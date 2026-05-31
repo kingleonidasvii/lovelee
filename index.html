@@ -6,7 +6,7 @@
   <title>lovelee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="VioletCover1.webp">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -152,10 +152,13 @@
     #contact { padding-top: 20px; }
 
     .section-label {
-      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-family: 'Cinzel', serif; font-weight: 400;
       font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--cream); margin-bottom: 48px;
       line-height: 1;
+    }
+    .release-caption {
+      display: none;
     }
 
 
@@ -193,8 +196,8 @@
     }
     .release-item:hover .release-overlay { opacity: 1; }
     .release-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
+      font-family: 'Cinzel', serif;
+      font-weight: 300;
       text-transform: uppercase;
       font-size: 1.3rem; color: var(--cream);
     }
@@ -236,8 +239,8 @@
       gap: 5px;
     }
     .tour-name {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
+      font-family: 'Cinzel', serif;
+      font-weight: 300;
       font-size: 1.35rem;
       letter-spacing: 0.04em;
       color: var(--cream);
@@ -325,12 +328,36 @@
       .tour-row { grid-template-columns: 32px 1fr auto; gap: 16px; padding: 20px 8px; }
       .tour-name { font-size: 1.1rem; }
       .tour-meta { font-size: 0.58rem; }
-      .release-overlay {
-        opacity: 1;
-        background: linear-gradient(to top, rgba(14,12,13,0.92) 0%, rgba(14,12,13,0.35) 55%, transparent 100%);
-        justify-content: flex-end;
-        padding-bottom: 14px;
-        gap: 4px;
+      .release-overlay { display: none !important; }
+      .release-grid { gap: 3px; row-gap: 2.8rem; }
+      .release-item {
+        aspect-ratio: 1 !important;
+        overflow: visible !important;
+      }
+      .release-art {
+        position: absolute !important;
+        inset: 0 !important;
+        filter: brightness(1) saturate(1) grayscale(0) !important;
+      }
+      .release-caption {
+        display: flex;
+        position: absolute;
+        bottom: -2rem;
+        left: 0;
+        width: 100%;
+      }
+      .release-caption .release-title {
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+      }
+      .release-caption {
+        display: flex;
+        align-items: center;
+        padding: 10px 8px 6px;
+      }
+      .release-caption .release-title {
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
       }
       .scroll-cue { right: 24px; }
       .footer { padding-left: 24px; padding-right: 24px; }
@@ -345,7 +372,7 @@
       transform: translateX(-50%) translateY(20px);
       background: var(--cream);
       color: #1a1714;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cinzel', serif;
       font-weight: 400;
       font-style: normal;
       font-size: 0.82rem;
@@ -465,9 +492,9 @@
       transform: scale(1) translateY(0);
     }
     .music-dropdown-title {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cinzel', serif;
       font-size: clamp(2rem, 10vw, 3.2rem);
-      font-weight: 800;
+      font-weight: 300;
       letter-spacing: 0.04em;
       text-transform: capitalize;
       color: var(--cream);
@@ -523,7 +550,7 @@
       border: none;
       border-bottom: 1px solid rgba(245,240,234,0.2);
       color: var(--cream);
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cinzel', serif;
       font-size: 0.9rem;
       padding: 8px 0;
       outline: none;
@@ -575,7 +602,7 @@
       background: rgba(245,240,234,0.06);
       border: 1px solid rgba(245,240,234,0.12);
       color: var(--cream);
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cinzel', serif;
       font-weight: 300;
       font-size: 0.72rem;
       letter-spacing: 0.08em;
@@ -609,7 +636,7 @@
       background: transparent;
       border: 1px solid #9b7ab5;
       color: #9b7ab5;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cinzel', serif;
       font-weight: 300;
       font-size: 0.62rem;
       letter-spacing: 0.26em;
@@ -869,8 +896,9 @@
       <div class="release-art" style="background-image:url('TearsCoverClaude.webp');background-size:cover;background-position:center;"></div>
       <div class="release-overlay">
         <span class="release-title">tears</span>
-        <span class="release-sub">single · 2026</span>
+        <span class="release-sub">single</span>
       </div>
+      <div class="release-caption"><span class="release-title">tears</span></div>
     </div>
     <div class="release-item" onclick="openStreamMenu('unahana')" role="button" tabindex="0">
       <div class="release-art" style="background-image:url('UnahanaCoverClaude.webp');background-size:cover;background-position:center;"></div>
@@ -878,6 +906,7 @@
         <span class="release-title">unahana</span>
         <span class="release-sub">single</span>
       </div>
+      <div class="release-caption"><span class="release-title">unahana</span></div>
     </div>
     <div class="release-item" onclick="openStreamMenu('romeo')" role="button" tabindex="0">
       <div class="release-art" style="background-image:url('RomeoCoverClaude.webp');background-size:cover;background-position:center;"></div>
@@ -885,6 +914,7 @@
         <span class="release-title">romeo</span>
         <span class="release-sub">single</span>
       </div>
+      <div class="release-caption"><span class="release-title">romeo</span></div>
     </div>
     <div class="release-item" onclick="openStreamMenu('demons')" role="button" tabindex="0">
       <div class="release-art" style="background-image:url('DemonsCoverClaude.webp');background-size:cover;background-position:center;"></div>
@@ -892,6 +922,7 @@
         <span class="release-title">demons</span>
         <span class="release-sub">single</span>
       </div>
+      <div class="release-caption"><span class="release-title">demons</span></div>
     </div>
   </div>
 </section>
@@ -1691,7 +1722,7 @@ if (newsletterFormInline) {
   .newsletter-popup-close:hover { color: rgba(245,240,234,0.8); }
   .newsletter-popup-title {
     display: flex; flex-direction: column; gap: 0.08em;
-    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-family: 'Cinzel', serif; font-weight: 300;
     text-transform: uppercase; color: var(--cream); line-height: 1;
     letter-spacing: -0.01em;
   }
@@ -1774,8 +1805,8 @@ if (newsletterFormInline) {
     flex-direction: column;
     gap: 0.08em;
     width: 100%;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
+    font-family: 'Cinzel', serif;
+    font-weight: 300;
     font-size: clamp(1.6rem, 7vw, 2.2rem);
     text-transform: uppercase;
     color: var(--cream);
@@ -1897,9 +1928,9 @@ if (newsletterFormInline) {
     margin-bottom: 28px;
   }
   #stream-popup-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Cinzel', serif;
     font-size: clamp(2rem, 10vw, 3.2rem);
-    font-weight: 800;
+    font-weight: 300;
     letter-spacing: 0.04em;
     text-transform: capitalize;
     color: var(--cream);
