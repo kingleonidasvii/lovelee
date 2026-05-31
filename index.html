@@ -71,8 +71,8 @@
     nav ul { list-style: none; display: flex; gap: 44px; align-items: center; }
 
     nav a {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.6rem; font-weight: 300;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem; font-weight: 400;
       letter-spacing: 0.22em; text-transform: uppercase;
       color: var(--cream); text-decoration: none;
       opacity: 0.45; transition: none;
@@ -166,8 +166,9 @@
     .release-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
+      gap: 12px;
       max-width: 800px;
+      background: var(--ink);
     }
     .release-item {
       aspect-ratio: 1; background: #0e0c0d;
@@ -180,7 +181,7 @@
       inset: 0;
       background: linear-gradient(135deg, #2a1f2d 0%, #1a1519 100%);
       display: flex; align-items: center; justify-content: center;
-      filter: brightness(0.75) saturate(0.6) grayscale(0.3);
+      filter: brightness(1) saturate(1) grayscale(0);
       transition: filter 0.5s ease;
     }
     .release-item:hover .release-art {
@@ -198,7 +199,7 @@
     .release-title {
       font-family: 'Cinzel', serif;
       font-weight: 300;
-      text-transform: uppercase;
+      text-transform: lowercase;
       font-size: 1.3rem; color: var(--cream);
     }
     .release-sub {
@@ -258,19 +259,18 @@
       font-size: 0.55rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--cream);
-      opacity: 0.45;
+      color: #9b8bbf;
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(245,240,234,0.22);
+      border-bottom: 1px solid rgba(155,139,191,0.35);
       padding: 0 0 3px;
       cursor: pointer;
-      transition: opacity 0.2s, border-color 0.2s;
+      transition: color 0.2s, border-color 0.2s;
       white-space: nowrap;
       justify-self: end;
       align-self: center;
     }
-    .ticket-btn:hover { opacity: 1; border-color: var(--cream); }
+    .ticket-btn:hover { color: #c4b4e8; border-color: #c4b4e8; }
 
     .epk-wrap {
       max-width: 100%; margin-top: 8px;
@@ -289,7 +289,7 @@
     .epk-link {
       font-family: 'Inter', sans-serif;
       font-size: 0.72rem; letter-spacing: 0.12em;
-      text-transform: capitalize; color: var(--cream);
+      text-transform: lowercase; color: var(--cream);
       text-decoration: none; opacity: 0.38;
       transition: opacity 0.2s;
       display: flex; align-items: center; gap: 14px;
@@ -327,7 +327,7 @@
       .ticket-btn { font-size: 0.55rem; }
       .tour-row { grid-template-columns: 32px 1fr auto; gap: 16px; padding: 20px 8px; }
       .tour-name { font-size: 1.1rem; }
-      .tour-meta { font-size: 0.58rem; }
+      .tour-meta { font-size: 0.58rem; white-space: nowrap; }
       .release-overlay { display: none !important; }
       .release-grid { gap: 3px; row-gap: 2.8rem; }
       .release-item {
@@ -1011,6 +1011,7 @@
       <div class="epk-links">
         <a href="Artist_EPK.png" download="lovelee_EPK.png" class="epk-link">download epk</a>
         <a href="lovelee_press_photos.zip" download class="epk-link">download press photos</a>
+
       </div>
     </div>
   </div>
@@ -1237,7 +1238,7 @@ function resetIdle() {
 }
 
 // Activity events that break idle
-['keydown'].forEach(evt =>
+['keydown', 'mousedown', 'touchstart', 'mousemove', 'wheel', 'scroll'].forEach(evt =>
   document.addEventListener(evt, resetIdle, { passive: true })
 );
 
@@ -1524,7 +1525,6 @@ function showTicketToast(gradient) {
   document.getElementById('ticket-notify-email').value = '';
   if (gradient) ticketToast.style.background = gradient;
   ticketToast.classList.add('show');
-  if (typeof onIdle === 'function') onIdle();
 }
 
 function hideTicketToast() {
@@ -1563,7 +1563,6 @@ const musicDropdown  = document.getElementById('music-dropdown');
 const musicBackdrop  = document.getElementById('music-backdrop');
 
 function openMusicMenu() {
-  if (typeof onIdle === 'function') onIdle();
   musicDropdown.classList.add('open');
   musicBtn.classList.add('active');
   if (musicBackdrop) {
@@ -1616,7 +1615,6 @@ function openNewsletterPopup() {
   if (newsletterPopup) newsletterPopup.classList.add('open');
   fitNewsletterTitle();
   setTimeout(() => document.getElementById('newsletter-email-popup').focus(), 100);
-  if (typeof onIdle === 'function') onIdle();
 }
 function closeNewsletterPopup() {
   if (newsletterPopup) newsletterPopup.classList.remove('open');
@@ -1932,7 +1930,7 @@ if (newsletterFormInline) {
     font-size: clamp(2rem, 10vw, 3.2rem);
     font-weight: 300;
     letter-spacing: 0.04em;
-    text-transform: capitalize;
+    text-transform: lowercase;
     color: var(--cream);
     line-height: 1;
   }
@@ -2018,7 +2016,6 @@ if (newsletterFormInline) {
     ).join('');
     if (links.gradient) streamPopup.style.background = links.gradient;
     streamPopup.classList.add('open');
-    if (typeof onIdle === 'function') onIdle();
   }
 
   streamPopupClose.addEventListener('click', () => streamPopup.classList.remove('open'));
