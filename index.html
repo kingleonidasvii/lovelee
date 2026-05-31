@@ -71,9 +71,9 @@
     nav ul { list-style: none; display: flex; gap: 44px; align-items: center; }
 
     nav a {
-      font-family: 'Cinzel', serif;
-      font-size: 0.72rem; font-weight: 400;
-      letter-spacing: 0.18em; text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase;
       color: var(--cream); text-decoration: none;
       opacity: 0.45; transition: none;
     }
@@ -1292,7 +1292,7 @@ function showToast() {
 document.addEventListener('click', e => {
   scatter(e.clientX, e.clientY);
 
-  if (toastShown) return;
+  if (toastShown || !isIdle) return;
 
   const hit = violets.some(v => {
     const dx = v.x - e.clientX;
@@ -1521,6 +1521,7 @@ function showTicketToast(gradient) {
   document.getElementById('ticket-notify-email').value = '';
   if (gradient) ticketToast.style.background = gradient;
   ticketToast.classList.add('show');
+  if (typeof onIdle === 'function') onIdle();
 }
 
 function hideTicketToast() {
@@ -1611,6 +1612,7 @@ function openNewsletterPopup() {
   if (newsletterPopup) newsletterPopup.classList.add('open');
   fitNewsletterTitle();
   setTimeout(() => document.getElementById('newsletter-email-popup').focus(), 100);
+  if (typeof onIdle === 'function') onIdle();
 }
 function closeNewsletterPopup() {
   if (newsletterPopup) newsletterPopup.classList.remove('open');
@@ -2000,6 +2002,7 @@ if (newsletterFormInline) {
     ).join('');
     if (links.gradient) streamPopup.style.background = links.gradient;
     streamPopup.classList.add('open');
+    if (typeof onIdle === 'function') onIdle();
   }
 
   streamPopupClose.addEventListener('click', () => streamPopup.classList.remove('open'));
