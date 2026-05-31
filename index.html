@@ -56,6 +56,22 @@
       pointer-events: none;
     }
 
+    #vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 49;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(14,12,13,0.75) 0%,
+        rgba(14,12,13,0.2) 8%,
+        transparent 20%,
+        transparent 80%,
+        rgba(14,12,13,0.2) 92%,
+        rgba(14,12,13,0.75) 100%
+      );
+    }
+
     /* NAV — centered, no logo */
     nav {
       position: fixed;
@@ -146,7 +162,8 @@
 
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    section { position: relative; z-index: 2; padding: 80px 52px; transition: background 0.3s; }
+    section { position: relative; z-index: 2; padding: 80px 52px; transition: background 0.3s; display: flex; flex-direction: column; align-items: center; }
+    section > * { width: 100%; max-width: 800px; }
     #tour { padding-top: 60px; padding-bottom: 60px; }
     #epk  { padding-top: 60px; padding-bottom: 20px; }
     #contact { padding-top: 20px; }
@@ -155,7 +172,7 @@
       font-family: 'Cinzel', serif; font-weight: 400;
       font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--cream); margin-bottom: 48px;
-      line-height: 1;
+      line-height: 1; text-align: center;
     }
     .release-caption {
       display: none;
@@ -167,6 +184,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      width: 100%;
       max-width: 800px;
       background: var(--ink);
     }
@@ -273,7 +291,7 @@
     .ticket-btn:hover { color: #c4b4e8; border-color: #c4b4e8; }
 
     .epk-wrap {
-      max-width: 100%; margin-top: 8px;
+      width: 100%; max-width: 800px; margin-top: 8px;
     }
     .epk-block h3 {
       font-family: 'Inter', sans-serif;
@@ -285,22 +303,20 @@
       font-size: 0.68rem; line-height: 2;
       color: rgba(245,240,234,0.5); letter-spacing: 0.04em;
     }
-    .epk-links { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; }
+    .epk-links { display: flex; flex-direction: column; width: 100%; margin-top: 4px; }
     .epk-link {
       font-family: 'Inter', sans-serif;
-      font-size: 0.72rem; letter-spacing: 0.12em;
+      font-size: 0.65rem; letter-spacing: 0.18em;
       text-transform: lowercase; color: var(--cream);
       text-decoration: none; opacity: 0.38;
-      transition: opacity 0.2s;
-      display: flex; align-items: center; gap: 14px;
+      transition: opacity 0.2s, background 0.2s, color 0.2s;
+      display: block; text-align: center; width: 100%;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(245,240,234,0.08);
     }
-    .epk-link::before {
-      content: ''; display: block;
-      width: 20px; height: 1px;
-      background: currentColor; flex-shrink: 0;
-    }
-    .epk-link:hover { opacity: 1; }
-    button.epk-link { background: none; border: none; cursor: pointer; padding: 0; }
+    .epk-links .epk-link:first-child { border-top: 1px solid rgba(245,240,234,0.08); }
+    .epk-link:hover { opacity: 1; background: #9b8bbf; color: #0e0c0d; }
+    button.epk-link { background: none; border: none; cursor: pointer; padding: 20px 0; width: 100%; }
 
 
 
@@ -320,7 +336,8 @@
     @media (max-width: 600px) {
       nav { padding: 20px 24px; }
       nav ul { gap: 20px; flex-wrap: wrap; justify-content: center; }
-      section, .hero-content { padding-left: 20px; padding-right: 20px; max-width: 100vw; }
+      section { padding-left: 20px; padding-right: 20px; }
+      section > * { max-width: 100%; }
       .hero-content { padding-bottom: 48px; }
       .epk-wrap { grid-template-columns: 1fr; gap: 48px; }
       .release-grid { max-width: 100%; }
@@ -435,9 +452,9 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: linear-gradient(315deg, rgba(46,28,72,0.78) 0%, rgba(14,12,13,0.65) 55%, rgba(22,14,38,0.7) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: linear-gradient(315deg, rgba(46,28,72,0.88) 0%, rgba(14,12,13,0.82) 55%, rgba(22,14,38,0.85) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       opacity: 0;
       transition: opacity 0.22s ease;
     }
@@ -839,6 +856,7 @@
 <div class="cursor" id="cursor"></div>
 <div id="progress-bar"></div>
 <canvas id="canvas"></canvas>
+<div id="vignette"></div>
 
 <div id="flower-toast">i'm glad you like the flowers!! :D</div>
 
@@ -864,20 +882,22 @@
   <a href="https://youtube.com/@itsloveleee" target="_blank" aria-label="YouTube">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
   </a>
-  <!-- Music / Streaming -->
-  <div id="music-backdrop"></div>
+  <!-- Music icon stays in nav for layout -->
   <div class="music-icon-wrap">
     <button class="music-icon-btn" id="music-icon-btn" aria-label="Listen">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.5 3h10v2.5h-10z M8.5 3h1.5v13.5h-1.5z M17 3h1.5v11.5H17z M9.32 15.62A4.5 2.5 -32 0 1 1.68 20.38A4.5 2.5 -32 0 1 9.32 15.62z M18.32 13.62A4.5 2.5 -32 0 1 10.68 18.38A4.5 2.5 -32 0 1 18.32 13.62z"/></svg>
     </button>
-    <div class="music-dropdown" id="music-dropdown">
-      <p class="music-dropdown-title">where to listen</p>
-      <a href="https://open.spotify.com/artist/0ulcfO2JDsDuhgfKPGuTVo" target="_blank">spotify</a>
-      <a href="https://music.apple.com/de/artist/lovelee/1862171633?l=en-GB" target="_blank">apple music</a>
-      <a href="https://music.amazon.de/artists/B0G71DGBZ3/lovelee?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_AtZxIisAuUN0FgTKWQmjt8RNi" target="_blank">amazon music</a>
-      <a href="https://tidal.com/album/495169007" target="_blank">tidal</a>
-    </div>
   </div>
+</div>
+
+<!-- Music backdrop + dropdown live at body level so nav opacity doesn't affect them -->
+<div id="music-backdrop"></div>
+<div class="music-dropdown" id="music-dropdown">
+  <p class="music-dropdown-title">where to listen</p>
+  <a href="https://open.spotify.com/artist/0ulcfO2JDsDuhgfKPGuTVo" target="_blank">spotify</a>
+  <a href="https://music.apple.com/de/artist/lovelee/1862171633?l=en-GB" target="_blank">apple music</a>
+  <a href="https://music.amazon.de/artists/B0G71DGBZ3/lovelee?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_AtZxIisAuUN0FgTKWQmjt8RNi" target="_blank">amazon music</a>
+  <a href="https://tidal.com/album/495169007" target="_blank">tidal</a>
 </div>
 
 <section id="home">
@@ -981,6 +1001,29 @@
   </div>
 </div>
 
+<!-- ── CONTACT MODAL ─────────────────────────────────────────────────────── -->
+<div id="contact-modal" onclick="closeContactModal()">
+  <div class="contact-modal-inner" onclick="event.stopPropagation()">
+    <button class="contact-modal-close" id="contact-modal-close">✕</button>
+    <p class="contact-modal-title" id="contact-modal-title">book lovelee</p>
+    <form class="contact-modal-form" id="contact-modal-form">
+      <div class="contact-field">
+        <input type="text" id="contact-name" placeholder="your name" required class="contact-input">
+      </div>
+      <div class="contact-field">
+        <input type="email" id="contact-email" placeholder="your email" required class="contact-input">
+      </div>
+      <div class="contact-field">
+        <input type="text" id="contact-subject" placeholder="subject" required class="contact-input">
+      </div>
+      <div class="contact-field">
+        <textarea id="contact-message" placeholder="your message" required class="contact-input contact-textarea" rows="4"></textarea>
+      </div>
+      <button type="submit" class="contact-send-btn">send</button>
+    </form>
+  </div>
+</div>
+
 <!-- ── NEWSLETTER POPUP ───────────────────────────────────────────────────── -->
 <div id="newsletter-popup" onclick="closeNewsletterPopup()">
   <div class="newsletter-popup-inner" onclick="event.stopPropagation()">
@@ -1019,8 +1062,8 @@
     <div class="epk-block">
       <div class="epk-links">
         <button class="epk-link" id="newsletter-toggle">join my newsletter :)</button>
-        <a href="mailto:booking@itsloveleee.com?subject=Booking%20Inquiry%20lovelee" class="epk-link">book lovelee</a>
-        <a href="mailto:management@itsloveleee.com?subject=General%20Inquiry%20lovelee" class="epk-link">general inquiries</a>
+        <button class="epk-link" onclick="openContactModal('booking')">book lovelee</button>
+        <button class="epk-link" onclick="openContactModal('general')">general inquiries</button>
       </div>
       <div class="newsletter-inline" id="newsletter-inline" style="display:none; margin-top: 24px; margin-left: 34px;">
         <form id="newsletter-form-inline" class="newsletter-form-inline">
@@ -1587,6 +1630,73 @@ if (musicBtn && musicDropdown) {
   if (musicBackdrop) musicBackdrop.addEventListener('click', closeMusicMenu);
 }
 
+// ── CONTACT MODAL ─────────────────────────────────────────────────────────────
+const contactModal      = document.getElementById('contact-modal');
+const contactModalTitle = document.getElementById('contact-modal-title');
+const contactModalForm  = document.getElementById('contact-modal-form');
+const contactModalClose = document.getElementById('contact-modal-close');
+
+const contactRecipients = {
+  booking: { email: 'booking@itsloveleee.com',    label: 'book lovelee',      subject: 'Booking Inquiry — lovelee' },
+  general: { email: 'management@itsloveleee.com', label: 'general inquiries', subject: 'General Inquiry — lovelee' }
+};
+let contactType = 'booking';
+
+function openContactModal(type) {
+  contactType = type;
+  const cfg = contactRecipients[type];
+  contactModalTitle.textContent = cfg.label;
+  document.getElementById('contact-subject').value = cfg.subject;
+  contactModal.classList.add('open');
+  setTimeout(() => document.getElementById('contact-name').focus(), 100);
+}
+function closeContactModal() {
+  contactModal.classList.remove('open');
+}
+contactModalClose.addEventListener('click', closeContactModal);
+
+contactModalForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn     = contactModalForm.querySelector('.contact-send-btn');
+  const name    = document.getElementById('contact-name').value.trim();
+  const email   = document.getElementById('contact-email').value.trim();
+  const subject = document.getElementById('contact-subject').value.trim();
+  const message = document.getElementById('contact-message').value.trim();
+
+  btn.textContent = 'sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: contactType === 'booking'
+          ? '629c44fd-9484-4580-84d1-55b5b53935ac'
+          : '1da490f2-1fbc-468a-99dd-0f27845e68a6',
+        name, email, subject, message,
+        from_name: 'lovelee website'
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = 'sent ✓';
+      setTimeout(() => {
+        closeContactModal();
+        contactModalForm.reset();
+        btn.textContent = 'send';
+        btn.disabled = false;
+      }, 1800);
+    } else {
+      btn.textContent = 'try again';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'try again';
+    btn.disabled = false;
+  }
+});
+
 // ── NEWSLETTER TOGGLE ─────────────────────────────────────────────────────────
 const newsletterToggle = document.getElementById('newsletter-toggle');
 const newsletterPopup  = document.getElementById('newsletter-popup');
@@ -1693,6 +1803,53 @@ if (newsletterFormInline) {
     privacy policy
   </a>
 </footer>
+
+<!-- ── CONTACT MODAL CSS ─────────────────────────────────────────────────── -->
+<style>
+  #contact-modal {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(190deg, rgba(42,24,68,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(26,16,44,0.72) 100%);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  #contact-modal.open { opacity: 1; pointer-events: auto; }
+  .contact-modal-inner {
+    width: min(420px, calc(100vw - 48px));
+    display: flex; flex-direction: column; gap: 20px;
+    padding: 32px 28px; position: relative;
+    transform: translateY(10px); transition: transform 0.25s ease;
+  }
+  #contact-modal.open .contact-modal-inner { transform: translateY(0); }
+  .contact-modal-close {
+    position: absolute; top: 0; right: 28px;
+    background: none; border: none; color: rgba(245,240,234,0.35);
+    font-size: 0.7rem; cursor: pointer; transition: color 0.2s;
+  }
+  .contact-modal-close:hover { color: var(--cream); }
+  .contact-modal-title {
+    font-family: 'Cinzel', serif; font-weight: 400;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    text-transform: lowercase; color: var(--cream); line-height: 1;
+  }
+  .contact-field { border-bottom: 1px solid rgba(245,240,234,0.12); }
+  .contact-input {
+    width: 100%; background: transparent; border: none; outline: none;
+    font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 300;
+    letter-spacing: 0.08em; color: var(--cream); padding: 12px 0;
+  }
+  .contact-input::placeholder { color: rgba(245,240,234,0.3); }
+  .contact-textarea { resize: none; line-height: 1.6; }
+  .contact-send-btn {
+    align-self: flex-end;
+    font-family: 'Inter', sans-serif; font-size: 0.58rem; font-weight: 300;
+    letter-spacing: 0.18em; text-transform: lowercase;
+    background: transparent; border: none; border-bottom: 1px solid rgba(245,240,234,0.3);
+    color: rgba(245,240,234,0.6); padding: 4px 0; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .contact-send-btn:hover { color: var(--cream); border-color: var(--cream); }
+</style>
 
 <!-- ── NEWSLETTER POPUP ──────────────────────────────────────────────────── -->
 <style>
