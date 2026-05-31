@@ -72,8 +72,8 @@
 
     nav a {
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem; font-weight: 400;
-      letter-spacing: 0.22em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--cream); text-decoration: none;
       opacity: 0.45; transition: none;
     }
@@ -971,11 +971,7 @@
     <div class="ticket-toast-top">
       <button class="ticket-toast-close" id="ticket-toast-close">✕</button>
     </div>
-    <p class="ticket-toast-title">
-      <span class="title-word"><span>T</span><span>I</span><span>C</span><span>K</span><span>E</span><span>T</span><span>S</span></span>
-      <span class="title-word"><span>C</span><span>O</span><span>M</span><span>I</span><span>N</span><span>G</span></span>
-      <span class="title-word"><span>S</span><span>O</span><span>O</span><span>N</span></span>
-    </p>
+    <p class="ticket-toast-title">tickets coming soon</p>
     <p class="ticket-toast-sub">join the newsletter to be the first to know (✿◠‿◠)</p>
     <form id="ticket-notify-form" class="ticket-notify-form">
       <input type="email" id="ticket-notify-email" placeholder="your email" required class="ticket-notify-input">
@@ -995,7 +991,7 @@
       <span>join the</span>
       <span>newsletter</span>
     </p>
-    <p class="newsletter-popup-sub">stay close (✿◠‿◠)</p>
+    <p class="newsletter-popup-sub">stay close (✿◡‿◡)</p>
     <form id="newsletter-form-popup" class="newsletter-popup-form">
       <input type="email" id="newsletter-email-popup" placeholder="your email" required class="newsletter-popup-input">
       <button type="submit" class="newsletter-popup-btn">join</button>
@@ -1799,25 +1795,13 @@ if (newsletterFormInline) {
     margin-bottom: 16px;
   }
   .ticket-toast-title {
-    display: flex;
-    flex-direction: column;
-    gap: 0.08em;
-    width: 100%;
     font-family: 'Cinzel', serif;
     font-weight: 300;
-    font-size: clamp(1.6rem, 7vw, 2.2rem);
-    text-transform: uppercase;
+    font-size: clamp(0.85rem, 3vw, 1.1rem);
+    text-transform: lowercase;
+    white-space: nowrap;
     color: var(--cream);
-    line-height: 1;
-  }
-  .title-word {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  .title-word:last-child {
-    justify-content: flex-start;
-    gap: 0.12em;
+    line-height: 1.15;
   }
   .ticket-toast-sub {
     font-family: 'Inter', sans-serif;
