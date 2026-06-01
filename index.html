@@ -240,13 +240,50 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       padding: 24px 16px;
-      border-bottom: 1px solid rgba(245,240,234,0.08);
       gap: 28px;
-      transition: background 0.2s;
+      transition: background 0.35s ease;
       cursor: pointer;
+      position: relative;
     }
-    .tour-row:first-child { border-top: 1px solid rgba(245,240,234,0.08); }
-    .tour-row:hover { background: rgba(245,240,234,0.04); }
+    /* Victorian ornamental divider after each row */
+    .tour-row::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 12px;
+      transform: translateY(50%);
+      z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='xMidYMid meet'%3E%3Cline x1='0' y1='6' x2='262' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cline x1='338' y1='6' x2='600' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cpath d='M262,6 Q270,2 278,6 Q286,10 294,6 Q302,2 300,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='300' cy='6' r='2.2' fill='rgba(245,240,234,0.22)'/%3E%3Ccircle cx='300' cy='6' r='1' fill='rgba(245,240,234,0.35)'/%3E%3Cpath d='M300,6 Q308,10 316,6 Q324,2 332,6 Q340,10 338,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='278' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3Ccircle cx='322' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      pointer-events: none;
+    }
+    /* Top divider on first row */
+    .tour-row:first-child::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 12px;
+      transform: translateY(-50%);
+      z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='xMidYMid meet'%3E%3Cline x1='0' y1='6' x2='262' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cline x1='338' y1='6' x2='600' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cpath d='M262,6 Q270,2 278,6 Q286,10 294,6 Q302,2 300,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='300' cy='6' r='2.2' fill='rgba(245,240,234,0.22)'/%3E%3Ccircle cx='300' cy='6' r='1' fill='rgba(245,240,234,0.35)'/%3E%3Cpath d='M300,6 Q308,10 316,6 Q324,2 332,6 Q340,10 338,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='278' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3Ccircle cx='322' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      pointer-events: none;
+    }
+    .tour-row:hover { background: rgba(100, 70, 165, 0.18); }
+    .tour-name {
+      transition: color 0.35s ease;
+    }
+    .tour-meta {
+      transition: color 0.35s ease;
+    }
+    .tour-row:hover .tour-name { color: var(--cream); opacity: 1; }
+    .tour-row:hover .tour-meta { color: rgba(245,240,234,0.55); }
+    .tour-row:hover .ticket-btn {
+      color: #c4b4e8;
+      border-color: rgba(196,180,232,0.5);
+    }
     .tour-num {
       font-family: 'Inter', sans-serif;
       font-size: 0.6rem;
@@ -286,7 +323,7 @@
       border-bottom: 1px solid rgba(155,139,191,0.35);
       padding: 0 0 3px;
       cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.35s ease, border-color 0.35s ease;
       white-space: nowrap;
       justify-self: end;
       align-self: center;
@@ -307,19 +344,87 @@
       color: rgba(245,240,234,0.5); letter-spacing: 0.04em;
     }
     .epk-links { display: flex; flex-direction: column; width: 100%; margin-top: 4px; }
+
+    /* Stagger entrance for each link */
+    .epk-links .epk-link {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.55s ease, transform 0.55s ease,
+                  background-size 0.5s cubic-bezier(0.4,0,0.2,1),
+                  color 0.25s, letter-spacing 0.3s;
+    }
+    .epk-links.visible .epk-link:nth-child(1) { transition-delay: 0s; }
+    .epk-links.visible .epk-link:nth-child(2) { transition-delay: 0.07s; }
+    .epk-links.visible .epk-link:nth-child(3) { transition-delay: 0.14s; }
+    .epk-links.visible .epk-link:nth-child(4) { transition-delay: 0.21s; }
+    .epk-links.visible .epk-link:nth-child(5) { transition-delay: 0.28s; }
+    .epk-links.visible .epk-link {
+      opacity: 0.38;
+      transform: translateY(0);
+    }
+
     .epk-link {
       font-family: 'Inter', sans-serif;
       font-size: 0.65rem; letter-spacing: 0.18em;
       text-transform: lowercase; color: var(--cream);
-      text-decoration: none; opacity: 0.38;
-      transition: opacity 0.2s, background 0.2s, color 0.2s;
+      text-decoration: none;
       display: block; text-align: center; width: 100%;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(245,240,234,0.08);
+      padding: 22px 0;
+      position: relative;
+      /* Animated underline drawn from center */
+      background-image: linear-gradient(to right, #9b8bbf, #9b8bbf);
+      background-size: 0% 1px;
+      background-position: center calc(100% - 1px);
+      background-repeat: no-repeat;
+      background-color: transparent;
     }
-    .epk-links .epk-link:first-child { border-top: 1px solid rgba(245,240,234,0.08); }
-    .epk-link:hover { opacity: 1; background: #9b8bbf; color: #0e0c0d; }
-    button.epk-link { background: none; border: none; cursor: pointer; padding: 20px 0; width: 100%; }
+    .epk-link:hover {
+      opacity: 1;
+      color: var(--cream);
+      background-size: 88% 1px;
+      background-color: transparent;
+      letter-spacing: 0.22em;
+    }
+    /* Victorian ornamental divider after each link */
+    /* Diamond divider after each link */
+    .epk-links .epk-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 10px;
+      transform: translateY(50%);
+      z-index: 1;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10'%3E%3Cline x1='0' y1='5' x2='292' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3Cpath d='M300,1.5 L304,5 L300,8.5 L296,5Z' fill='rgba(245,240,234,0.22)'/%3E%3Cline x1='308' y1='5' x2='600' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+    /* Diamond divider before first link */
+    .epk-links .epk-link:first-child::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 10px;
+      transform: translateY(-50%);
+      z-index: 1;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10'%3E%3Cline x1='0' y1='5' x2='292' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3Cpath d='M300,1.5 L304,5 L300,8.5 L296,5Z' fill='rgba(245,240,234,0.22)'/%3E%3Cline x1='308' y1='5' x2='600' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+    button.epk-link {
+      background-image: linear-gradient(to right, #9b8bbf, #9b8bbf);
+      background-size: 0% 1px;
+      background-position: center calc(100% - 1px);
+      background-repeat: no-repeat;
+      background-color: transparent;
+      border: none; cursor: pointer;
+      padding: 22px 0; width: 100%;
+    }
+    button.epk-link:hover {
+      background-size: 88% 1px;
+      background-color: transparent;
+    }
 
 
 
@@ -381,6 +486,93 @@
       }
       .scroll-cue { right: 24px; }
       .footer { padding-left: 24px; padding-right: 24px; }
+
+    }
+
+    /* press-contact row: stacked on mobile */
+    .press-contact-row { display: block; }
+    .contact-col-label { display: none; }
+    .contact-cols { display: contents; }
+    /* desktop combined section: hidden on mobile */
+    #press-contact-desktop { display: none; }
+
+    /* ── DESKTOP LAYOUT (900px+) ─────────────────────────────────────────── */
+    @media (min-width: 900px) {
+
+      /* Sections: more horizontal breathing room */
+      section { padding: 100px 80px; }
+      section > * { max-width: 1100px; }
+
+      /* Section label: left-aligned, feels editorial */
+      .section-label {
+        text-align: left;
+        font-size: clamp(1rem, 1.8vw, 1.4rem);
+        letter-spacing: 0.18em;
+        margin-bottom: 56px;
+      }
+
+      /* MUSIC: 4-across single row */
+      .release-grid {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 1100px;
+        gap: 16px;
+      }
+
+      /* TOUR: wider rows, more air */
+      .tour-list { max-width: 1100px; }
+      .tour-row {
+        padding: 28px 32px;
+        grid-template-columns: 1fr auto;
+      }
+      .tour-info { gap: 12px; }
+      .tour-name { font-size: 1.5rem; }
+      .tour-meta { font-size: 0.65rem; letter-spacing: 0.18em; }
+
+      /* PRESS & CONTACT: desktop combined, mobile rows hidden */
+      #press-contact-desktop { display: flex; }
+      .press-contact-row { display: none; }
+
+      .pc-desktop-links {
+        flex-direction: row !important;
+        border-top: none;
+        position: relative;
+        padding-top: 12px;
+      }
+      .pc-desktop-links::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 12px;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10'%3E%3Cline x1='0' y1='5' x2='292' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3Cpath d='M300,1.5 L304,5 L300,8.5 L296,5Z' fill='rgba(245,240,234,0.22)'/%3E%3Cline x1='308' y1='5' x2='600' y2='5' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: 100% 10px;
+      }
+      .pc-desktop-links .epk-link {
+        flex: 1;
+        border-bottom: none !important;
+        border-right: none;
+        padding: 22px 16px;
+        text-align: center;
+        position: relative;
+      }
+      /* Override mobile ::after/::before on desktop links */
+      .pc-desktop-links .epk-link::before,
+      .pc-desktop-links .epk-link::after { display: none; }
+      /* Victorian vertical divider between items */
+      .pc-desktop-links .epk-link:not(:last-child)::after {
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0; bottom: 0; right: 0;
+        width: 12px;
+        transform: translateX(50%);
+        z-index: 1;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 300'%3E%3Cline x1='5' y1='0' x2='5' y2='142' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3Cpath d='M1.5,150 L5,154 L8.5,150 L5,146Z' fill='rgba(245,240,234,0.22)'/%3E%3Cline x1='5' y1='158' x2='5' y2='300' stroke='rgba(245,240,234,0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+      }
 
     }
 
@@ -1046,6 +1238,21 @@
   </div>
 </div>
 
+<!-- DESKTOP: combined Press & Contact -->
+<section id="press-contact-desktop" class="reveal">
+  <p class="section-label">Press &amp; Contact</p>
+  <div class="epk-links pc-desktop-links">
+    <a href="Artist_EPK.png" download="lovelee_EPK.png" class="epk-link">download epk</a>
+    <a href="lovelee_press_photos.zip" download class="epk-link">download press photos</a>
+    <button class="epk-link" onclick="openNewsletterPopup()">join my newsletter :)</button>
+    <button class="epk-link" onclick="openContactModal('booking')">book lovelee</button>
+    <button class="epk-link" onclick="openContactModal('general')">general inquiries</button>
+  </div>
+</section>
+
+<!-- MOBILE: separate Press + Contact -->
+<div class="press-contact-row">
+
 <section id="epk">
   <p class="section-label reveal">press</p>
   <div class="epk-wrap reveal">
@@ -1053,31 +1260,32 @@
       <div class="epk-links">
         <a href="Artist_EPK.png" download="lovelee_EPK.png" class="epk-link">download epk</a>
         <a href="lovelee_press_photos.zip" download class="epk-link">download press photos</a>
-
       </div>
     </div>
   </div>
 </section>
 
 <section id="contact">
+  <p class="section-label reveal">contact</p>
   <div class="epk-wrap reveal">
-    <p class="section-label">contact</p>
     <div class="epk-block">
       <div class="epk-links">
         <button class="epk-link" id="newsletter-toggle">join my newsletter :)</button>
         <button class="epk-link" onclick="openContactModal('booking')">book lovelee</button>
         <button class="epk-link" onclick="openContactModal('general')">general inquiries</button>
       </div>
-      <div class="newsletter-inline" id="newsletter-inline" style="display:none; margin-top: 24px; margin-left: 34px;">
-        <form id="newsletter-form-inline" class="newsletter-form-inline">
-          <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-inline">
-          <button type="submit" class="newsletter-submit-inline">subscribe</button>
-        </form>
-        <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
-      </div>
     </div>
   </div>
+  <div class="newsletter-inline" id="newsletter-inline" style="display:none; margin-top: 24px; padding: 0 52px;">
+    <form id="newsletter-form-inline" class="newsletter-form-inline">
+      <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-inline">
+      <button type="submit" class="newsletter-submit-inline">subscribe</button>
+    </form>
+    <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
+  </div>
 </section>
+
+</div>
 
 
 
@@ -1546,7 +1754,11 @@ updateTiles();
 const io = new IntersectionObserver(entries => {
   entries.forEach((e, i) => {
     if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 90);
+      setTimeout(() => {
+        e.target.classList.add('visible');
+        // propagate to any nested epk-links so stagger animation fires
+        e.target.querySelectorAll('.epk-links').forEach(el => el.classList.add('visible'));
+      }, i * 90);
       io.unobserve(e.target);
     }
   });
