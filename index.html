@@ -2829,7 +2829,7 @@ if (newsletterFormInline) {
 
   // Mirror of right flower configs — left side, scaleX(-1) applied in CSS
   const MOB = { start: 50, end: -28, w: 170, left: -82, topVh: 55 };
-  const DSK = { start: 50, end: -60, w: 190, left: -110, topVh: 48 };
+  const DSK = { start: 50, end: -48, w: 190, left: -110, topVh: 48 };
 
   function getContactEl() {
     return DESKTOP()
@@ -2858,8 +2858,8 @@ if (newsletterFormInline) {
     const vh  = window.innerHeight;
     const top = contactEl.getBoundingClientRect().top;
 
-    const trigStart = DESKTOP() ? vh * 0.7 : vh * 0.8;
-    const trigRange = vh * 0.5;
+    const trigStart = DESKTOP() ? vh * 0.9 : vh * 0.8;
+    const trigRange = vh * 0.6;
     const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
     const eased = ease(prog);
 
