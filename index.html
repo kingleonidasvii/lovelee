@@ -625,6 +625,40 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ── VIOLET SCROLL FLOWER ─────────────────────────────────────────────── */
+    #violet-float {
+      position: fixed;
+      right: -160px;
+      top: 28vh;
+      width: 320px;
+      height: 320px;
+      transform-origin: 52% 93%;
+      transform: rotate(70deg) translateZ(0);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 200;
+      -webkit-transform: rotate(70deg) translateZ(0);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ── VIOLET LEFT FLOWER ──────────────────────────────────────────────────── */
+    #violet-float-left {
+      position: fixed;
+      left: -160px;
+      top: 28vh;
+      width: 320px;
+      height: 320px;
+      transform-origin: 48% 93%;
+      transform: scaleX(-1) rotate(-50deg) translateZ(0);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 200;
+      -webkit-transform: scaleX(-1) rotate(-50deg) translateZ(0);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     /* SCROLL PROGRESS BAR */
     #progress-bar {
       position: fixed;
@@ -2563,6 +2597,10 @@ if (newsletterFormInline) {
   <p>lovelee is the artist project of Leon Byvanck, a Berlin-based singer-songwriter and guitarist making indie pop and bedroom pop. Positioned between Steve Lacy and Clairo, lovelee's music is guitar-driven, emotionally direct, and modern without being nostalgic. His GEMA-registered catalogue has accumulated over 800,000 streams. He is releasing the Storm Chasers EP in June 2026 and the Violet EP across the second half of 2026. Alongside his solo work, he is the touring guitarist for Berlin indie act Dilla, with over 150 concerts at major festivals including Hurricane, Southside, and Superbloom, and television appearances on ProSieben, MDR, ARD, and ZDF. His singles Romeo, Demons, Unahana, and Tears are available on all streaming platforms.</p>
 </section>
 
+<!-- ── VIOLET SCROLL FLOWER ───────────────────────────────────────────────── -->
+<img id="violet-float" src="violet.webp" alt="" aria-hidden="true">
+<img id="violet-float-left" src="violet.webp" alt="" aria-hidden="true">
+
 <!-- ── DYNAMIC SHOWS LOADER ────────────────────────────────────────────────────
      Fetches from Google Sheets public CSV.
      Replace SHOWS_CSV_URL with your sheet's published CSV link.
@@ -2718,6 +2756,124 @@ if (newsletterFormInline) {
         <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('${grad('340deg','rgba(42,18,70,0.84)','rgba(22,12,40,0.7)')}')">tickets</button>
       </div>`;
   }
+})();
+</script>
+
+<script>
+/* ── VIOLET SCROLL ANIMATION ─────────────────────────────────────────────── */
+(function () {
+  const el = document.getElementById('violet-float');
+  if (!el) return;
+
+  const DESKTOP = () => window.innerWidth >= 900;
+
+  // Mobile config
+  const MOB = { start: 50, end: -52, w: 170, right: -88, topVh: 20 };
+  // Desktop config: smaller, fixed in viewport
+  const DSK = { start: 50, end: -40, w: 190, right: -90, topVh: 32 };
+
+  function getPressEl() {
+    return DESKTOP()
+      ? document.getElementById('press-contact-desktop')
+      : document.getElementById('epk');
+  }
+
+  function applyLayout() {
+    const cfg = DESKTOP() ? DSK : MOB;
+    el.style.position = 'fixed';
+    el.style.width    = cfg.w + 'px';
+    el.style.height   = cfg.w + 'px';
+    el.style.right    = cfg.right + 'px';
+    el.style.top      = cfg.topVh + 'vh';
+  }
+
+  function ease(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+
+  function update() {
+    if (window.scrollY < 80) return;
+
+    const pressEl = getPressEl();
+    if (!pressEl) return;
+
+    const cfg = DESKTOP() ? DSK : MOB;
+    const vh  = window.innerHeight;
+    const top = pressEl.getBoundingClientRect().top;
+    // Mobile: starts late (40% vh), Desktop: starts earlier (80% vh) since page is shorter
+    const trigStart = DESKTOP() ? vh * 0.8 : vh * 0.4;
+    const trigRange = vh * 0.5;
+    const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
+    const eased = ease(prog);
+
+    el.style.transform = `rotate(${(cfg.start + (cfg.end - cfg.start) * eased).toFixed(1)}deg) translateZ(0)`;
+    el.style.opacity   = Math.min(1, prog * 4).toFixed(3);
+  }
+
+  window.addEventListener('resize', applyLayout);
+  applyLayout();
+
+  // rAF loop — reliable across Safari, avoids scroll event quirks
+  (function loop() {
+    update();
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+
+<script>
+/* ── VIOLET LEFT FLOWER ANIMATION ───────────────────────────────────────── */
+(function () {
+  const el = document.getElementById('violet-float-left');
+  if (!el) return;
+
+  const DESKTOP = () => window.innerWidth >= 900;
+
+  // Mirror of right flower configs — left side, scaleX(-1) applied in CSS
+  const MOB = { start: 50, end: -42, w: 170, left: -82, topVh: 55 };
+  const DSK = { start: 50, end: -60, w: 190, left: -110, topVh: 48 };
+
+  function getContactEl() {
+    return DESKTOP()
+      ? document.getElementById('press-contact-desktop')
+      : document.getElementById('contact');
+  }
+
+  function applyLayout() {
+    const cfg = DESKTOP() ? DSK : MOB;
+    el.style.position = 'fixed';
+    el.style.width    = cfg.w + 'px';
+    el.style.height   = cfg.w + 'px';
+    el.style.left     = cfg.left + 'px';
+    el.style.right    = '';
+    el.style.top      = cfg.topVh + 'vh';
+  }
+
+  function ease(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+
+  function update() {
+    if (window.scrollY < 80) return;
+    const contactEl = getContactEl();
+    if (!contactEl) return;
+
+    const cfg = DESKTOP() ? DSK : MOB;
+    const vh  = window.innerHeight;
+    const top = contactEl.getBoundingClientRect().top;
+
+    const trigStart = DESKTOP() ? vh * 0.7 : vh * 0.8;
+    const trigRange = vh * 0.5;
+    const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
+    const eased = ease(prog);
+
+    el.style.transform = `scaleX(-1) rotate(${(cfg.start + (cfg.end - cfg.start) * eased).toFixed(1)}deg) translateZ(0)`;
+    el.style.opacity   = Math.min(1, prog * 4).toFixed(3);
+  }
+
+  window.addEventListener('resize', applyLayout);
+  applyLayout();
+
+  (function loop() {
+    update();
+    requestAnimationFrame(loop);
+  })();
 })();
 </script>
 </body>
