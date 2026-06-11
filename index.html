@@ -1843,11 +1843,23 @@ const ticketClose   = document.getElementById('ticket-toast-close');
 const ticketForm    = document.getElementById('ticket-notify-form');
 const ticketStatus  = document.getElementById('ticket-notify-status');
 
-function showTicketToast(gradient) {
+function showTicketToast(gradient, soldOut) {
   ticketStatus.textContent = '';
   ticketStatus.className   = 'ticket-notify-status';
-  ticketForm.style.display = 'flex';
   document.getElementById('ticket-notify-email').value = '';
+
+  const title = ticketToast.querySelector('.ticket-toast-title');
+  const sub   = ticketToast.querySelector('.ticket-toast-sub');
+
+  if (soldOut) {
+    title.textContent = 'sold out';
+    sub.textContent   = 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ ♥';
+  } else {
+    title.textContent = 'tickets coming soon';
+    sub.textContent   = 'join the newsletter to be the first to know (✿◠‿◠)';
+  }
+
+  ticketForm.style.display = 'flex';
   if (gradient) ticketToast.style.background = gradient;
   ticketToast.style.visibility = '';
   ticketToast.style.opacity    = '';
@@ -2692,7 +2704,7 @@ if (newsletterFormInline) {
       ticketHtml = `<a href="${escHtml(ticketUrl)}" target="_blank" rel="noopener"
         class="ticket-btn" onclick="event.stopPropagation(); return true;">tickets</a>`;
     } else if (soldOut) {
-      ticketHtml = `<span class="ticket-btn sold-out">sold out</span>`;
+      ticketHtml = `<button class="ticket-btn sold-out" onclick="event.stopPropagation(); showTicketToast(undefined, true)">sold out</button>`;
     } else if (free) {
       ticketHtml = `<span class="ticket-btn free-label">free</span>`;
     } else {
@@ -2702,7 +2714,7 @@ if (newsletterFormInline) {
 
     const rowClick = ticketUrl && !soldOut
       ? `onclick="window.open('${escHtml(ticketUrl)}','_blank')"`
-      : `onclick="showTicketToast()"`;
+      : `onclick="showTicketToast(undefined, ${soldOut})"`;
 
     return `
       <div class="tour-row" ${rowClick} style="cursor:pointer">
