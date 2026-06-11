@@ -1240,7 +1240,7 @@
   </div>
 </section>
 
-<div id="ticket-toast" onclick="hideTicketToast()">
+<div id="ticket-toast" style="visibility:hidden;opacity:0" onclick="hideTicketToast()">
   <div class="ticket-toast-inner" onclick="event.stopPropagation()">
     <div class="ticket-toast-top">
       <button class="ticket-toast-close" id="ticket-toast-close">✕</button>
@@ -1256,7 +1256,7 @@
 </div>
 
 <!-- ── CONTACT MODAL ─────────────────────────────────────────────────────── -->
-<div id="contact-modal" onclick="closeContactModal()">
+<div id="contact-modal" style="visibility:hidden;opacity:0" onclick="closeContactModal()">
   <div class="contact-modal-inner" onclick="event.stopPropagation()">
     <button class="contact-modal-close" id="contact-modal-close">✕</button>
     <p class="contact-modal-title" id="contact-modal-title">book lovelee</p>
@@ -1279,7 +1279,7 @@
 </div>
 
 <!-- ── NEWSLETTER POPUP ───────────────────────────────────────────────────── -->
-<div id="newsletter-popup" onclick="closeNewsletterPopup()">
+<div id="newsletter-popup" style="visibility:hidden;opacity:0" onclick="closeNewsletterPopup()">
   <div class="newsletter-popup-inner" onclick="event.stopPropagation()">
     <div class="newsletter-popup-top">
       <button class="newsletter-popup-close" id="newsletter-popup-close">✕</button>
@@ -1849,6 +1849,8 @@ function showTicketToast(gradient) {
   ticketForm.style.display = 'flex';
   document.getElementById('ticket-notify-email').value = '';
   if (gradient) ticketToast.style.background = gradient;
+  ticketToast.style.visibility = '';
+  ticketToast.style.opacity    = '';
   ticketToast.classList.add('show');
   if (typeof onIdle === 'function') onIdle();
 }
@@ -1933,6 +1935,8 @@ function openContactModal(type) {
   const cfg = contactRecipients[type];
   contactModalTitle.textContent = cfg.label;
   document.getElementById('contact-subject').value = cfg.subject;
+  contactModal.style.visibility = '';
+  contactModal.style.opacity    = '';
   contactModal.classList.add('open');
   setTimeout(() => document.getElementById('contact-name').focus(), 100);
 }
@@ -2005,7 +2009,11 @@ function fitNewsletterTitle() {
   });
 }
 function openNewsletterPopup() {
-  if (newsletterPopup) newsletterPopup.classList.add('open');
+  if (newsletterPopup) {
+    newsletterPopup.style.visibility = '';
+    newsletterPopup.style.opacity    = '';
+    newsletterPopup.classList.add('open');
+  }
   fitNewsletterTitle();
   setTimeout(() => document.getElementById('newsletter-email-popup').focus(), 100);
   if (typeof onIdle === 'function') onIdle();
@@ -2097,9 +2105,9 @@ if (newsletterFormInline) {
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(190deg, rgba(42,24,68,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(26,16,44,0.72) 100%);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
   }
-  #contact-modal.open { opacity: 1; pointer-events: auto; }
+  #contact-modal.open { opacity: 1; pointer-events: auto; visibility: visible; }
   .contact-modal-inner {
     width: min(420px, calc(100vw - 48px));
     display: flex; flex-direction: column; gap: 20px;
@@ -2144,9 +2152,9 @@ if (newsletterFormInline) {
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(190deg, rgba(42,24,68,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(26,16,44,0.72) 100%);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
   }
-  #newsletter-popup.open { opacity: 1; pointer-events: auto; }
+  #newsletter-popup.open { opacity: 1; pointer-events: auto; visibility: visible; }
   .newsletter-popup-inner {
     width: min(360px, calc(100vw - 48px));
     display: flex; flex-direction: column; gap: 20px; padding: 0 16px;
@@ -2216,10 +2224,12 @@ if (newsletterFormInline) {
     -webkit-backdrop-filter: blur(16px);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
   }
   #ticket-toast.show {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
   .ticket-toast-inner {
@@ -2329,9 +2339,10 @@ if (newsletterFormInline) {
     -webkit-backdrop-filter: blur(16px);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.22s ease;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
   }
-  #stream-popup.open {
+  #stream-popup.open { visibility: visible;
     opacity: 1;
     pointer-events: auto;
   }
@@ -2404,7 +2415,7 @@ if (newsletterFormInline) {
   .stream-popup-link:hover::before { width: 22px; }
 </style>
 
-<div id="stream-popup">
+<div id="stream-popup" style="visibility:hidden;opacity:0">
   <div id="stream-popup-inner">
     <div class="stream-popup-top">
       <span id="stream-popup-title"></span>
@@ -2444,6 +2455,8 @@ if (newsletterFormInline) {
       `<a href="${url}" target="_blank" rel="noopener" class="stream-popup-link">${label}</a>`
     ).join('');
     if (links.gradient) streamPopup.style.background = links.gradient;
+    streamPopup.style.visibility = '';
+    streamPopup.style.opacity    = '';
     streamPopup.classList.add('open');
     if (typeof onIdle === 'function') onIdle();
   }
@@ -2609,7 +2622,7 @@ if (newsletterFormInline) {
 <script>
 (function () {
   // ↓↓ Paste your Google Sheet "publish to web" CSV URL here ↓↓
-  const SHOWS_CSV_URL = '';
+  const SHOWS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7g26J6XtGA0irZqX7gpbFdDXDVIaXt5qsxk6FrX6L-8L46MeJlATxOEs2mB3pjM-hhKSZPFnB-JtY/pub?gid=116038247&single=true&output=csv';
   // Leave blank to keep hardcoded rows. Fill in to go live.
 
   if (!SHOWS_CSV_URL) return; // no URL yet — hardcoded rows stay visible
@@ -2620,7 +2633,7 @@ if (newsletterFormInline) {
   // Show subtle loading state while fetching
   tourList.innerHTML = '<div class="tour-loading">loading shows…</div>';
 
-  fetch(SHOWS_CSV_URL)
+  fetch(SHOWS_CSV_URL + '&t=' + Date.now())
     .then(r => {
       if (!r.ok) throw new Error('fetch failed');
       return r.text();
@@ -2677,15 +2690,22 @@ if (newsletterFormInline) {
     let ticketHtml = '';
     if (ticketUrl && !soldOut) {
       ticketHtml = `<a href="${escHtml(ticketUrl)}" target="_blank" rel="noopener"
-        class="ticket-btn" onclick="event.stopPropagation()">tickets</a>`;
+        class="ticket-btn" onclick="event.stopPropagation(); return true;">tickets</a>`;
     } else if (soldOut) {
       ticketHtml = `<span class="ticket-btn sold-out">sold out</span>`;
     } else if (free) {
       ticketHtml = `<span class="ticket-btn free-label">free</span>`;
+    } else {
+      // No ticket URL yet — show newsletter toast (tickets coming soon)
+      ticketHtml = `<button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>`;
     }
 
+    const rowClick = ticketUrl && !soldOut
+      ? `onclick="window.open('${escHtml(ticketUrl)}','_blank')"`
+      : `onclick="showTicketToast()"`;
+
     return `
-      <div class="tour-row">
+      <div class="tour-row" ${rowClick} style="cursor:pointer">
         <div class="tour-info">
           <span class="tour-name">${escHtml(venue.toUpperCase())}</span>
           <span class="tour-meta">${escHtml(dateStr)} · ${escHtml(location)}</span>
