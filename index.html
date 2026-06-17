@@ -1856,7 +1856,9 @@ function showTicketToast(gradient, soldOut) {
 
   if (soldOut) {
     title.textContent = 'sold out';
-    sub.textContent   = 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ ♥';
+    sub.textContent   = window.innerWidth < 900
+      ? 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ <3'
+      : 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ ♥';
   } else {
     title.textContent = 'tickets coming soon';
     sub.textContent   = 'join the newsletter to be the first to know (✿◠‿◠)';
@@ -2102,6 +2104,17 @@ if (newsletterFormInline) {
   text-transform: uppercase;
   color: rgba(245,240,234,0.2);
 ">
+  <div style="margin-bottom: 14px;">
+    <button onclick="openSupportPopup()" style="
+      background: none; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 0.55rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(245,240,234,0.55); transition: color 0.2s; padding: 0;
+    "
+    onmouseover="this.style.color='rgba(245,240,234,0.9)'" onmouseout="this.style.color='rgba(245,240,234,0.55)'">
+      support me
+    </button>
+  </div>
   <a href="/impressum.html" style="color:rgba(245,240,234,0.2); text-decoration:none; transition: color 0.2s;"
      onmouseover="this.style.color='rgba(245,240,234,0.55)'" onmouseout="this.style.color='rgba(245,240,234,0.2)'">
     impressum
@@ -2486,6 +2499,70 @@ if (newsletterFormInline) {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') streamPopup.classList.remove('open');
   });
+</script>
+
+<!-- ── SUPPORT POPUP ─────────────────────────────────────────────────────────── -->
+<style>
+  #support-popup {
+    position: fixed; inset: 0; z-index: 9998;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(195deg, rgba(36,16,62,0.82) 0%, rgba(14,12,13,0.62) 55%, rgba(22,10,40,0.74) 100%);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    opacity: 0; pointer-events: none; visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+  }
+  #support-popup.open { visibility: visible; opacity: 1; pointer-events: auto; }
+  #support-popup-inner {
+    background: transparent; border: none;
+    padding: 0 40px;
+    width: min(440px, calc(100vw - 48px));
+    display: flex; flex-direction: column;
+    transform: translateY(10px);
+    transition: transform 0.22s ease;
+  }
+  #support-popup.open #support-popup-inner { transform: translateY(0); }
+  #support-popup-close {
+    background: none; border: none;
+    color: rgba(245,240,234,0.35); font-size: 0.7rem;
+    cursor: pointer; padding: 0 0 0 16px;
+    transition: color 0.2s; line-height: 1; flex-shrink: 0;
+    align-self: flex-end; margin-bottom: 20px;
+  }
+  #support-popup-close:hover { color: rgba(245,240,234,0.8); }
+  .support-popup-link {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 7vw, 2.4rem);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: #fff;
+    text-decoration: none;
+    line-height: 1;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(245,240,234,0.15);
+    transition: opacity 0.2s;
+    display: block;
+  }
+  .support-popup-link:last-child { border-bottom: none; }
+  .support-popup-link:hover { opacity: 0.7; }
+</style>
+<div id="support-popup" style="visibility:hidden;opacity:0">
+  <div id="support-popup-inner">
+    <button id="support-popup-close" title="close">✕</button>
+    <a href="https://www.patreon.com/cw/itslovelee" target="_blank" rel="noopener" class="support-popup-link">patreon</a>
+    <a href="https://buymeacoffee.com/itslovelee" target="_blank" rel="noopener" class="support-popup-link">buy me a coffee</a>
+  </div>
+</div>
+<script>
+  const supportPopup = document.getElementById('support-popup');
+  document.getElementById('support-popup-close').addEventListener('click', () => supportPopup.classList.remove('open'));
+  supportPopup.addEventListener('click', e => { if (e.target === supportPopup) supportPopup.classList.remove('open'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') supportPopup.classList.remove('open'); });
+  function openSupportPopup() {
+    supportPopup.style.visibility = '';
+    supportPopup.style.opacity = '';
+    supportPopup.classList.add('open');
+  }
 </script>
 
 <!-- ── COOKIE CONSENT ───────────────────────────────────────────────────────── -->
