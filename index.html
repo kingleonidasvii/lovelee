@@ -1179,7 +1179,7 @@
 </section>
 
 <section id="tour">
-  <p class="section-label reveal">upcoming</p>
+  <p class="section-label reveal" id="tour-section-label">upcoming</p>
   <div class="tour-list reveal" id="tour-list-dynamic">
 
     <!-- Shows are loaded dynamically from Google Sheets.
@@ -1217,15 +1217,15 @@
     </div>
 
   </div>
-  <div id="past-shows-wrap" style="width:100%;max-width:960px;margin-top:-60px;display:flex;flex-direction:column;align-items:flex-end;padding-right:0;transform:translateX(30px);">
-    <button id="past-shows-btn" onclick="togglePastShows()" style="
-      background:none;border:none;cursor:pointer;padding:0;
-      transition:opacity 0.2s;opacity:0.85;position:relative;z-index:10;
-    "
-    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
-      <img src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);">
+  <!-- past shows list (hidden by default) -->
+  <div id="past-shows-list" style="display:none;flex-direction:column;width:100%;max-width:960px;"></div>
+
+  <!-- sticker always sits BELOW whichever list is visible, overlapping the last row -->
+  <div id="shows-sticker-wrap" style="width:100%;max-width:960px;margin-top:-60px;display:flex;justify-content:flex-end;transform:translateX(30px);position:relative;z-index:10;">
+    <button onclick="toggleShowsView()" style="background:none;border:none;cursor:pointer;padding:0;transition:opacity 0.2s;opacity:0.85;"
+      onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
+      <img id="shows-sticker-img" src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);">
     </button>
-    <div id="past-shows-list" style="display:none;flex-direction:column;width:100%;"></div>
   </div>
 </section>
 
@@ -2763,37 +2763,94 @@ if (newsletterFormInline) {
       renderFallback(tourList);
     });
 
+  // inject sticker keyframes once
+  (function() {
+    const s = document.createElement('style');
+    s.textContent = `
+      @keyframes stickerOut {
+        0%   { transform: var(--sticker-rot) scale(1); }
+        40%  { transform: var(--sticker-rot) scale(0.6) rotate(160deg); }
+        100% { transform: var(--sticker-rot) scale(0) rotate(340deg); }
+      }
+      @keyframes stickerIn {
+        0%   { transform: var(--sticker-rot) scale(0) rotate(-340deg); }
+        60%  { transform: var(--sticker-rot) scale(1.15) rotate(-20deg); }
+        80%  { transform: var(--sticker-rot) scale(0.93) rotate(5deg); }
+        100% { transform: var(--sticker-rot) scale(1); }
+      }
+      #shows-sticker-img.spin-out { animation: stickerOut 0.32s cubic-bezier(0.4,0,1,1) forwards; }
+      #shows-sticker-img.spin-in  { animation: stickerIn  0.4s cubic-bezier(0.2,0.8,0.3,1) forwards; }
+    `;
+    document.head.appendChild(s);
+  })();
+
   let _pastRows = null;
-  let _pastOpen = false;
-  window.togglePastShows = function togglePastShows() {
-    const list = document.getElementById('past-shows-list');
-    const btn  = document.getElementById('past-shows-btn');
-    _pastOpen = !_pastOpen;
-    if (!_pastOpen) {
-      list.style.display = 'none';
-      btn.textContent = 'previous shows';
-      return;
-    }
-    btn.textContent = 'hide previous shows';
-    if (_pastRows) { renderPast(_pastRows); return; }
-    fetch(SHOWS_CSV_URL + '&t=' + Date.now())
-      .then(r => r.text())
-      .then(csv => {
-        const today = new Date(); today.setHours(0,0,0,0);
-        _pastRows = parseCSV(csv).slice(1)
-          .filter(r => r[0] && r[1] && new Date(r[0]) < today)
-          .sort((a,b) => new Date(b[0]) - new Date(a[0])); // newest first
-        renderPast(_pastRows);
-      })
-      .catch(() => { list.innerHTML = '<div class="tour-loading">no past shows found</div>'; list.style.display='flex'; });
-  }
+  let _showingPast = false;
+  window.toggleShowsView = function() {
+    const img = document.getElementById('shows-sticker-img');
+    if (img.classList.contains('spin-out') || img.classList.contains('spin-in')) return; // debounce
+
+    _showingPast = !_showingPast;
+    const upcoming = document.getElementById('tour-list-dynamic');
+    const pastList = document.getElementById('past-shows-list');
+    const wrap     = document.getElementById('shows-sticker-wrap');
+
+    // spin out
+    img.classList.add('spin-out');
+
+    setTimeout(() => {
+      img.classList.remove('spin-out');
+
+      if (_showingPast) {
+        upcoming.style.display = 'none';
+        document.getElementById('tour-section-label').textContent = 'previous';
+        img.src = 'UpcomingShowsBtn.webp';
+        img.alt = 'upcoming shows';
+        img.style.setProperty('--sticker-rot', 'rotate(30deg)');
+        wrap.style.justifyContent = 'flex-start';
+        wrap.style.transform = 'translateX(-30px)';
+        if (_pastRows) { renderPast(_pastRows); }
+        else {
+          fetch(SHOWS_CSV_URL + '&t=' + Date.now())
+            .then(r => r.text())
+            .then(csv => {
+              const today = new Date(); today.setHours(0,0,0,0);
+              _pastRows = parseCSV(csv).slice(1)
+                .filter(r => r[0] && r[1] && new Date(r[0]) < today)
+                .sort((a,b) => new Date(b[0]) - new Date(a[0]));
+              renderPast(_pastRows);
+            })
+            .catch(() => {
+              pastList.innerHTML = '<div class="tour-loading">no past shows on record</div>';
+              pastList.style.display = 'flex';
+            });
+        }
+      } else {
+        pastList.style.display = 'none';
+        upcoming.style.display = '';
+        document.getElementById('tour-section-label').textContent = 'upcoming';
+        img.src = 'PreviousShowsBtn.webp';
+        img.alt = 'previous shows';
+        img.style.setProperty('--sticker-rot', 'rotate(-30deg)');
+        wrap.style.justifyContent = 'flex-end';
+        wrap.style.transform = 'translateX(30px)';
+      }
+
+      // spin in with new image — after animation ends, set final inline transform so removal is seamless
+      const finalRot = _showingPast ? 'rotate(30deg)' : 'rotate(-30deg)';
+      img.classList.add('spin-in');
+      setTimeout(() => {
+        img.classList.remove('spin-in');
+        img.style.transform = finalRot;
+      }, 420);
+    }, 320);
+  };
+
   function renderPast(rows) {
     const list = document.getElementById('past-shows-list');
-    if (rows.length === 0) {
-      list.innerHTML = '<div class="tour-loading" style="opacity:0.4;padding:16px 0;">no past shows on record</div>';
-    } else {
-      list.innerHTML = rows.map(r => buildRow(r, true)).join('');
-    }
+    list.innerHTML = rows.length === 0
+      ? '<div class="tour-loading" style="opacity:0.4;padding:16px 0;">no past shows on record</div>'
+      : rows.map(r => buildRow(r, true)).join('');
     list.style.display = 'flex';
   }
 
@@ -2828,7 +2885,7 @@ if (newsletterFormInline) {
 
     if (isPast) {
       return `
-        <div class="tour-row" style="cursor:default;opacity:0.45;pointer-events:none;">
+        <div class="tour-row" style="cursor:default;">
           <div class="tour-info">
             <span class="tour-name">${escHtml(venue.toUpperCase())}</span>
             <span class="tour-meta">${escHtml(dateStr)} · ${escHtml(location)}</span>
