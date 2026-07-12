@@ -1166,38 +1166,14 @@
 
 <section id="music">
   <p class="section-label reveal">music</p>
-  <div class="release-grid reveal">
-    <div class="release-item" onclick="openStreamMenu('tears')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('TearsCoverClaude.webp');background-size:cover;background-position:center;"></div>
+  <div class="release-grid reveal" style="grid-template-columns:1fr;max-width:400px;margin:0 auto;">
+    <div class="release-item" onclick="openStreamMenu('stormchasers')" role="button" tabindex="0">
+      <div class="release-art" style="background-image:url('StormChasersCover.webp');background-size:cover;background-position:center;"></div>
       <div class="release-overlay">
-        <span class="release-title">tears</span>
-        <span class="release-sub">single</span>
+        <span class="release-title">storm chasers</span>
+        <span class="release-sub">ep</span>
       </div>
-      <div class="release-caption"><span class="release-title">tears</span></div>
-    </div>
-    <div class="release-item" onclick="openStreamMenu('unahana')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('UnahanaCoverClaude.webp');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">unahana</span>
-        <span class="release-sub">single</span>
-      </div>
-      <div class="release-caption"><span class="release-title">unahana</span></div>
-    </div>
-    <div class="release-item" onclick="openStreamMenu('romeo')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('RomeoCoverClaude.webp');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">romeo</span>
-        <span class="release-sub">single</span>
-      </div>
-      <div class="release-caption"><span class="release-title">romeo</span></div>
-    </div>
-    <div class="release-item" onclick="openStreamMenu('demons')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('DemonsCoverClaude.webp');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">demons</span>
-        <span class="release-sub">single</span>
-      </div>
-      <div class="release-caption"><span class="release-title">demons</span></div>
+      <div class="release-caption"><span class="release-title">storm chasers</span></div>
     </div>
   </div>
 </section>
@@ -1240,6 +1216,16 @@
       <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('linear-gradient(340deg, rgba(42,18,70,0.84) 0%, rgba(14,12,13,0.62) 55%, rgba(22,12,40,0.7) 100%)')">tickets</button>
     </div>
 
+  </div>
+  <div id="past-shows-wrap" style="width:100%;max-width:960px;margin-top:-60px;display:flex;flex-direction:column;align-items:flex-end;padding-right:0;transform:translateX(30px);">
+    <button id="past-shows-btn" onclick="togglePastShows()" style="
+      background:none;border:none;cursor:pointer;padding:0;
+      transition:opacity 0.2s;opacity:0.85;position:relative;z-index:10;
+    "
+    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
+      <img src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);">
+    </button>
+    <div id="past-shows-list" style="display:none;flex-direction:column;width:100%;"></div>
   </div>
 </section>
 
@@ -2455,6 +2441,8 @@ if (newsletterFormInline) {
 <script>
   // Update with per-song links whenever you have them
   const songLinks = {
+    stormchasers: { displayName: 'storm\nchasers', spotify: 'https://open.spotify.com/album/336qhN4B49KyyFsCu06O75?si=1e6oeBzwQi2MJIwY4G2oyA', apple: 'https://music.apple.com/de/album/storm-chasers-ep/6778823329?l=en-GB', amazon: 'https://music.amazon.com/albums/B0H4RWBTLT?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_AESpJeZ9U4ZmwtV3yCUbiMx9c', tidal: 'https://tidal.com/album/532362770/u', bandcamp: 'https://itslovelee.bandcamp.com/album/storm-chasers', deezer: 'https://link.deezer.com/s/33OgPX8pGSFfYQa28VS6m', youtube: 'https://youtube.com/playlist?list=OLAK5uy_mDz949IXLPNvIWC2Cpy9EDSbUfMKEwI0c&si=oOhyKWFxQLqDgeY1',
+                   gradient: 'linear-gradient(155deg, rgba(80,12,30,0.85) 0%, rgba(14,12,13,0.62) 50%, rgba(50,8,20,0.75) 100%)' },
     tears:   { spotify: 'https://open.spotify.com/track/6Xwq2z4WOZmIiUFRp9fAnw', apple: 'https://music.apple.com/de/album/tears/6767345261?i=6767345263&l=en-GB', amazon: 'https://music.amazon.de/albums/B0GVP921JX?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_ZjfJSQiIV9MZ9K4OOS0GC0wnr', tidal: 'https://tidal.com/album/495169007', bandcamp: 'https://itslovelee.bandcamp.com/track/tears', deezer: 'https://www.deezer.com/us/track/3935973391', youtube: 'https://youtu.be/j8cZ_z4SPso?si=VkaSkNb_7bLrNqpO',
                gradient: 'linear-gradient(155deg, rgba(48,22,78,0.82) 0%, rgba(14,12,13,0.6) 50%, rgba(20,12,36,0.72) 100%)' },
     unahana: { spotify: 'https://open.spotify.com/track/2ZakSNW70Q86PVaJIIlvZy', apple: 'https://music.apple.com/de/album/unahana/1873902941?i=1873902945&l=en-GB', amazon: 'https://music.amazon.de/albums/B0GL2GKXPN?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_Q5gxt1bRezLk5ixdD19GUuQQm', tidal: 'https://tidal.com/album/495169007', bandcamp: 'https://itslovelee.bandcamp.com/track/unahana', deezer: 'https://www.deezer.com/us/track/3817412902', youtube: 'https://www.youtube.com/watch?v=DKDkKsiw78g',
@@ -2473,7 +2461,12 @@ if (newsletterFormInline) {
   function openStreamMenu(song) {
     const links = songLinks[song];
     if (!links) return;
-    streamPopupTitle.textContent = song;
+    const display = links.displayName || song;
+    if (display.includes('\n')) {
+      streamPopupTitle.innerHTML = display.split('\n').map(l => `<span style="display:block">${l}</span>`).join('');
+    } else {
+      streamPopupTitle.textContent = display;
+    }
     streamPopupLinks.innerHTML = [
       ['spotify',      links.spotify],
       ['apple music',  links.apple],
@@ -2770,7 +2763,41 @@ if (newsletterFormInline) {
       renderFallback(tourList);
     });
 
-  function buildRow(r) {
+  let _pastRows = null;
+  let _pastOpen = false;
+  function togglePastShows() {
+    const list = document.getElementById('past-shows-list');
+    const btn  = document.getElementById('past-shows-btn');
+    _pastOpen = !_pastOpen;
+    if (!_pastOpen) {
+      list.style.display = 'none';
+      btn.textContent = 'previous shows';
+      return;
+    }
+    btn.textContent = 'hide previous shows';
+    if (_pastRows) { renderPast(_pastRows); return; }
+    fetch(SHOWS_CSV_URL + '&t=' + Date.now())
+      .then(r => r.text())
+      .then(csv => {
+        const today = new Date(); today.setHours(0,0,0,0);
+        _pastRows = parseCSV(csv).slice(1)
+          .filter(r => r[0] && r[1] && new Date(r[0]) < today)
+          .sort((a,b) => new Date(b[0]) - new Date(a[0])); // newest first
+        renderPast(_pastRows);
+      })
+      .catch(() => { list.innerHTML = '<div class="tour-loading">no past shows found</div>'; list.style.display='flex'; });
+  }
+  function renderPast(rows) {
+    const list = document.getElementById('past-shows-list');
+    if (rows.length === 0) {
+      list.innerHTML = '<div class="tour-loading" style="opacity:0.4;padding:16px 0;">no past shows on record</div>';
+    } else {
+      list.innerHTML = rows.map(r => buildRow(r, true)).join('');
+    }
+    list.style.display = 'flex';
+  }
+
+  function buildRow(r, isPast) {
     const [date, venue, city, country, ticketUrl, status] = r;
 
     const d        = new Date(date);
@@ -2798,6 +2825,16 @@ if (newsletterFormInline) {
     const rowClick = ticketUrl && !soldOut
       ? `onclick="window.open('${escHtml(ticketUrl)}','_blank')"`
       : `onclick="showTicketToast(undefined, ${soldOut})"`;
+
+    if (isPast) {
+      return `
+        <div class="tour-row" style="cursor:default;opacity:0.45;pointer-events:none;">
+          <div class="tour-info">
+            <span class="tour-name">${escHtml(venue.toUpperCase())}</span>
+            <span class="tour-meta">${escHtml(dateStr)} · ${escHtml(location)}</span>
+          </div>
+        </div>`;
+    }
 
     return `
       <div class="tour-row" ${rowClick} style="cursor:pointer">
