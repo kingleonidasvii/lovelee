@@ -1221,11 +1221,16 @@
   <div id="past-shows-list" style="display:none;flex-direction:column;width:100%;max-width:960px;"></div>
 
   <!-- sticker always sits BELOW whichever list is visible, overlapping the last row -->
-  <div id="shows-sticker-wrap" style="width:100%;max-width:960px;margin-top:-60px;display:flex;justify-content:flex-end;transform:translateX(30px);position:relative;z-index:10;">
-    <button onclick="toggleShowsView()" style="background:none;border:none;cursor:pointer;padding:0;transition:opacity 0.2s;opacity:0.85;"
-      onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
-      <img id="shows-sticker-img" src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);">
-    </button>
+  <div id="shows-sticker-wrap" style="width:100%;max-width:960px;margin-top:-55px;display:flex;justify-content:flex-end;transform:translateX(30px);position:relative;z-index:10;pointer-events:none;">
+    <div style="position:relative;width:200px;height:200px;">
+      <img id="shows-sticker-img" src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);pointer-events:none;transition:opacity 0.2s;opacity:0.85;display:block;">
+      <!-- clickable area covers only the bottom ~60% — below the overlap with the tickets row -->
+      <button onclick="toggleShowsView()" aria-label="toggle shows"
+        style="position:absolute;bottom:0;left:0;width:100%;height:120px;background:none;border:none;cursor:pointer;pointer-events:auto;"
+        onmouseover="document.getElementById('shows-sticker-img').style.opacity='1'"
+        onmouseout="document.getElementById('shows-sticker-img').style.opacity='0.85'">
+      </button>
+    </div>
   </div>
 </section>
 
