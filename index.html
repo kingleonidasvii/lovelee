@@ -1074,7 +1074,7 @@
     }
   </style>
 
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/webp" href="favicon.webp">
 <link rel="canonical" href="https://itsloveleee.com/" />
 <meta name="description" content="lovelee is a Berlin-based singer-songwriter and guitarist making indie pop and bedroom pop. Stream Tears, Unahana, Romeo, and Demons on Spotify." />
 <meta property="og:type" content="website" />
@@ -1158,7 +1158,7 @@
 <section id="home">
   <div class="hero-photo" id="heroBg"></div>
   <div class="hero-content">
-    <img src="logo.png" class="hero-logo" alt="lovelee">
+    <img src="logo.webp" class="hero-logo" alt="lovelee">
 
   </div>
 
@@ -2765,7 +2765,7 @@ if (newsletterFormInline) {
 
   let _pastRows = null;
   let _pastOpen = false;
-  function togglePastShows() {
+  window.togglePastShows = function togglePastShows() {
     const list = document.getElementById('past-shows-list');
     const btn  = document.getElementById('past-shows-btn');
     _pastOpen = !_pastOpen;
