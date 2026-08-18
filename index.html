@@ -2066,6 +2066,15 @@ function closeNewsletterPopup() {
 if (newsletterToggle) newsletterToggle.addEventListener('click', openNewsletterPopup);
 if (newsletterPopupClose) newsletterPopupClose.addEventListener('click', closeNewsletterPopup);
 
+// ── NEWSLETTER URL PARAM AUTO-OPEN ───────────────────────────────────────────
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('newsletter')) {
+    history.replaceState(null, '', window.location.pathname);
+    setTimeout(openNewsletterPopup, 400);
+  }
+})();
+
 // ── NEWSLETTER POPUP FORM ─────────────────────────────────────────────────────
 const newsletterFormPopup   = document.getElementById('newsletter-form-popup');
 const newsletterStatusPopup = document.getElementById('newsletter-popup-status');
