@@ -1027,11 +1027,22 @@
     .newsletter-inline {
       margin-top: 24px;
     }
-    .newsletter-form-inline {
+    .newsletter-consent {
       display: flex;
-      gap: 0;
-      align-items: center;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-top: 10px;
+      cursor: pointer;
+      width: 100%;
     }
+    .newsletter-consent input { margin-top: 2px; flex-shrink: 0; }
+    .newsletter-consent a { color: var(--cream); text-decoration: underline; }
+
+    .newsletter-form-inline { display: flex; flex-direction: column; }
+    .newsletter-inline-row { display: flex; gap: 0; align-items: center; }
     .newsletter-input-inline {
       font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
@@ -1242,8 +1253,14 @@
     <p class="ticket-toast-title">tickets coming soon</p>
     <p class="ticket-toast-sub">join the newsletter to be the first to know (✿◠‿◠)</p>
     <form id="ticket-notify-form" class="ticket-notify-form">
-      <input type="email" id="ticket-notify-email" placeholder="your email" required class="ticket-notify-input">
-      <button type="submit" class="ticket-notify-btn">join</button>
+      <div class="ticket-notify-row">
+        <input type="email" id="ticket-notify-email" placeholder="your email" required class="ticket-notify-input">
+        <button type="submit" class="ticket-notify-btn">join</button>
+      </div>
+      <label class="newsletter-consent">
+        <input type="checkbox" id="ticket-notify-consent" required>
+        <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
+      </label>
     </form>
     <p id="ticket-notify-status" class="ticket-notify-status"></p>
   </div>
@@ -1284,8 +1301,14 @@
     </p>
     <p class="newsletter-popup-sub">stay close (✿◡‿◡)</p>
     <form id="newsletter-form-popup" class="newsletter-popup-form">
-      <input type="email" id="newsletter-email-popup" placeholder="your email" required class="newsletter-popup-input">
-      <button type="submit" class="newsletter-popup-btn">join</button>
+      <div class="newsletter-popup-row">
+        <input type="email" id="newsletter-email-popup" placeholder="your email" required class="newsletter-popup-input">
+        <button type="submit" class="newsletter-popup-btn">join</button>
+      </div>
+      <label class="newsletter-consent">
+        <input type="checkbox" id="newsletter-consent-popup" required>
+        <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
+      </label>
     </form>
     <p id="newsletter-popup-status" class="newsletter-popup-status"></p>
   </div>
@@ -1331,8 +1354,14 @@
   </div>
   <div class="newsletter-inline" id="newsletter-inline" style="display:none; margin-top: 24px; padding: 0 52px;">
     <form id="newsletter-form-inline" class="newsletter-form-inline">
-      <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-inline">
-      <button type="submit" class="newsletter-submit-inline">subscribe</button>
+      <div class="newsletter-inline-row">
+        <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-inline">
+        <button type="submit" class="newsletter-submit-inline">subscribe</button>
+      </div>
+      <label class="newsletter-consent">
+        <input type="checkbox" id="newsletter-consent-inline" required>
+        <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
+      </label>
     </form>
     <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
   </div>
@@ -1873,13 +1902,18 @@ if (ticketForm) {
   ticketForm.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('ticket-notify-email').value;
+    const consent = document.getElementById('ticket-notify-consent').checked;
+    if (!consent) {
+      ticketStatus.textContent = 'please accept to continue';
+      return;
+    }
     const btn   = ticketForm.querySelector('.ticket-notify-btn');
     btn.textContent = '...';
     try {
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '' }),
+        body: JSON.stringify({ email, name: '', consentGiven: true }),
       });
       ticketForm.style.display = 'none';
       ticketStatus.textContent = 'you\'re in :) we\'ll let you know';
@@ -2039,12 +2073,18 @@ if (newsletterFormPopup) {
   newsletterFormPopup.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('newsletter-email-popup').value;
+    const consent = document.getElementById('newsletter-consent-popup').checked;
+    if (!consent) {
+      newsletterStatusPopup.textContent = 'please accept to continue';
+      newsletterStatusPopup.className = 'newsletter-popup-status';
+      return;
+    }
     const btn = newsletterFormPopup.querySelector('.newsletter-popup-btn');
     btn.textContent = '...';
     try {
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '' })
+        body: JSON.stringify({ email, name: '', consentGiven: true })
       });
       newsletterStatusPopup.textContent = 'you are in :)';
       newsletterStatusPopup.className = 'newsletter-popup-status success';
@@ -2065,13 +2105,18 @@ if (newsletterFormInline) {
   newsletterFormInline.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('newsletter-email-inline').value;
+    const consent = document.getElementById('newsletter-consent-inline').checked;
+    if (!consent) {
+      newsletterStatusInline.textContent = 'please accept to continue';
+      return;
+    }
     const btn = newsletterFormInline.querySelector('.newsletter-submit-inline');
     btn.textContent = '...';
     try {
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '' })
+        body: JSON.stringify({ email, name: '', consentGiven: true })
       });
       newsletterStatusInline.textContent = 'you are in :)';
       newsletterFormInline.reset();
@@ -2203,7 +2248,8 @@ if (newsletterFormInline) {
     font-weight: 300; letter-spacing: 0.1em;
     color: rgba(245,240,234,0.55);
   }
-  .newsletter-popup-form {
+  .newsletter-popup-form { display: flex; flex-direction: column; }
+  .newsletter-popup-row {
     display: flex; align-items: center;
     border-bottom: 1px solid rgba(245,240,234,0.15); padding-bottom: 12px;
   }
@@ -2296,12 +2342,10 @@ if (newsletterFormInline) {
     flex-shrink: 0;
   }
   .ticket-toast-close:hover { color: rgba(245,240,234,0.8); }
-  .ticket-notify-form {
-    display: flex;
-    gap: 0;
-    align-items: center;
-    border-bottom: 1px solid rgba(245,240,234,0.15);
-    padding-bottom: 12px;
+  .ticket-notify-form { display: flex; flex-direction: column; }
+  .ticket-notify-row {
+    display: flex; gap: 0; align-items: center;
+    border-bottom: 1px solid rgba(245,240,234,0.15); padding-bottom: 12px;
   }
   .ticket-notify-input {
     flex: 1;
