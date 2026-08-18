@@ -2067,13 +2067,14 @@ if (newsletterToggle) newsletterToggle.addEventListener('click', openNewsletterP
 if (newsletterPopupClose) newsletterPopupClose.addEventListener('click', closeNewsletterPopup);
 
 // ── NEWSLETTER URL PARAM AUTO-OPEN ───────────────────────────────────────────
-(function () {
-  const params = new URLSearchParams(window.location.search);
-  if (params.has('newsletter')) {
-    history.replaceState(null, '', window.location.pathname);
+// Uses pageshow (not load) so it also fires when Instagram's in-app browser
+// restores the page from bfcache — e.g. user browses the site, hits back,
+// then taps the story link again.
+window.addEventListener('pageshow', function () {
+  if (new URLSearchParams(window.location.search).has('newsletter')) {
     setTimeout(openNewsletterPopup, 400);
   }
-})();
+});
 
 // ── NEWSLETTER POPUP FORM ─────────────────────────────────────────────────────
 const newsletterFormPopup   = document.getElementById('newsletter-form-popup');
