@@ -1295,11 +1295,12 @@
     <div class="newsletter-popup-top">
       <button class="newsletter-popup-close" id="newsletter-popup-close">✕</button>
     </div>
+    <p class="newsletter-popup-song">"feeling you" ..... coming soon</p>
     <p class="newsletter-popup-title">
       <span>join the</span>
       <span>newsletter</span>
     </p>
-    <p class="newsletter-popup-sub">stay close (✿◡‿◡)</p>
+    <p class="newsletter-popup-sub">(✿◡‿◡)</p>
     <form id="newsletter-form-popup" class="newsletter-popup-form">
       <div class="newsletter-popup-row">
         <input type="email" id="newsletter-email-popup" placeholder="your email" required class="newsletter-popup-input">
@@ -1910,11 +1911,13 @@ if (ticketForm) {
     const btn   = ticketForm.querySelector('.ticket-notify-btn');
     btn.textContent = '...';
     try {
+      const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true }),
+        body: JSON.stringify({ email, name: '', consentGiven: true, eventId }),
       });
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       ticketForm.style.display = 'none';
       ticketStatus.textContent = 'you\'re in :) we\'ll let you know';
       ticketStatus.classList.add('success');
@@ -2092,10 +2095,12 @@ if (newsletterFormPopup) {
     const btn = newsletterFormPopup.querySelector('.newsletter-popup-btn');
     btn.textContent = '...';
     try {
+      const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true })
+        body: JSON.stringify({ email, name: '', consentGiven: true, eventId })
       });
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       newsletterStatusPopup.textContent = 'you are in :)';
       newsletterStatusPopup.className = 'newsletter-popup-status success';
       newsletterFormPopup.reset();
@@ -2123,11 +2128,13 @@ if (newsletterFormInline) {
     const btn = newsletterFormInline.querySelector('.newsletter-submit-inline');
     btn.textContent = '...';
     try {
+      const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true })
+        body: JSON.stringify({ email, name: '', consentGiven: true, eventId })
       });
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       newsletterStatusInline.textContent = 'you are in :)';
       newsletterFormInline.reset();
       btn.textContent = 'subscribe';
@@ -2241,6 +2248,15 @@ if (newsletterFormInline) {
     font-size: 0.7rem; cursor: pointer; padding: 0; transition: color 0.2s; line-height: 1;
   }
   .newsletter-popup-close:hover { color: rgba(245,240,234,0.8); }
+  .newsletter-popup-song {
+    font-family: 'Cinzel', serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,240,234,0.45);
+    margin-bottom: 6px;
+  }
   .newsletter-popup-title {
     display: flex; flex-direction: column; gap: 0.08em;
     font-family: 'Cinzel', serif; font-weight: 300;
@@ -2715,7 +2731,7 @@ if (newsletterFormInline) {
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window,document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('init', '1760447988002797');
     fbq('track', 'PageView');
   }
 
