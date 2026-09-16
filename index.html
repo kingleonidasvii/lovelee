@@ -932,9 +932,10 @@
     .form-status.error   { color: #c8a0a0; }
 
     .hero-logo {
-      width: clamp(180px, 48vw, 420px);
+      width: clamp(140px, 36vw, 320px);
       display: block;
       margin-bottom: 0;
+      opacity: 0.75;
       filter: drop-shadow(0 2px 12px rgba(0,0,0,0.3));
     }
 
@@ -1169,7 +1170,7 @@
 <section id="home">
   <div class="hero-photo" id="heroBg"></div>
   <div class="hero-content">
-    <img src="logo.webp" class="hero-logo" alt="lovelee">
+    <img src="logo.webp?v=3" class="hero-logo" alt="lovelee">
 
   </div>
 
@@ -1298,26 +1299,30 @@
 </div>
 
 <!-- ── NEWSLETTER POPUP ───────────────────────────────────────────────────── -->
-<div id="newsletter-popup" style="visibility:hidden;opacity:0" onclick="closeNewsletterPopup()">
-  <div class="newsletter-popup-inner" onclick="event.stopPropagation()">
-    <div class="newsletter-popup-top">
-      <button class="newsletter-popup-close" id="newsletter-popup-close">✕</button>
-    </div>
-    <p class="newsletter-popup-song">"feeling you" ..... coming soon</p>
-    <p class="newsletter-popup-title">
-      <span>join the</span>
-      <span>newsletter</span>
-    </p>
-    <p class="newsletter-popup-sub">(✿◡‿◡)</p>
+<div id="newsletter-popup" style="visibility:hidden;opacity:0">
+  <div class="newsletter-popup-backdrop" onclick="closeNewsletterPopup()"></div>
+  <button class="newsletter-popup-close" id="newsletter-popup-close" onclick="closeNewsletterPopup()">✕</button>
+  <div class="newsletter-popup-inner">
+    <img src="jointhenewsletter.png?v=2" alt="join the newsletter" class="newsletter-popup-title-img">
     <form id="newsletter-form-popup" class="newsletter-popup-form">
-      <div class="newsletter-popup-row">
-        <input type="email" id="newsletter-email-popup" placeholder="your email" required class="newsletter-popup-input">
-        <button type="submit" class="newsletter-popup-btn">join</button>
+      <div class="newsletter-popup-grid">
+        <div class="newsletter-popup-field">
+          <input type="text" id="newsletter-name-popup" placeholder="first name" class="newsletter-popup-input">
+        </div>
+        <div class="newsletter-popup-field">
+          <input type="email" id="newsletter-email-popup" placeholder="email address" required class="newsletter-popup-input">
+        </div>
+        <div class="newsletter-popup-field">
+          <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input">
+        </div>
       </div>
       <label class="newsletter-consent">
         <input type="checkbox" id="newsletter-consent-popup" required>
         <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
       </label>
+      <button type="submit" class="newsletter-popup-btn-full">
+        <img src="Join.png?v=2" alt="join" class="newsletter-join-img">
+      </button>
     </form>
     <p id="newsletter-popup-status" class="newsletter-popup-status"></p>
   </div>
@@ -1978,8 +1983,8 @@ const contactModalForm  = document.getElementById('contact-modal-form');
 const contactModalClose = document.getElementById('contact-modal-close');
 
 const contactRecipients = {
-  booking: { email: 'booking@itsloveleee.com',    label: 'book lovelee',      subject: 'Booking Inquiry — lovelee' },
-  general: { email: 'management@itsloveleee.com', label: 'general inquiries', subject: 'General Inquiry — lovelee' }
+  booking: { email: 'mgmt@itsloveleee.com', label: 'book lovelee',      subject: 'Booking Inquiry — lovelee' },
+  general: { email: 'mgmt@itsloveleee.com', label: 'general inquiries', subject: 'General Inquiry — lovelee' }
 };
 let contactType = 'booking';
 
@@ -2094,19 +2099,21 @@ if (newsletterFormPopup) {
   newsletterFormPopup.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('newsletter-email-popup').value;
+    const name  = document.getElementById('newsletter-name-popup').value.trim();
+    const phone = document.getElementById('newsletter-phone-popup').value.trim();
     const consent = document.getElementById('newsletter-consent-popup').checked;
     if (!consent) {
       newsletterStatusPopup.textContent = 'please accept to continue';
       newsletterStatusPopup.className = 'newsletter-popup-status';
       return;
     }
-    const btn = newsletterFormPopup.querySelector('.newsletter-popup-btn');
+    const btn = newsletterFormPopup.querySelector('.newsletter-popup-btn-full');
     btn.textContent = '...';
     try {
       const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true, eventId })
+        body: JSON.stringify({ email, name, phone, consentGiven: true, eventId })
       });
       if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       newsletterStatusPopup.textContent = 'you are in :)';
@@ -2236,6 +2243,9 @@ if (newsletterFormInline) {
 
 <!-- ── NEWSLETTER POPUP ──────────────────────────────────────────────────── -->
 <style>
+  .newsletter-popup-backdrop {
+    position: absolute; inset: 0; z-index: 0; cursor: pointer;
+  }
   #newsletter-popup {
     position: fixed; inset: 0; z-index: 9999;
     display: flex; align-items: center; justify-content: center;
@@ -2245,15 +2255,23 @@ if (newsletterFormInline) {
   }
   #newsletter-popup.open { opacity: 1; pointer-events: auto; visibility: visible; }
   .newsletter-popup-inner {
-    width: min(360px, calc(100vw - 48px));
-    display: flex; flex-direction: column; gap: 20px; padding: 0 16px;
+    position: relative; z-index: 1;
+    pointer-events: none;
+    width: min(460px, calc(100vw - 48px));
+    display: flex; flex-direction: column; gap: 8px; padding: 0 16px;
     transform: translateY(10px); transition: transform 0.25s ease;
   }
+  .newsletter-popup-inner img,
+  .newsletter-popup-inner input,
+  .newsletter-popup-inner button,
+  .newsletter-popup-inner label,
+  .newsletter-popup-inner a { pointer-events: auto; }
   #newsletter-popup.open .newsletter-popup-inner { transform: translateY(0); }
-  .newsletter-popup-top { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .newsletter-popup-top { display: none; }
   .newsletter-popup-close {
+    position: fixed; top: 120px; right: 40px;
     background: none; border: none; color: rgba(245,240,234,0.35);
-    font-size: 0.7rem; cursor: pointer; padding: 0; transition: color 0.2s; line-height: 1;
+    font-size: 1rem; cursor: pointer; padding: 8px; transition: color 0.2s; line-height: 1; z-index: 10000;
   }
   .newsletter-popup-close:hover { color: rgba(245,240,234,0.8); }
   .newsletter-popup-song {
@@ -2282,25 +2300,36 @@ if (newsletterFormInline) {
     font-weight: 300; letter-spacing: 0.1em;
     color: rgba(245,240,234,0.55);
   }
-  .newsletter-popup-form { display: flex; flex-direction: column; }
-  .newsletter-popup-row {
-    display: flex; align-items: center;
-    border-bottom: 1px solid rgba(245,240,234,0.15); padding-bottom: 12px;
+  .newsletter-popup-form { display: flex; flex-direction: column; gap: 20px; }
+  .newsletter-popup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 20px;
   }
+  .newsletter-popup-field { display: flex; flex-direction: column; gap: 8px; }
   .newsletter-popup-input {
-    flex: 1; background: transparent; border: none; color: var(--cream);
-    font-family: 'Inter', sans-serif; font-size: 0.65rem;
-    font-weight: 300; letter-spacing: 0.08em; padding: 4px 0; outline: none;
+    background: transparent; border: none; border-bottom: 1px solid rgba(245,240,234,0.2);
+    color: var(--cream); font-family: 'Inter', sans-serif; font-size: 0.68rem;
+    font-weight: 300; letter-spacing: 0.06em; padding: 8px 0; outline: none; width: 100%;
   }
-  .newsletter-popup-input::placeholder { color: rgba(245,240,234,0.3); }
-  .newsletter-popup-btn {
-    font-family: 'Inter', sans-serif; font-size: 0.58rem; font-weight: 300;
-    letter-spacing: 0.18em; text-transform: uppercase; background: transparent;
-    border: none; border-bottom: 1px solid rgba(245,240,234,0.3);
-    color: rgba(245,240,234,0.6); padding: 4px 0; cursor: pointer;
-    margin-left: 16px; transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+  .newsletter-popup-input::placeholder { color: var(--cream); }
+  @media (max-width: 480px) {
+    .newsletter-popup-grid { grid-template-columns: 1fr; }
   }
-  .newsletter-popup-btn:hover { color: var(--cream); border-color: var(--cream); }
+  .newsletter-popup-btn-full {
+    background: transparent; border: none; cursor: pointer;
+    width: fit-content; margin-top: 12px; margin-left: auto; padding: 0;
+    display: block; line-height: 0; font-size: 0;
+  }
+  .newsletter-popup-title-img { width: 100%; max-width: 460px; height: auto; display: block; margin-left: 0; margin-bottom: 24px; margin-top: 0; opacity: 0.8; }
+  .newsletter-join-img { width: 82px; height: auto; display: inline-block; opacity: 0.8; transition: opacity 0.2s; }
+  .newsletter-popup-btn-full:hover .newsletter-join-img { opacity: 1; }
+  .newsletter-btn-ornament {
+    display: block; width: 100%; height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='xMidYMid meet'%3E%3Cline x1='0' y1='6' x2='262' y2='6' stroke='rgba(245,240,234,0.25)' stroke-width='0.6'/%3E%3Cline x1='338' y1='6' x2='600' y2='6' stroke='rgba(245,240,234,0.25)' stroke-width='0.6'/%3E%3Cpath d='M262,6 Q270,2 278,6 Q286,10 294,6 Q302,2 300,6' stroke='rgba(245,240,234,0.45)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='300' cy='6' r='2.2' fill='rgba(245,240,234,0.4)'/%3E%3Ccircle cx='300' cy='6' r='1' fill='rgba(245,240,234,0.6)'/%3E%3Cpath d='M300,6 Q308,10 316,6 Q324,2 332,6 Q340,10 338,6' stroke='rgba(245,240,234,0.45)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='278' cy='6' r='1' fill='rgba(245,240,234,0.3)'/%3E%3Ccircle cx='322' cy='6' r='1' fill='rgba(245,240,234,0.3)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-size: 100% 100%;
+  }
+  .newsletter-btn-ornament-flip { transform: scaleY(-1); }
   .newsletter-popup-status {
     font-family: 'Inter', sans-serif; font-size: 0.58rem;
     letter-spacing: 0.1em; color: rgba(245,240,234,0.45); min-height: 1em;
