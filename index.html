@@ -1314,7 +1314,10 @@
         </div>
         <div class="newsletter-popup-field">
           <div class="newsletter-phone-row">
-            <select id="newsletter-country-popup" class="newsletter-country-select"></select>
+            <div class="country-select-wrap">
+              <span class="country-select-label" id="country-select-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <select id="newsletter-country-popup" class="newsletter-country-select"></select>
+            </div>
             <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input">
           </div>
         </div>
@@ -2170,25 +2173,21 @@ window.addEventListener('pageshow', function () {
 
   sel.innerHTML = '<option value="">select country</option>' +
     COUNTRIES.map(([iso, name, dial]) =>
-      `<option value="${dial}" data-iso="${iso}" data-short="${iso} +${dial}">${name}</option>`
+      `<option value="${dial}" data-iso="${iso}">${name}</option>`
     ).join('');
 
-  function applyShort() {
-    const opt = sel.options[sel.selectedIndex];
-    if (opt && opt.value && opt.dataset.short) opt.textContent = opt.dataset.short;
-  }
-  function restoreFull() {
-    Array.from(sel.options).forEach(o => {
-      if (o.dataset.iso) {
-        const c = COUNTRIES.find(([iso]) => iso === o.dataset.iso);
-        if (c) o.textContent = c[1];
-      }
-    });
+  const label = document.getElementById('country-select-label');
+  const chevron = '<svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function setLabel(text) {
+    if (label) label.innerHTML = `<span>${text}</span>${chevron}`;
   }
 
-  sel.addEventListener('focus', restoreFull);
-  sel.addEventListener('change', applyShort);
-  sel.addEventListener('blur', applyShort);
+  sel.addEventListener('change', () => {
+    const opt = sel.options[sel.selectedIndex];
+    if (opt && opt.value) setLabel(opt.dataset.iso + ' +' + opt.value);
+    else setLabel('—');
+  });
 
   fetch('https://www.cloudflare.com/cdn-cgi/trace')
     .then(r => r.text())
@@ -2196,7 +2195,7 @@ window.addEventListener('pageshow', function () {
       const loc = (txt.match(/loc=([A-Z]{2})/) || [])[1];
       if (!loc) return;
       const opt = sel.querySelector(`option[data-iso="${loc}"]`);
-      if (opt) { opt.selected = true; applyShort(); }
+      if (opt) { opt.selected = true; setLabel(loc + ' +' + opt.value); }
     })
     .catch(() => {});
 })();
@@ -2382,7 +2381,7 @@ if (newsletterFormInline) {
   #newsletter-popup.open { opacity: 1; pointer-events: auto; visibility: visible; }
   .newsletter-popup-inner {
     position: relative; z-index: 1;
-    pointer-events: none;
+    pointer-events: auto;
     width: min(460px, calc(100vw - 48px));
     display: flex; flex-direction: column; gap: 8px; padding: 0 16px;
     transform: translateY(10px); transition: transform 0.25s ease;
@@ -2392,7 +2391,8 @@ if (newsletterFormInline) {
   .newsletter-popup-inner select,
   .newsletter-popup-inner button,
   .newsletter-popup-inner label,
-  .newsletter-popup-inner a { pointer-events: auto; }
+  .newsletter-popup-inner a,
+  .country-select-wrap { pointer-events: auto; }
   #newsletter-popup.open .newsletter-popup-inner { transform: translateY(0); }
   .newsletter-popup-top { display: none; }
   .newsletter-popup-close {
@@ -2434,6 +2434,7 @@ if (newsletterFormInline) {
     gap: 24px 20px;
   }
   .newsletter-popup-field { display: flex; flex-direction: column; gap: 8px; }
+  .newsletter-popup-field:last-child { grid-column: 1 / -1; }
   .newsletter-popup-input {
     background: transparent; border: none; border-bottom: 1px solid rgba(245,240,234,0.2);
     color: var(--cream); font-family: 'Inter', sans-serif; font-size: 0.68rem;
@@ -2441,15 +2442,21 @@ if (newsletterFormInline) {
   }
   .newsletter-popup-input::placeholder { color: var(--cream); opacity: 0.5; }
   .newsletter-phone-row {
-    display: flex; align-items: flex-end; gap: 0;
+    display: flex; align-items: flex-end; gap: 16px;
     border-bottom: 1px solid rgba(245,240,234,0.2);
   }
-  .newsletter-phone-row .newsletter-popup-input { border-bottom: none; flex: 1; }
+  .newsletter-phone-row .newsletter-popup-input { border-bottom: none; flex: 1; min-width: 0; }
+  .country-select-wrap { flex-shrink: 0; position: relative; display: flex; align-items: center; cursor: pointer; }
+  .country-select-label {
+    font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 300;
+    letter-spacing: 0.06em; color: var(--cream); white-space: nowrap;
+    padding: 8px 4px 8px 0; pointer-events: none;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .country-select-label svg { flex-shrink: 0; }
   .newsletter-country-select {
-    background: transparent; border: none;
-    color: var(--cream); font-family: 'Inter', sans-serif; font-size: 0.68rem;
-    font-weight: 300; letter-spacing: 0.06em; padding: 8px 6px 8px 0;
-    outline: none; cursor: pointer; flex-shrink: 0; max-width: 130px;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; border: none; outline: none;
   }
   .newsletter-country-select option { background: #1a1028; color: var(--cream); }
   @media (max-width: 480px) {
