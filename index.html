@@ -2102,6 +2102,14 @@ if (newsletterFormPopup) {
     const name  = document.getElementById('newsletter-name-popup').value.trim();
     const phone = document.getElementById('newsletter-phone-popup').value.trim();
     const consent = document.getElementById('newsletter-consent-popup').checked;
+    if (phone) {
+      const cleaned = phone.replace(/[\s\-().]/g, '');
+      if (!/^\+?\d{7,15}$/.test(cleaned)) {
+        newsletterStatusPopup.textContent = 'please enter a valid phone number';
+        newsletterStatusPopup.className = 'newsletter-popup-status';
+        return;
+      }
+    }
     if (!consent) {
       newsletterStatusPopup.textContent = 'please accept to continue';
       newsletterStatusPopup.className = 'newsletter-popup-status';
