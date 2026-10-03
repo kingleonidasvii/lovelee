@@ -2201,7 +2201,17 @@ window.addEventListener('pageshow', function () {
 })();
 
 // ── CONFIRMED SPLASH ──────────────────────────────────────────────────────────
-if (new URLSearchParams(window.location.search).get('confirmed') === '1') {
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('confirmed') !== '1') return;
+  const emailToConfirm = params.get('email');
+  if (emailToConfirm) {
+    fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'confirm', email: decodeURIComponent(emailToConfirm) })
+    }).catch(() => {});
+  }
   const splash = document.createElement('div');
   splash.id = 'confirmed-splash';
   splash.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(13,10,18,0.85);backdrop-filter:blur(8px);';
@@ -2213,9 +2223,10 @@ if (new URLSearchParams(window.location.search).get('confirmed') === '1') {
       <button onclick="document.getElementById('confirmed-splash').remove();history.replaceState(null,'',location.pathname);" style="background:#6d28d9;border:none;color:#ffffff;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;padding:10px 24px;cursor:pointer;border-radius:4px;">close</button>
     </div>
   `;
-  document.addEventListener('DOMContentLoaded', () => document.body.appendChild(splash));
-  if (document.readyState !== 'loading') document.body.appendChild(splash);
-}
+  function show() { document.body.appendChild(splash); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
+  else show();
+})();
 
 // ── NEWSLETTER POPUP FORM ─────────────────────────────────────────────────────
 const newsletterFormPopup   = document.getElementById('newsletter-form-popup');
