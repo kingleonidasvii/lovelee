@@ -2219,7 +2219,7 @@ window.addEventListener('pageshow', function () {
     <div style="text-align:center;padding:48px 32px;max-width:320px;">
       <p style="margin:0 0 16px;font-size:32px;font-weight:400;color:#f5f0ea;letter-spacing:0.12em;font-family:'Cinzel',Georgia,serif;">lovelee</p>
       <div style="height:1px;background:rgba(245,240,234,0.15);margin-bottom:28px;"></div>
-      <p style="margin:0 0 36px;font-size:22px;color:#ffffff;font-family:'Inter',sans-serif;font-weight:300;">thank you for joining!:D</p>
+      <p style="margin:0 0 36px;font-size:22px;color:#ffffff;font-family:'Inter',sans-serif;font-weight:300;">you are in:)</p>
       <button onclick="document.getElementById('confirmed-splash').remove();history.replaceState(null,'',location.pathname);" style="background:#6d28d9;border:none;color:#ffffff;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;padding:10px 24px;cursor:pointer;border-radius:4px;">close</button>
     </div>
   `;
@@ -2269,7 +2269,7 @@ if (newsletterFormPopup) {
         body: JSON.stringify({ email, name, phone, consentGiven: true, eventId })
       });
       if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
-      newsletterStatusPopup.textContent = 'you are in :)';
+      newsletterStatusPopup.textContent = 'check your email to confirm :)';
       newsletterStatusPopup.className = 'newsletter-popup-status success';
       newsletterFormPopup.reset();
       if (btnImg) btnImg.style.opacity = '';
@@ -2303,7 +2303,7 @@ if (newsletterFormInline) {
         body: JSON.stringify({ email, name: '', consentGiven: true, eventId })
       });
       if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
-      newsletterStatusInline.textContent = 'you are in :)';
+      newsletterStatusInline.textContent = 'check your email to confirm :)';
       newsletterFormInline.reset();
       btn.textContent = 'subscribe';
     } catch {
