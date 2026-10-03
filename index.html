@@ -2232,7 +2232,7 @@ if (newsletterFormPopup) {
       return;
     }
     const btn = newsletterFormPopup.querySelector('.newsletter-popup-btn-full');
-    const btnImg = btn.querySelector('img');
+    const btnImg = btn ? btn.querySelector('img') : null;
     if (btnImg) btnImg.style.opacity = '0.3';
     try {
       const eventId = crypto.randomUUID();
