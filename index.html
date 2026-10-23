@@ -1178,7 +1178,15 @@
 
 <section id="music">
   <p class="section-label reveal">music</p>
-  <div class="release-grid reveal" style="grid-template-columns:1fr 1fr;max-width:800px;margin:0 auto;">
+  <div class="release-grid reveal" style="grid-template-columns:1fr 1fr 1fr;max-width:800px;margin:0 auto;">
+    <div class="release-item" onclick="openStreamMenu('violet')" role="button" tabindex="0">
+      <div class="release-art" style="background-image:url('VioletSongCoverPlastic.png');background-size:cover;background-position:center;"></div>
+      <div class="release-overlay">
+        <span class="release-title">violet</span>
+        <span class="release-sub">single</span>
+      </div>
+      <div class="release-caption"><span class="release-title">violet</span></div>
+    </div>
     <div class="release-item" onclick="openStreamMenu('feelingyou')" role="button" tabindex="0">
       <div class="release-art" style="background-image:url('FeelingYouCover.webp');background-size:cover;background-position:center;"></div>
       <div class="release-overlay">
@@ -2727,6 +2735,8 @@ if (newsletterFormInline) {
 <script>
   // Update with per-song links whenever you have them
   const songLinks = {
+    violet:       { displayName: 'violet', spotify: 'https://open.spotify.com/track/0w7zKDJJ916s9eUsXB0Oru?si=e42bab8cbb094a2a', apple: 'https://music.apple.com/de/album/violet/6815243973?i=6815243978&l=en-GB', amazon: 'https://music.amazon.com/tracks/B0HKSXNQ2R/?ref=dm_sh_z1xSp58DbbwJAwr575u2lVkog', tidal: 'https://tidal.com/track/563744772/u', bandcamp: 'https://itslovelee.bandcamp.com/track/violet', deezer: 'https://link.deezer.com/s/34L1T5JKbSxnFrJ7EJXhD', youtube: 'https://youtu.be/TkV38QtSp9g?si=pCSvOaSq2Pa_9aUT',
+      sub: 'single' },
     feelingyou:   { displayName: 'feeling\nyou', spotify: 'https://open.spotify.com/track/7mKjnIQSZkrXuLRtyE0lRe?si=70dec3bc123047ed', apple: 'https://music.apple.com/de/album/feeling-you/6797563172?i=6797563174&l=en-GB', amazon: 'https://music.amazon.com/albums/B0HCPYDWMR', tidal: 'https://tidal.com/browse/track/548866312', bandcamp: 'https://itslovelee.bandcamp.com/track/feeling-you', deezer: 'https://www.deezer.com/track/4199155092', youtube: 'https://www.youtube.com/watch?v=OeRZydu8HHw',
       sub: 'single' },
     stormchasers: { displayName: 'storm\nchasers', spotify: 'https://open.spotify.com/album/336qhN4B49KyyFsCu06O75?si=1e6oeBzwQi2MJIwY4G2oyA', apple: 'https://music.apple.com/de/album/storm-chasers-ep/6778823329?l=en-GB', amazon: 'https://music.amazon.com/albums/B0H4RWBTLT?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_AESpJeZ9U4ZmwtV3yCUbiMx9c', tidal: 'https://tidal.com/album/532362770/u', bandcamp: 'https://itslovelee.bandcamp.com/album/storm-chasers', deezer: 'https://link.deezer.com/s/33OgPX8pGSFfYQa28VS6m', youtube: 'https://youtube.com/playlist?list=OLAK5uy_mDz949IXLPNvIWC2Cpy9EDSbUfMKEwI0c&si=oOhyKWFxQLqDgeY1',
