@@ -33,15 +33,14 @@
       opacity: 0;
       pointer-events: none;
     }
-    #splash-video-src { display: none; }
-    #splash-canvas {
+    #splash-canvas { display: none; }
+    #splash-video-src {
       width: 100%;
-      height: 100%;
       max-width: 480px;
       object-fit: contain;
     }
     @media (max-width: 600px) {
-      #splash-canvas { max-width: 320px; }
+      #splash-video-src { max-width: 320px; }
     }
 
     body {
@@ -1668,7 +1667,7 @@
 <body>
 
 <div id="splash">
-  <video id="splash-video-src" src="logo.mp4" autoplay muted playsinline crossorigin="anonymous"></video>
+  <video id="splash-video-src" src="logo_1.mp4" autoplay muted playsinline crossorigin="anonymous"></video>
   <canvas id="splash-canvas"></canvas>
 </div>
 
@@ -4169,9 +4168,8 @@ function mcReset() { mcPos = 0; mcApply(true); }
 
 <script>
 (function() {
-  const splash  = document.getElementById('splash');
-  const video   = document.getElementById('splash-video-src');
-  const canvas  = document.getElementById('splash-canvas');
+  const splash = document.getElementById('splash');
+  const video  = document.getElementById('splash-video-src');
 
   // Only play once per session
   if (sessionStorage.getItem('splashSeen')) {
@@ -4180,37 +4178,11 @@ function mcReset() { mcPos = 0; mcApply(true); }
   }
   sessionStorage.setItem('splashSeen', '1');
 
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  let raf;
-
   function dismiss() {
-    cancelAnimationFrame(raf);
     splash.classList.add('fade-out');
     setTimeout(() => { splash.remove(); document.dispatchEvent(new Event('splashDone')); }, 750);
   }
 
-  function drawFrame() {
-    if (video.readyState < 2) { raf = requestAnimationFrame(drawFrame); return; }
-    const w = video.videoWidth, h = video.videoHeight;
-    if (canvas.width !== w)  canvas.width  = w;
-    if (canvas.height !== h) canvas.height = h;
-
-    ctx.drawImage(video, 0, 0, w, h);
-    const img  = ctx.getImageData(0, 0, w, h);
-    const data = img.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i], g = data[i+1], b = data[i+2];
-      // Key out the blue background (r≈58, g≈98, b≈167)
-      if (b > 100 && b > r + 40 && b > g + 30) {
-        data[i+3] = 0;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    raf = requestAnimationFrame(drawFrame);
-  }
-
-  video.addEventListener('play', drawFrame);
   video.addEventListener('ended', dismiss);
   setTimeout(dismiss, 8000); // fallback
 })();
