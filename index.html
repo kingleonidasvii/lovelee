@@ -17,25 +17,43 @@
       --muted: rgba(245,240,234,0.45);
     }
 
-    html { scroll-behavior: smooth; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.7s ease;
+    }
+    #splash.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #splash-video-src { display: none; }
+    #splash-canvas {
+      width: 100%;
+      height: 100%;
+      max-width: 480px;
+      object-fit: contain;
+    }
 
     body {
       background: var(--ink);
       color: var(--cream);
-      overflow-x: hidden;
       font-family: 'Inter', sans-serif;
       font-weight: 300;
       letter-spacing: 0.03em;
-      overflow-x: hidden;
     }
 
-    /* Progressive darkening — going deeper */
-    #music    { background: #0e0c0d; }
-    #tour     { background: #0e0c0d; }
-    #epk      { background: #0e0c0d; }
+    /* Sections overlay the fixed hero photo */
+    #music, #tour, #epk, #press-contact-desktop { background: transparent; }
     #contact {
       position: relative;
-      background: #0e0c0d;
+      background: transparent;
       padding-top: 20px;
     }
 
@@ -63,37 +81,336 @@
       pointer-events: none;
       background: linear-gradient(
         to bottom,
-        rgba(14,12,13,0.75) 0%,
-        rgba(14,12,13,0.2) 8%,
-        transparent 20%,
-        transparent 80%,
-        rgba(14,12,13,0.2) 92%,
-        rgba(14,12,13,0.75) 100%
+        rgba(14,12,13,0.5) 0%,
+        rgba(14,12,13,0.1) 6%,
+        transparent 16%
       );
     }
 
-    /* NAV — centered, no logo */
+    /* Mask so scrolling content disappears under the nav cleanly */
+    #newsletter-section {
+      position: relative;
+      z-index: 2;
+      padding: 20px 52px 24px;
+      display: flex;
+      align-items: flex-start;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transform: translateZ(0);
+      margin-left: -1px;
+      padding-left: 53px;
+    }
+    #scroll-content {
+      position: relative;
+      z-index: 5;
+      padding-top: 0;
+    }
+
+    /* SECTION PANELS */
+    .section-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(14,12,13,0.35);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 52px 52px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .section-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #panel-tour {
+      justify-content: center;
+      padding-top: 80px;
+      padding-bottom: 60px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      gap: 0;
+      align-items: center;
+    }
+    #tour-upcoming-section {
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 680px;
+      padding: 0 32px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #tour-upcoming-section.visible {
+      opacity: 1;
+    }
+    #tour-past-section {
+      width: 100%;
+      max-width: 680px;
+      padding: 0 32px 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #tour-past-section.visible {
+      opacity: 1;
+    }
+    /* Poster layout — single upcoming show */
+    .tour-featured-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 80px 0 36px;
+    }
+    .tour-featured-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .tour-featured-month {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.44rem;
+      letter-spacing: 0.4em;
+      color: rgba(245,240,234,0.35);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .tour-featured-day {
+      font-family: 'Cinzel', serif;
+      font-size: 5.5rem;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+    }
+    .tour-featured-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .tour-featured-venue {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 200;
+      letter-spacing: 0.18em;
+      color: var(--cream);
+      text-transform: uppercase;
+    }
+    .tour-featured-venue-img {
+      max-width: 260px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      opacity: 0.92;
+    }
+    .tour-featured-city {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.25em;
+      color: var(--cream);
+      text-transform: uppercase;
+    }
+    .tour-featured-ticket {
+      margin-top: 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(196,180,232,0.8);
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(196,180,232,0.35);
+      padding: 0 0 2px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .tour-featured-ticket:hover { color: rgba(196,180,232,1); border-color: rgba(196,180,232,0.75); }
+
+    /* Editorial layout — multiple upcoming shows */
+    .tour-editorial-row {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      column-gap: 20px;
+      align-items: center;
+      padding: 22px 0;
+      border-bottom: 1px solid rgba(245,240,234,0.07);
+    }
+    .tour-editorial-row:first-child { border-top: 1px solid rgba(245,240,234,0.07); }
+    .tour-editorial-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tour-editorial-month {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.4rem;
+      letter-spacing: 0.25em;
+      color: rgba(245,240,234,0.35);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .tour-editorial-day {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .tour-editorial-info { display: flex; flex-direction: column; gap: 5px; }
+    .tour-editorial-venue {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      line-height: 1.15;
+    }
+    .tour-editorial-city {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.46rem;
+      letter-spacing: 0.2em;
+      color: rgba(245,240,234,0.38);
+      text-transform: uppercase;
+    }
+    .tour-editorial-ticket {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.42rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(196,180,232,0.75);
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(196,180,232,0.3);
+      padding: 0 0 2px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .tour-editorial-ticket:hover { color: rgba(196,180,232,1); border-color: rgba(196,180,232,0.75); }
+    .tour-no-upcoming {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,240,234,0.3);
+      padding: 40px 0;
+      text-align: center;
+    }
+    .panel-close {
+      position: absolute;
+      top: 28px; right: 36px;
+      background: none; border: none;
+      color: var(--cream); opacity: 0.45;
+      font-size: 1rem; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .panel-close:hover { opacity: 1; }
+    .panel-close-below {
+      margin-top: 32px;
+      background: none; border: none;
+      color: var(--cream); opacity: 0.3;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.5rem; letter-spacing: 0.2em;
+      text-transform: uppercase; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .panel-close-below:hover { opacity: 0.8; }
+
+    /* NAV */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 52px;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 22px 40px;
       transition: opacity 0.2s ease;
     }
 
-    nav ul { list-style: none; display: flex; gap: 44px; align-items: center; }
-
-    nav a {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.6rem; font-weight: 300;
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--cream); text-decoration: none;
-      opacity: 0.45; transition: none;
+    .nav-left {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
     }
-    nav a:hover { opacity: 1; }
+    .nav-left-links {
+      display: flex;
+      flex-direction: row;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-left a {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem; font-weight: 400;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none;
+      opacity: 0.55; transition: opacity 0.2s;
+      padding: 10px 0;
+    }
+    .nav-left a:hover { opacity: 1; }
+
+    .nav-socials {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-socials a, .nav-socials .music-icon-btn {
+      opacity: 0.35;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 4px;
+    }
+    .nav-socials a:hover, .nav-socials .music-icon-btn:hover { opacity: 0.8; }
+    .nav-socials svg {
+      width: 13px;
+      height: 13px;
+      fill: var(--cream);
+    }
+    .nav-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .nav-right-links {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+    }
+    .nav-util-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.45rem; font-weight: 300;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none;
+      opacity: 0.28; transition: opacity 0.2s;
+      background: none; border: none; cursor: pointer; padding: 10px 0;
+    }
+    .nav-util-btn:hover { opacity: 0.65; }
 
     /* merch link stands out slightly */
 
@@ -109,15 +426,16 @@
       justify-content: flex-end;
       align-items: stretch;
       padding: 0;
-      overflow: hidden;
+      background: transparent;
     }
     #home > * { max-width: none; width: auto; }
     .hero-photo {
-      position: absolute; inset: 0;
+      position: fixed; inset: 0;
       background-size: cover;
       background-position: center 15%;
-      background-attachment: scroll;
       z-index: 0;
+      will-change: filter;
+      transition: filter 0.2s linear;
     }
     .hero-photo::after {
       content: '';
@@ -134,10 +452,12 @@
       );
     }
     .hero-content {
-      position: relative; z-index: 2;
-      padding: 0 52px 64px;
+      position: fixed;
+      bottom: 64px; left: 52px;
+      z-index: 3;
       opacity: 0; transform: translateY(24px);
       animation: fadeUp 1.2s ease forwards 0.5s;
+      pointer-events: none;
     }
     .hero-name {
       font-family: 'Inter', sans-serif;
@@ -165,17 +485,17 @@
 
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    section { position: relative; z-index: 2; padding: 80px 52px; transition: background 0.3s; display: flex; flex-direction: column; align-items: center; }
+    section { position: relative; z-index: 2; padding: 48px 52px; transition: background 0.3s; display: flex; flex-direction: column; align-items: flex-start; }
     section > * { width: 100%; max-width: 960px; }
-    #tour { padding-top: 60px; padding-bottom: 60px; }
-    #epk  { padding-top: 60px; padding-bottom: 20px; }
-    #contact { padding-top: 20px; }
+    #tour { padding-top: 40px; padding-bottom: 40px; }
+    #epk  { padding-top: 40px; padding-bottom: 16px; }
+    #contact { padding-top: 16px; padding-bottom: 48px; }
 
     .section-label {
-      font-family: 'Cinzel', serif; font-weight: 400;
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--cream); margin-bottom: 48px;
-      line-height: 1; text-align: center;
+      font-family: 'Inter', sans-serif; font-weight: 300;
+      font-size: 0.55rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--cream); margin-bottom: 40px;
+      line-height: 1; text-align: left; opacity: 0.5;
     }
     .release-caption {
       display: none;
@@ -183,163 +503,214 @@
 
 
     .section-inner { max-width: 1100px; margin: 0 auto; }
-    .release-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%;
-      max-width: 620px;
-      background: var(--ink);
+    /* ── Music carousel ─────────────────────────────────────────────────────── */
+    /* ── Cover Flow carousel ───────────────────────────────────────────────── */
+    .music-carousel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      width: fit-content;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
-    .release-item {
-      aspect-ratio: 1; background: #0e0c0d;
-      position: relative; overflow: hidden;
-      display: block; text-decoration: none;
+    .music-carousel.visible { opacity: 1; }
+    .mc-stage {
+      width: min(52vw, 280px);
+      height: min(52vw, 280px);
+      position: relative;
+      perspective: 900px;
+      cursor: grab;
+      user-select: none;
+      overflow: visible;
+    }
+    .mc-stage:active { cursor: grabbing; }
+    .mc-track {
+      position: absolute;
+      top: 0; left: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: min(52vw, 280px);
+      margin-left: calc(min(52vw, 280px) / -2);
+      transform-origin: center center;
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease, filter 0.5s ease;
+      pointer-events: auto;
+      will-change: transform, opacity;
+    }
+    .mc-track.active { pointer-events: auto; z-index: 10; opacity: 1 !important; filter: none !important; }
+
+    .mc-cover {
+      width: min(52vw, 280px);
+      height: min(52vw, 280px);
+      overflow: hidden;
       cursor: pointer;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     }
-    .release-art {
+    .mc-cover img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+    }
+    .mc-cover--storm img { transform: scale(1.3); }
+
+    #mc-glow {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, #2a1f2d 0%, #1a1519 100%);
-      display: flex; align-items: center; justify-content: center;
-      filter: brightness(1) saturate(1) grayscale(0);
-      transition: filter 0.5s ease;
-    }
-    .release-item:hover .release-art {
-      filter: brightness(1) saturate(1) grayscale(0);
-    }
-    .vinyl-icon { width: 56px; opacity: 0.15; }
-    .release-overlay {
-      position: absolute; inset: 0;
-      background: rgba(14,12,13,0.88);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      opacity: 0; transition: opacity 0.3s; gap: 6px;
-    }
-    .release-item:hover .release-overlay { opacity: 1; }
-    .release-title {
-      font-family: 'Cinzel', serif;
-      font-weight: 300;
-      text-transform: lowercase;
-      font-size: 1.3rem; color: var(--cream);
-    }
-    .release-sub {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.52rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--muted);
+      pointer-events: none;
+      transition: background 0.6s ease;
+      z-index: 0;
     }
 
+    .mc-title-area {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-top: 32px;
+    }
+    .mc-title-img {
+      height: 160px;
+      width: auto;
+      max-width: 80vw;
+      display: block;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .mc-title-img.visible { opacity: 0.9; }
+
+    .mc-nav { display: flex; align-items: center; justify-content: center; }
+    .mc-dots { display: flex; gap: 8px; align-items: center; margin-top: 24px; }
+    .mc-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--cream); opacity: 0.2;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .mc-dot.active { opacity: 0.9; transform: scale(1.4); }
+    .vinyl-icon { width: 56px; opacity: 0.15; }
+
+.tour-divider {
+      width: 100%;
+      max-width: 760px;
+      height: 1px;
+      background: rgba(245,240,234,0.07);
+      margin: 10px 20px 10px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .tour-section-label-wrap {
+      width: 100%;
+      max-width: 760px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    .tour-section-label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.46rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(245,240,234,0.55);
+      padding-bottom: 8px;
+    }
+    .tour-section-label-img {
+      display: block;
+      max-width: 380px;
+      width: auto;
+      height: auto;
+      opacity: 0.92;
+      margin-top: -10px;
+      margin-bottom: -52px;
+      margin-left: -80px;
+      align-self: flex-start;
+    }
+    .tour-year-header {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.38rem;
+      letter-spacing: 0.4em;
+      color: rgba(245,240,234,0.2);
+      text-transform: uppercase;
+      padding: 14px 0 4px;
+      display: block;
+    }
     .tour-empty {
       font-family: 'Inter', sans-serif;
       text-transform: uppercase;
       font-style: italic; font-size: 1.1rem; color: var(--muted);
     }
-    .tour-list { display: flex; flex-direction: column; max-width: 100%; }
+    .tour-list { display: flex; flex-direction: column; width: 100%; }
     .tour-row {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 52px 1fr auto auto;
       align-items: center;
-      padding: 24px 16px;
-      gap: 28px;
-      transition: background 0.35s ease;
+      padding: 5px 0;
+      gap: 14px;
+      transition: opacity 0.15s;
       cursor: pointer;
-      position: relative;
     }
-    /* Victorian ornamental divider after each row */
-    .tour-row::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 12px;
-      transform: translateY(50%);
-      z-index: 1;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='xMidYMid meet'%3E%3Cline x1='0' y1='6' x2='262' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cline x1='338' y1='6' x2='600' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cpath d='M262,6 Q270,2 278,6 Q286,10 294,6 Q302,2 300,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='300' cy='6' r='2.2' fill='rgba(245,240,234,0.22)'/%3E%3Ccircle cx='300' cy='6' r='1' fill='rgba(245,240,234,0.35)'/%3E%3Cpath d='M300,6 Q308,10 316,6 Q324,2 332,6 Q340,10 338,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='278' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3Ccircle cx='322' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      pointer-events: none;
+    .tour-row:not(.past) { border-left: 2px solid rgba(196,180,232,0.5); padding-left: 10px; }
+    .tour-row:not(.past) .tour-city, .tour-row:not(.past) .tour-date { color: var(--cream); }
+    .tour-row:not(.past):hover { opacity: 0.75; }
+    .tour-row.past {
+      opacity: 0.55;
+      cursor: default;
     }
-    /* Top divider on first row */
-    .tour-row:first-child::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 12px;
-      transform: translateY(-50%);
-      z-index: 1;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='xMidYMid meet'%3E%3Cline x1='0' y1='6' x2='262' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cline x1='338' y1='6' x2='600' y2='6' stroke='rgba(245,240,234,0.13)' stroke-width='0.6'/%3E%3Cpath d='M262,6 Q270,2 278,6 Q286,10 294,6 Q302,2 300,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='300' cy='6' r='2.2' fill='rgba(245,240,234,0.22)'/%3E%3Ccircle cx='300' cy='6' r='1' fill='rgba(245,240,234,0.35)'/%3E%3Cpath d='M300,6 Q308,10 316,6 Q324,2 332,6 Q340,10 338,6' stroke='rgba(245,240,234,0.25)' stroke-width='0.7' fill='none'/%3E%3Ccircle cx='278' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3Ccircle cx='322' cy='6' r='1' fill='rgba(245,240,234,0.18)'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      pointer-events: none;
-    }
-    .tour-row:hover { background: rgba(100, 70, 165, 0.18); }
-    .tour-name {
-      transition: color 0.35s ease;
-    }
-    .tour-meta {
-      transition: color 0.35s ease;
-    }
-    .tour-row:hover .tour-name { color: var(--cream); opacity: 1; }
-    .tour-row:hover .tour-meta { color: rgba(245,240,234,0.55); }
-    .tour-row:hover .ticket-btn {
-      color: #c4b4e8;
-      border-color: rgba(196,180,232,0.5);
-    }
-    .tour-num {
+    .tour-row.past:hover { opacity: 0.55; }
+    .tour-date {
       font-family: 'Inter', sans-serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
+      font-size: 0.52rem;
+      letter-spacing: 0.08em;
       color: var(--muted);
-      opacity: 0.5;
-      align-self: center;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
-    .tour-info {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .tour-name {
-      font-family: 'Cinzel', serif;
-      font-weight: 300;
-      font-size: 1.35rem;
-      letter-spacing: 0.04em;
-      color: var(--cream);
-      line-height: 1;
-    }
-    .tour-meta {
+    .tour-venue {
       font-family: 'Inter', sans-serif;
-      font-size: 0.62rem;
+      font-weight: 300;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tour-city {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.5rem;
       letter-spacing: 0.1em;
       color: var(--muted);
       text-transform: uppercase;
+      white-space: nowrap;
     }
     .ticket-btn {
       font-family: 'Inter', sans-serif;
-      font-size: 0.55rem;
+      font-size: 0.48rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: #9b8bbf;
       background: transparent;
       border: none;
       border-bottom: 1px solid rgba(155,139,191,0.35);
-      padding: 0 0 3px;
+      padding: 0 0 2px;
       cursor: pointer;
-      transition: color 0.35s ease, border-color 0.35s ease;
+      transition: color 0.25s, border-color 0.25s;
       white-space: nowrap;
-      justify-self: end;
-      align-self: center;
     }
     .ticket-btn:hover { color: #c4b4e8; border-color: #c4b4e8; }
     .ticket-btn.sold-out {
-      color: rgba(245,240,234,0.28);
-      border-color: rgba(245,240,234,0.1);
+      color: rgba(245,240,234,0.25);
+      border-color: rgba(245,240,234,0.08);
       cursor: default;
       pointer-events: none;
       text-decoration: line-through;
-      text-decoration-color: rgba(245,240,234,0.2);
     }
     .ticket-btn.free-label {
-      color: rgba(168,200,160,0.75);
-      border-color: rgba(168,200,160,0.25);
+      color: rgba(168,200,160,0.7);
+      border-color: rgba(168,200,160,0.2);
       cursor: default;
       pointer-events: none;
     }
@@ -459,57 +830,72 @@
     }
 
     .reveal {
-      opacity: 0; transform: translateY(18px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      opacity: 0; transform: translateY(48px);
+      transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
     }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-60px);
+      transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0; transform: translateX(60px);
+      transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
     @media (max-width: 600px) {
-      nav { padding: 20px 24px; }
-      nav ul { gap: 20px; flex-wrap: wrap; justify-content: center; }
+      /* ── Nav ── */
+      nav {
+        padding: 18px 20px;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .nav-left { width: 100%; align-items: center; gap: 0; }
+      .nav-left-links { justify-content: center; gap: 24px; }
+      .nav-left a { font-size: 0.54rem; letter-spacing: 0.12em; }
+      .nav-right { align-items: center; gap: 0; }
+      .nav-right-links { display: none; }
+      .nav-socials { gap: 18px; }
+      .nav-socials svg { width: 15px; height: 15px; }
+
+      /* ── Panels ── */
+      .section-panel { padding: 80px 20px 40px; }
+
+      /* ── Music panel ── */
+      #panel-music { justify-content: flex-start; padding-top: 260px; }
+      .mc-stage { width: min(56vw, 210px); height: min(56vw, 210px); }
+      .mc-track { width: min(56vw, 210px); margin-left: calc(min(56vw, 210px) / -2); }
+      .mc-cover { width: min(56vw, 210px); height: min(56vw, 210px); }
+      .mc-title-img { height: 130px; }
+      .mc-title-area { margin-top: 16px; min-height: 60px; }
+
+      /* ── Tour panel ── */
+      #tour-upcoming-section { padding: 0 16px; display: flex; flex-direction: column; align-items: center; }
+      #tour-past-section { padding: 0 16px; display: flex; flex-direction: column; align-items: center; }
+      .tour-featured-row { padding: 40px 0 24px; }
+      .tour-featured-day { font-size: 4rem; }
+      .tour-featured-venue { font-size: 0.88rem; letter-spacing: 0.12em; }
+      .tour-featured-ticket { font-size: 0.52rem; }
+      .tour-section-label-img { max-width: 320px; margin-left: 0; margin-bottom: -20px; align-self: center; }
+      .tour-row { grid-template-columns: 44px auto; gap: 8px; padding: 6px 0; width: 250px; }
+      .tour-city { display: none; }
+      .tour-venue { font-size: 0.78rem; }
+      .tour-date { font-size: 0.48rem; }
+
+      /* ── Press panel ── */
+      .pc-list { gap: 24px; }
+      .pc-row-label { font-size: 0.92rem; }
+      .pc-sub-link { font-size: 0.8rem; }
+
+      /* ── General ── */
       section { padding-left: 20px; padding-right: 20px; }
       section > * { max-width: 100%; }
       .hero-content { padding-bottom: 48px; }
-      .epk-wrap { grid-template-columns: 1fr; gap: 48px; }
-      .release-grid { max-width: 100%; }
-      .ticket-btn { font-size: 0.55rem; }
-      .tour-row { grid-template-columns: 1fr auto; gap: 16px; padding: 20px 8px; }
-      .tour-name { font-size: 1.1rem; }
-      .tour-meta { font-size: 0.58rem; white-space: nowrap; }
-      .release-overlay { display: none !important; }
-      .release-grid { gap: 3px; row-gap: 2.8rem; }
-      .release-item {
-        aspect-ratio: 1 !important;
-        overflow: visible !important;
-      }
-      .release-art {
-        position: absolute !important;
-        inset: 0 !important;
-        filter: brightness(1) saturate(1) grayscale(0) !important;
-      }
-      .release-caption {
-        display: flex;
-        position: absolute;
-        bottom: -2rem;
-        left: 0;
-        width: 100%;
-      }
-      .release-caption .release-title {
-        font-size: 0.75rem;
-        letter-spacing: 0.12em;
-      }
-      .release-caption {
-        display: flex;
-        align-items: center;
-        padding: 10px 8px 6px;
-      }
-      .release-caption .release-title {
-        font-size: 0.8rem;
-        letter-spacing: 0.1em;
-      }
       .scroll-cue { right: 24px; }
       .footer { padding-left: 24px; padding-right: 24px; }
-
     }
 
     /* press-contact row: stacked on mobile */
@@ -519,11 +905,26 @@
     /* desktop combined section: hidden on mobile */
     #press-contact-desktop { display: none; }
 
+    .mobile-footer-links {
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .mobile-footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        padding: 20px 20px 32px;
+        background: rgba(0,0,0,0.75);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+    }
+
     /* ── DESKTOP LAYOUT (900px+) ─────────────────────────────────────────── */
     @media (min-width: 900px) {
 
       /* Sections: more horizontal breathing room */
-      section { padding: 100px 80px; }
+      section { padding: 48px 80px; }
       section > * { max-width: 1100px; }
 
       /* Section label: left-aligned, feels editorial */
@@ -531,25 +932,21 @@
         text-align: left;
         font-size: clamp(1rem, 1.8vw, 1.4rem);
         letter-spacing: 0.18em;
-        margin-bottom: 56px;
+        margin-bottom: 32px;
       }
 
-      /* MUSIC: 4-across single row */
-      .release-grid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 1100px;
-        gap: 16px;
-      }
+      /* MUSIC: handled by the 640px breakpoint above */
 
       /* TOUR: wider rows, more air */
-      .tour-list { max-width: 1100px; }
+      .tour-list { max-width: 900px; }
       .tour-row {
-        padding: 28px 32px;
-        grid-template-columns: 1fr auto;
+        padding: 6px 0;
+        gap: 20px;
+        grid-template-columns: 60px 1fr auto auto;
       }
-      .tour-info { gap: 12px; }
-      .tour-name { font-size: 1.5rem; }
-      .tour-meta { font-size: 0.65rem; letter-spacing: 0.18em; }
+      .tour-venue { font-size: 0.95rem; }
+      .tour-date { font-size: 0.54rem; }
+      .tour-city { font-size: 0.5rem; }
 
       /* PRESS & CONTACT: desktop combined, mobile rows hidden */
       #press-contact-desktop { display: flex; }
@@ -628,48 +1025,35 @@
     /* ── VIOLET SCROLL FLOWER ─────────────────────────────────────────────── */
     #violet-float {
       position: fixed;
-      right: -160px;
-      top: 28vh;
-      width: 320px;
-      height: 320px;
-      transform-origin: 52% 93%;
-      transform: rotate(70deg) translateZ(0);
+      right: -175px;
+      top: 55vh;
+      width: 300px;
+      height: 300px;
+      transform-origin: 58% 96%;
+      transform: rotate(50deg) translateZ(0);
       opacity: 0;
       pointer-events: none;
       z-index: 200;
-      -webkit-transform: rotate(70deg) translateZ(0);
       user-select: none;
       -webkit-user-select: none;
     }
 
-    /* ── VIOLET LEFT FLOWER ──────────────────────────────────────────────────── */
     #violet-float-left {
       position: fixed;
-      left: -160px;
-      top: 28vh;
-      width: 320px;
-      height: 320px;
-      transform-origin: 48% 93%;
-      transform: scaleX(-1) rotate(-50deg) translateZ(0);
+      left: -100px;
+      top: 25vh;
+      width: 280px;
+      height: 280px;
+      transform: scaleX(-1) rotate(-20deg) translateZ(0);
       opacity: 0;
       pointer-events: none;
       z-index: 200;
-      -webkit-transform: scaleX(-1) rotate(-50deg) translateZ(0);
       user-select: none;
       -webkit-user-select: none;
     }
 
     /* SCROLL PROGRESS BAR */
-    #progress-bar {
-      position: fixed;
-      top: 0; left: 0;
-      height: 1.5px;
-      width: 0%;
-      background: var(--cream);
-      z-index: 200;
-      mix-blend-mode: exclusion;
-      transition: width 0.08s linear;
-    }
+    #progress-bar { display: none; }
 
     /* SOCIAL ICONS */
     .social-bar {
@@ -704,11 +1088,11 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: linear-gradient(315deg, rgba(46,28,72,0.88) 0%, rgba(14,12,13,0.82) 55%, rgba(22,14,38,0.85) 100%);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: linear-gradient(225deg, rgba(50,26,78,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(18,12,32,0.72) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       opacity: 0;
-      transition: opacity 0.22s ease;
+      transition: opacity 0.22s ease, background 0.4s ease;
     }
     #music-backdrop.open { opacity: 1; }
     .music-icon-wrap {
@@ -735,72 +1119,78 @@
     }
     .music-dropdown {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-      height: fit-content;
-      transform: scale(0.97) translateY(10px);
-      background: transparent;
-      border: none;
-      padding: 0 40px;
+      inset: 0;
       display: flex;
-      flex-direction: column;
-      width: min(320px, calc(100vw - 48px));
+      align-items: center;
+      justify-content: center;
       z-index: 10001;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+      transition: opacity 0.2s ease, visibility 0.2s;
     }
     .music-dropdown.open {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-      transform: scale(1) translateY(0);
     }
+    .music-dropdown-inner {
+      padding: 0 32px;
+      width: min(340px, calc(100vw - 48px));
+      display: flex;
+      flex-direction: column;
+    }
+    .music-dropdown-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .music-dropdown-close {
+      background: none; border: none;
+      color: rgba(245,240,234,0.3); font-size: 0.65rem;
+      cursor: pointer; padding: 0;
+      transition: color 0.2s; line-height: 1;
+    }
+    .music-dropdown-close:hover { color: rgba(245,240,234,0.8); }
     .music-dropdown-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2rem, 10vw, 3.2rem);
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.42rem;
       font-weight: 300;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: var(--cream);
-      opacity: 1;
-      line-height: 1;
-      margin: 0 0 20px 0;
+      color: rgba(245,240,234,0.35);
+      margin: 0;
       padding: 0;
     }
     .music-dropdown a {
       display: flex;
       align-items: center;
       gap: 14px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.72rem;
-      font-weight: normal;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      color: #fff;
-      opacity: 1;
+      color: rgba(245,240,234,0.75);
       text-decoration: none;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(245,240,234,0.15);
-      transition: color 0.2s;
-      white-space: nowrap;
+      padding: 13px 16px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
     }
-    .music-dropdown a:last-child { border-bottom: none; }
-    .music-dropdown a::before {
-      content: '';
-      display: block;
-      width: 14px;
-      height: 1px;
-      background: currentColor;
+    .music-dropdown a:last-child { margin-bottom: 0; }
+    .music-dropdown a:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border-color: rgba(255,255,255,0.18);
+    }
+    .music-dropdown a svg {
+      width: 22px; height: 22px;
       flex-shrink: 0;
-      transition: width 0.2s;
+      opacity: 0.85;
     }
-    .music-dropdown a:hover { color: #fff; }
-    .music-dropdown a:hover::before { width: 22px; }
 
 
 
@@ -952,7 +1342,7 @@
 
     nav a { display: inline-block; }
 
-    nav a.glitching {
+    .nav-left a.glitching {
       animation: crt-glitch 0.4s steps(2) forwards;
     }
 
@@ -1084,6 +1474,183 @@
       color: var(--muted);
       margin-top: 10px;
     }
+
+    /* ── MODERN CONTACT ──────────────────────────────────────────────────── */
+    .pc-list {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 32px;
+      width: 100%;
+      max-width: 520px;
+    }
+    .pc-row {
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 0;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .pc-row.visible { opacity: 1; transform: translateY(0); }
+    .pc-row.visible:hover { opacity: 0.4; }
+    .pc-row-item.visible .pc-row:hover .pc-row-label { text-decoration: underline; text-underline-offset: 4px; }
+    .pc-row-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 200;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+      line-height: 1;
+      display: block;
+      text-align: left;
+    }
+    .pc-row-pair {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      cursor: default;
+    }
+    .pc-pair-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.25s;
+    }
+    .pc-pair-btn:hover { opacity: 0.4; }
+    .pc-row-pair .pc-row-label { text-align: left; text-align-last: left; }
+    .pc-row-pair .pc-pair-btn:last-child .pc-row-label { text-align: right; text-align-last: right; }
+    .pc-row-hint { display: none; }
+    .pc-sub {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-left: 16px;
+    }
+    .pc-sub.open {
+      max-height: 300px;
+      opacity: 1;
+      padding-top: 14px;
+      padding-bottom: 16px;
+    }
+    .pc-sub-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 200;
+      letter-spacing: 0.06em;
+      color: rgba(245,240,234,0.5);
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s;
+      padding: 10px 0;
+    }
+    .pc-sub-link:hover { color: rgba(245,240,234,0.9); }
+    .pc-row-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .pc-row-item.visible { opacity: 1; }
+    .pc-row-item .pc-row {
+      opacity: 1 !important;
+      transition: none;
+    }
+    .contact-modern {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      max-width: 480px;
+      width: 100%;
+    }
+    .newsletter-form-modern {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .newsletter-headline {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .newsletter-row-modern {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .newsletter-input-modern {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      background: transparent;
+      border: none;
+      color: #fff;
+      padding: 12px 0;
+      flex: 1;
+      outline: none;
+    }
+    .newsletter-input-modern::placeholder { color: rgba(255,255,255,0.75); }
+    .newsletter-btn-modern {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: transparent;
+      border: none;
+      color: #fff;
+      opacity: 0.7;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .newsletter-btn-modern:hover { opacity: 1; }
+    .newsletter-consent-modern {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+    .newsletter-consent-modern input { margin-top: 2px; flex-shrink: 0; }
+    .newsletter-consent-modern a { color: #fff; text-decoration: underline; }
+    .contact-links-modern {
+      display: flex;
+      gap: 32px;
+    }
+    .contact-links-modern a {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      opacity: 0.45;
+      border-bottom: 1px solid rgba(245,240,234,0.25);
+      padding-bottom: 3px;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+    .contact-links-modern a:hover { opacity: 1; border-color: var(--cream); }
   </style>
 
 <link rel="icon" type="image/webp" href="favicon.webp">
@@ -1096,6 +1663,12 @@
 <meta property="og:image" content="https://itsloveleee.com/VioletCover1.webp" />
 </head>
 <body>
+
+<div id="splash">
+  <video id="splash-video-src" src="logo.mp4" autoplay muted playsinline crossorigin="anonymous"></video>
+  <canvas id="splash-canvas"></canvas>
+</div>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1125,142 +1698,138 @@
 <div id="flower-toast">i'm glad you like the flowers!! :D</div>
 
 <nav>
-  <ul>
-    <li><a href="#music">music</a></li>
-    <li><a href="#tour">upcoming</a></li>
-    <li><a href="#epk">press</a></li>
-    <li><a href="#contact">contact</a></li>
+  <ul class="nav-left">
+    <li class="nav-left-links">
+      <a href="#" onclick="openPanel('panel-music'); return false;">music</a>
+      <a href="#" onclick="openPanel('panel-tour'); return false;">upcoming</a>
+      <a href="#" onclick="openPanel('panel-press'); return false;">press &amp; contact</a>
+    </li>
   </ul>
+  <div class="nav-right">
+    <div class="nav-right-links">
+      <a href="/impressum.html" class="nav-util-btn">impr.</a>
+      <a href="/privacy-policy.html" class="nav-util-btn">privacy</a>
+    </div>
+    <div class="nav-socials">
+    <a href="https://www.tiktok.com/@itsloveleee" target="_blank" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.74a4.85 4.85 0 01-1.01-.05z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/itsloveleee/" target="_blank" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://youtube.com/@itsloveleee" target="_blank" aria-label="YouTube">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+    <div class="music-icon-wrap">
+      <button class="music-icon-btn" id="music-icon-btn" aria-label="Listen">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.5 3h10v2.5h-10z M8.5 3h1.5v13.5h-1.5z M17 3h1.5v11.5H17z M9.32 15.62A4.5 2.5 -32 0 1 1.68 20.38A4.5 2.5 -32 0 1 9.32 15.62z M18.32 13.62A4.5 2.5 -32 0 1 10.68 18.38A4.5 2.5 -32 0 1 18.32 13.62z"/></svg>
+      </button>
+    </div>
+    </div>
+  </div>
 </nav>
 
-<div class="social-bar">
-  <!-- TikTok -->
-  <a href="https://www.tiktok.com/@itsloveleee" target="_blank" aria-label="TikTok">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.74a4.85 4.85 0 01-1.01-.05z"/></svg>
-  </a>
-  <!-- Instagram -->
-  <a href="https://www.instagram.com/itsloveleee/" target="_blank" aria-label="Instagram">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-  </a>
-  <!-- YouTube -->
-  <a href="https://youtube.com/@itsloveleee" target="_blank" aria-label="YouTube">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-  </a>
-  <!-- Music icon stays in nav for layout -->
-  <div class="music-icon-wrap">
-    <button class="music-icon-btn" id="music-icon-btn" aria-label="Listen">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.5 3h10v2.5h-10z M8.5 3h1.5v13.5h-1.5z M17 3h1.5v11.5H17z M9.32 15.62A4.5 2.5 -32 0 1 1.68 20.38A4.5 2.5 -32 0 1 9.32 15.62z M18.32 13.62A4.5 2.5 -32 0 1 10.68 18.38A4.5 2.5 -32 0 1 18.32 13.62z"/></svg>
-    </button>
-  </div>
-</div>
+
 
 <!-- Music backdrop + dropdown live at body level so nav opacity doesn't affect them -->
-<div id="music-backdrop"></div>
-<div class="music-dropdown" id="music-dropdown">
-  <p class="music-dropdown-title">where to listen</p>
-  <a href="https://open.spotify.com/artist/0ulcfO2JDsDuhgfKPGuTVo" target="_blank">spotify</a>
-  <a href="https://music.apple.com/de/artist/lovelee/1862171633?l=en-GB" target="_blank">apple music</a>
-  <a href="https://music.amazon.de/artists/B0G71DGBZ3/lovelee?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_AtZxIisAuUN0FgTKWQmjt8RNi" target="_blank">amazon music</a>
-  <a href="https://tidal.com/album/495169007" target="_blank">tidal</a>
-  <a href="https://itslovelee.bandcamp.com/album/storm-chasers" target="_blank">bandcamp</a>
-  <a href="https://www.deezer.com/us/artist/395937981" target="_blank">deezer</a>
-  <a href="https://www.youtube.com/@Itsloveleee/releases" target="_blank">youtube music</a>
+<div id="music-backdrop" onclick="closeMusicMenu()"></div>
+<div class="music-dropdown" id="music-dropdown" onclick="closeMusicMenu()">
+  <div class="music-dropdown-inner" onclick="event.stopPropagation()">
+    <div class="music-dropdown-top">
+      <p class="music-dropdown-title">where to listen</p>
+      <button class="music-dropdown-close" onclick="closeMusicMenu()">✕</button>
+    </div>
+    <a href="https://open.spotify.com/artist/0ulcfO2JDsDuhgfKPGuTVo" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.29c-.217.356-.683.47-1.039.254-2.843-1.737-6.424-2.13-10.642-1.167-.407.093-.813-.16-.906-.567-.093-.407.16-.813.567-.906 4.613-1.054 8.572-.6 11.767 1.347.356.217.47.683.253 1.039zm1.474-3.275c-.273.444-.854.583-1.297.31-3.254-2-8.213-2.58-12.063-1.411-.5.152-1.028-.131-1.18-.63-.152-.5.131-1.028.63-1.18 4.4-1.335 9.87-.689 13.6 1.613.444.273.583.854.31 1.298zm.127-3.407c-3.9-2.316-10.335-2.528-14.062-1.398-.598.182-1.23-.152-1.412-.75-.181-.598.152-1.23.75-1.411 4.285-1.3 11.408-1.049 15.906 1.617.539.32.716 1.016.396 1.554-.319.539-1.016.716-1.554.397l-.024-.009z"/></svg>
+      <span>Spotify</span>
+    </a>
+    <a href="https://music.apple.com/de/artist/lovelee/1862171633?l=en-GB" target="_blank" rel="noopener">
+      <svg viewBox="0 0 361 361" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M359.98,99.71c-0.02-3.62-0.06-7.24-0.16-10.86c-0.21-7.89-0.68-15.84-2.08-23.64c-1.42-7.92-3.75-15.29-7.41-22.49c-3.6-7.07-8.3-13.53-13.91-19.14c-5.61-5.61-12.08-10.31-19.15-13.91c-7.19-3.66-14.56-5.98-22.47-7.41c-7.8-1.4-15.76-1.87-23.65-2.08c-3.62-0.1-7.24-0.14-10.86-0.16C255.99,0,251.69,0,247.39,0H112.61c-4.3,0-8.6,0-12.9,0.02c-3.62,0.02-7.24,0.06-10.86,0.16C80.96,0.4,73,0.86,65.2,2.27c-7.92,1.42-15.28,3.75-22.47,7.41c-7.07,3.6-13.54,8.3-19.15,13.91c-5.61,5.61-10.31,12.07-13.91,19.14c-3.66,7.2-5.99,14.57-7.41,22.49c-1.4,7.8-1.87,15.76-2.08,23.64c-0.1,3.62-0.14,7.24-0.16,10.86C0,104.01,0,108.31,0,112.61v134.77c0,4.3,0,8.6,0.02,12.9c0.02,3.62,0.06,7.24,0.16,10.86c0.21,7.89,0.68,15.84,2.08,23.64c1.42,7.92,3.75,15.29,7.41,22.49c3.6,7.07,8.3,13.53,13.91,19.14c5.61,5.61,12.08,10.31,19.15,13.91c7.19,3.66,14.56,5.98,22.47,7.41c7.8,1.4,15.76,1.87,23.65,2.08c3.62,0.1,7.24,0.14,10.86,0.16c4.3,0.03,8.6,0.02,12.9,0.02h134.77c4.3,0,8.6,0,12.9-0.02c3.62-0.02,7.24-0.06,10.86-0.16c7.89-0.21,15.85-0.68,23.65-2.08c7.92-1.42,15.28-3.74,22.47-7.41c7.07-3.6,13.54-8.3,19.15-13.91c5.61-5.61,10.31-12.07,13.91-19.14c3.66-7.2,5.99-14.57,7.41-22.49c1.4-7.8,1.87-15.76,2.08-23.64c0.1-3.62,0.14-7.24,0.16-10.86c0.03-4.3,0.02-8.6,0.02-12.9V112.61C360,108.31,360,104.01,359.98,99.71z M263.54,234.26c0,4.56-0.04,8.7-1,13.26c-0.93,4.43-2.63,8.6-5.24,12.35c-2.61,3.74-5.95,6.81-9.85,9.11c-3.95,2.33-8.08,3.66-12.5,4.55c-8.3,1.67-13.97,2.05-19.31,0.98c-5.14-1.03-9.5-3.4-12.99-6.6c-5.17-4.74-8.39-11.14-9.09-17.82c-0.82-7.84,1.79-16.21,7.67-22.38c2.97-3.11,6.7-5.57,11.68-7.51c5.21-2.02,10.96-3.23,19.8-5.01c2.33-0.47,4.66-0.94,6.99-1.41c3.06-0.62,5.69-1.4,7.81-3.99c2.13-2.61,2.17-5.78,2.17-8.92l0-79.29c0-6.07-2.72-7.72-8.52-6.61c-4.14,0.81-93.09,18.75-93.09,18.75c-5.02,1.21-6.78,2.85-6.78,9.08l0,116.15c0,4.56-0.24,8.7-1.19,13.26c-0.93,4.43-2.63,8.6-5.24,12.35c-2.61,3.74-5.95,6.81-9.85,9.11c-3.95,2.33-8.08,3.72-12.5,4.61c-8.3,1.67-13.97,2.05-19.31,0.98c-5.14-1.03-9.5-3.47-12.99-6.66c-5.17-4.74-8.17-11.14-8.88-17.82c-0.82-7.84,1.57-16.21,7.46-22.38c2.97-3.11,6.7-5.57,11.68-7.51c5.21-2.02,10.96-3.23,19.8-5.01c2.33-0.47,4.66-0.94,6.99-1.41c3.06-0.62,5.69-1.4,7.81-3.99c2.12-2.59,2.37-5.64,2.37-8.76c0-24.6,0-133.92,0-133.92c0-1.8,0.15-3.02,0.24-3.62c0.43-2.82,1.56-5.24,3.6-6.95c1.7-1.42,3.88-2.41,6.67-3l0.04-0.01l107-21.59c0.93-0.19,8.66-1.56,9.53-1.64c5.78-0.5,9.03,3.3,9.03,9.46V234.26z"/></svg>
+      <span>Apple Music</span>
+    </a>
+    <a href="https://music.amazon.de/artists/B0G71DGBZ3/lovelee?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_AtZxIisAuUN0FgTKWQmjt8RNi" target="_blank" rel="noopener">
+      <svg viewBox="0 0 80 48" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><text x="40" y="26" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="21" text-anchor="middle">music</text><path d="M11 37 Q38 52 65 37" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M61 32 L67 37 L60 40 Z"/></svg>
+      <span>Amazon Music</span>
+    </a>
+    <a href="https://tidal.com/album/495169007" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7.5L9 9.5 7 11.5 5 9.5ZM12 7.5L14 9.5 12 11.5 10 9.5ZM17 7.5L19 9.5 17 11.5 15 9.5ZM12 12.5L14 14.5 12 16.5 10 14.5Z"/></svg>
+      <span>Tidal</span>
+    </a>
+    <a href="https://itslovelee.bandcamp.com/album/storm-chasers" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>
+      <span>Bandcamp</span>
+    </a>
+    <a href="https://www.deezer.com/us/artist/395937981" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.944 16.242h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm-4.815 5.34h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm-4.816 8.01h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zM4.498 16.242h3.463v1.594H4.498zm0-2.67h3.463v1.594H4.498zm-4.498 2.67h3.463v1.594H0z"/></svg>
+      <span>Deezer</span>
+    </a>
+    <a href="https://www.youtube.com/@Itsloveleee/releases" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+      <span>YouTube Music</span>
+    </a>
+  </div>
 </div>
 
 <section id="home">
   <div class="hero-photo" id="heroBg"></div>
-  <div class="hero-content">
-    <img src="logo.webp?v=3" class="hero-logo" alt="lovelee">
-
-  </div>
-
 </section>
 
-<section id="music">
-  <p class="section-label reveal">music</p>
-  <div class="release-grid reveal" style="grid-template-columns:1fr 1fr 1fr;max-width:800px;margin:0 auto;">
-    <div class="release-item" onclick="openStreamMenu('violet')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('VioletSongCoverPlastic.png');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">violet</span>
-        <span class="release-sub">single</span>
-      </div>
-      <div class="release-caption"><span class="release-title">violet</span></div>
+<div id="newsletter-section">
+  <form id="newsletter-form-inline" class="newsletter-form-modern">
+    <img src="jointhenewsletter.webp?v=1" alt="join the newsletter" style="max-width:320px; width:100%; height:auto; margin-bottom:20px; opacity:0.9;">
+    <div class="newsletter-row-modern" style="gap:0;">
+      <input type="text" id="newsletter-name-inline" placeholder="your name" class="newsletter-input-modern" style="flex:1; min-width:0;">
+      <span style="color:rgba(245,240,234,0.2); font-size:0.7rem; padding: 0 10px; align-self:center;">|</span>
+      <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-modern" style="flex:1; min-width:0;">
     </div>
-    <div class="release-item" onclick="openStreamMenu('feelingyou')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('FeelingYouCover.webp');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">feeling you</span>
-        <span class="release-sub">single</span>
+    <div class="newsletter-row-modern" style="gap:0;">
+      <div class="country-select-wrap" style="margin-right:6px;">
+        <span class="country-select-label" id="country-select-label-inline"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <select id="newsletter-country-inline" class="newsletter-country-select"></select>
       </div>
-      <div class="release-caption"><span class="release-title">feeling you</span></div>
+      <input type="tel" id="newsletter-phone-inline" placeholder="phone number (optional)" class="newsletter-input-modern" style="flex:1; min-width:0;">
     </div>
-    <div class="release-item" onclick="openStreamMenu('stormchasers')" role="button" tabindex="0">
-      <div class="release-art" style="background-image:url('StormChasersCover.webp');background-size:cover;background-position:center;"></div>
-      <div class="release-overlay">
-        <span class="release-title">storm chasers</span>
-        <span class="release-sub">ep</span>
-      </div>
-      <div class="release-caption"><span class="release-title">storm chasers</span></div>
+    <div class="newsletter-row-modern" style="border-bottom:none; margin-top:8px;">
+      <label class="newsletter-consent-modern" style="margin-top:0;">
+        <input type="checkbox" id="newsletter-consent-inline" required>
+        <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
+      </label>
     </div>
-  </div>
-</section>
-
-<section id="tour">
-  <p class="section-label reveal" id="tour-section-label">upcoming</p>
-  <div class="tour-list reveal" id="tour-list-dynamic">
-
-    <!-- Shows are loaded dynamically from Google Sheets.
-         Fallback rows shown while loading / if fetch fails. -->
-    <div class="tour-row" onclick="showTicketToast('linear-gradient(70deg, rgba(44,20,72,0.82) 0%, rgba(14,12,13,0.62) 55%, rgba(20,12,36,0.7) 100%)')">
-      <div class="tour-info">
-        <span class="tour-name">TRGRS</span>
-        <span class="tour-meta">Sep 15, 2026 · Berlin</span>
-      </div>
-      <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('linear-gradient(70deg, rgba(44,20,72,0.82) 0%, rgba(14,12,13,0.62) 55%, rgba(20,12,36,0.7) 100%)')">tickets</button>
-    </div>
-
-    <div class="tour-row" onclick="showTicketToast('linear-gradient(300deg, rgba(38,16,65,0.82) 0%, rgba(14,12,13,0.62) 55%, rgba(24,14,42,0.7) 100%)')">
-      <div class="tour-info">
-        <span class="tour-name">KRANSAAL</span>
-        <span class="tour-meta">Oct 2, 2026 · Werder</span>
-      </div>
-      <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('linear-gradient(300deg, rgba(38,16,65,0.82) 0%, rgba(14,12,13,0.62) 55%, rgba(24,14,42,0.7) 100%)')">tickets</button>
-    </div>
-
-    <div class="tour-row" onclick="showTicketToast('linear-gradient(170deg, rgba(50,24,76,0.8) 0%, rgba(14,12,13,0.62) 55%, rgba(18,10,34,0.72) 100%)')">
-      <div class="tour-info">
-        <span class="tour-name">THF RADIO BERLIN</span>
-        <span class="tour-meta">Oct 17, 2026 · Berlin</span>
-      </div>
-      <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('linear-gradient(170deg, rgba(50,24,76,0.8) 0%, rgba(14,12,13,0.62) 55%, rgba(18,10,34,0.72) 100%)')">tickets</button>
-    </div>
-
-    <div class="tour-row" onclick="showTicketToast('linear-gradient(340deg, rgba(42,18,70,0.84) 0%, rgba(14,12,13,0.62) 55%, rgba(22,12,40,0.7) 100%)')">
-      <div class="tour-info">
-        <span class="tour-name">EP RELEASE SHOW</span>
-        <span class="tour-meta">Dec 13, 2026 · Berlin</span>
-      </div>
-      <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('linear-gradient(340deg, rgba(42,18,70,0.84) 0%, rgba(14,12,13,0.62) 55%, rgba(22,12,40,0.7) 100%)')">tickets</button>
-    </div>
-
-  </div>
-  <!-- past shows list (hidden by default) -->
-  <div id="past-shows-list" style="display:none;flex-direction:column;width:100%;max-width:960px;"></div>
-
-  <!-- sticker always sits BELOW whichever list is visible, overlapping the last row -->
-  <div id="shows-sticker-wrap" style="width:100%;max-width:960px;margin-top:-55px;display:flex;justify-content:flex-end;transform:translateX(30px);position:relative;z-index:10;pointer-events:none;">
-    <div style="position:relative;width:200px;height:200px;">
-      <img id="shows-sticker-img" src="PreviousShowsBtn.webp" alt="previous shows" style="width:200px;height:200px;object-fit:contain;transform:rotate(-30deg);--sticker-rot:rotate(-30deg);pointer-events:none;transition:opacity 0.2s;opacity:0.85;display:block;">
-      <!-- clickable area covers only the bottom ~60% — below the overlap with the tickets row -->
-      <button onclick="toggleShowsView()" aria-label="toggle shows"
-        style="position:absolute;bottom:0;left:0;width:100%;height:120px;background:none;border:none;cursor:pointer;pointer-events:auto;"
-        onmouseover="document.getElementById('shows-sticker-img').style.opacity='1'"
-        onmouseout="document.getElementById('shows-sticker-img').style.opacity='0.85'">
+    <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+      <button type="submit" class="newsletter-btn-modern" style="background:none; border:none; padding:0; cursor:pointer;">
+        <img src="Join.webp" alt="join" style="height:40px; width:auto; opacity:0.9; display:block;">
       </button>
     </div>
+    <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
+  </form>
+</div>
+</div>
+
+<main id="scroll-content">
+
+<div id="panel-tour" class="section-panel" onclick="closePanel()">
+  <div id="tour-upcoming-section">
+    <div class="tour-featured-row">
+      <div class="tour-featured-date">
+        <span class="tour-featured-month">Jan</span>
+        <span class="tour-featured-day">14</span>
+      </div>
+      <div class="tour-featured-info">
+        <div class="tour-featured-venue">EP Release Show</div>
+        <div class="tour-featured-city">Berlin, DE</div>
+      </div>
+      <button class="tour-featured-ticket" onclick="event.stopPropagation(); showTicketToast()">Get Tickets</button>
+    </div>
   </div>
-</section>
+  <div id="tour-past-section" class="tour-list" style="margin-top:40px">
+    <img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">
+    <div class="tour-row past"><span class="tour-date">Oct 18</span><span class="tour-venue">THF RADIO BERLIN</span><span class="tour-city">Berlin, DE</span><span></span></div>
+    <div class="tour-row past"><span class="tour-date">Oct 2</span><span class="tour-venue">KRANSAAL</span><span class="tour-city">Werder, DE</span><span></span></div>
+    <div class="tour-row past"><span class="tour-date">Sep 14</span><span class="tour-venue">TRGRS SESSIONS</span><span class="tour-city">Berlin, DE</span><span></span></div>
+    <div class="tour-row past"><span class="tour-date">Aug 11</span><span class="tour-venue">NASSAU SESSIONS</span><span class="tour-city">Amsterdam, NL</span><span></span></div>
+    <div class="tour-row past"><span class="tour-date">Jun 21</span><span class="tour-venue">FÊTE DE LA MUSIQUE</span><span class="tour-city">Paris, FR</span><span></span></div>
+  </div>
+</div>
 
 <div id="ticket-toast" style="visibility:hidden;opacity:0" onclick="hideTicketToast()">
   <div class="ticket-toast-inner" onclick="event.stopPropagation()">
@@ -1268,16 +1837,26 @@
       <button class="ticket-toast-close" id="ticket-toast-close">✕</button>
     </div>
     <p class="ticket-toast-title">tickets coming soon</p>
-    <p class="ticket-toast-sub">join the newsletter to be the first to know (✿◠‿◠)</p>
+    <p class="ticket-toast-sub">join the newsletter to be the first to know</p>
     <form id="ticket-notify-form" class="ticket-notify-form">
-      <div class="ticket-notify-row">
-        <input type="email" id="ticket-notify-email" placeholder="your email" required class="ticket-notify-input">
-        <button type="submit" class="ticket-notify-btn">join</button>
+      <div class="ticket-notify-fields">
+        <input type="text" id="ticket-notify-name" placeholder="first name" class="ticket-notify-input">
+        <input type="email" id="ticket-notify-email" placeholder="email address" required class="ticket-notify-input">
+        <div class="newsletter-phone-row">
+          <div class="country-select-wrap">
+            <span class="country-select-label" id="ticket-country-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <select id="ticket-notify-country" class="newsletter-country-select"></select>
+          </div>
+          <input type="tel" id="ticket-notify-phone" placeholder="phone number (optional)" class="ticket-notify-input">
+        </div>
       </div>
-      <label class="newsletter-consent">
+      <label class="newsletter-consent" style="margin-top:16px">
         <input type="checkbox" id="ticket-notify-consent" required>
         <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
       </label>
+      <button type="submit" class="newsletter-popup-btn-full" style="margin-top:20px">
+        <img src="Join.webp?v=1" alt="join" class="newsletter-join-img">
+      </button>
     </form>
     <p id="ticket-notify-status" class="ticket-notify-status"></p>
   </div>
@@ -1342,58 +1921,89 @@
   </div>
 </div>
 
-<!-- DESKTOP: combined Press & Contact -->
-<section id="press-contact-desktop" class="reveal">
-  <p class="section-label">Press &amp; Contact</p>
-  <div class="epk-links pc-desktop-links">
-    <a href="Artist_EPK.png" download="lovelee_EPK.png" class="epk-link">download epk</a>
-    <a href="lovelee_press_photos.zip" download class="epk-link">download press photos</a>
-    <button class="epk-link" onclick="openNewsletterPopup()">join my newsletter :)</button>
-    <button class="epk-link" onclick="openContactModal('booking')">book lovelee</button>
-    <button class="epk-link" onclick="openContactModal('general')">general inquiries</button>
+  <div class="mobile-footer-links">
+    <a href="/impressum.html" class="nav-util-btn">impr.</a>
+    <a href="/privacy-policy.html" class="nav-util-btn">privacy</a>
   </div>
-</section>
+</main>
 
-<!-- MOBILE: separate Press + Contact -->
-<div class="press-contact-row">
+<!-- ── SECTION PANELS ─────────────────────────────────────────────────────── -->
+<div id="panel-music" class="section-panel" onclick="closePanel()">
+  <div class="music-carousel" onclick="event.stopPropagation()">
 
-<section id="epk">
-  <p class="section-label reveal">press</p>
-  <div class="epk-wrap reveal">
-    <div class="epk-block">
-      <div class="epk-links">
-        <a href="Artist_EPK.png" download="lovelee_EPK.png" class="epk-link">download epk</a>
-        <a href="lovelee_press_photos.zip" download class="epk-link">download press photos</a>
+    <div class="mc-stage">
+      <div class="mc-track active" data-key="violet">
+        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('violet')">
+          <img src="VioletSongCoverPlastic.webp" alt="violet">
+        </div>
+      </div>
+      <div class="mc-track" data-key="feelingyou">
+        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('feelingyou')">
+          <img src="FeelingYouCVRWeb.png" alt="feeling you">
+        </div>
+      </div>
+      <div class="mc-track" data-key="stormchasers">
+        <div class="mc-cover mc-cover--storm" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('stormchasers')">
+          <img src="StormChasersCover.webp" alt="storm chasers">
+        </div>
       </div>
     </div>
-  </div>
-</section>
 
-<section id="contact">
-  <p class="section-label reveal">contact</p>
-  <div class="epk-wrap reveal">
-    <div class="epk-block">
-      <div class="epk-links">
-        <button class="epk-link" id="newsletter-toggle">join my newsletter :)</button>
-        <button class="epk-link" onclick="openContactModal('booking')">book lovelee</button>
-        <button class="epk-link" onclick="openContactModal('general')">general inquiries</button>
+  </div>
+
+  <div class="mc-title-area" onclick="event.stopPropagation()">
+    <img src="title-violet.png"      alt="violet"      class="mc-title-img" data-for="violet">
+    <img src="title-feelingyou.png"  alt="feeling you" class="mc-title-img" data-for="feelingyou">
+    <img src="title-stormchasers.png" alt="storm chasers" class="mc-title-img" data-for="stormchasers">
+  </div>
+
+  <div class="mc-nav" onclick="event.stopPropagation()">
+  </div>
+
+</div>
+
+<div id="panel-press" class="section-panel" onclick="closePanel()">
+  <div class="pc-list" onclick="event.stopPropagation()">
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="event.stopPropagation(); togglePcSub(this)">
+        <span class="pc-row-label">Electronic Press Kit</span>
+      </button>
+      <div class="pc-sub">
+        <a href="Artist_EPK.png" download="lovelee_EPK.png" class="pc-sub-link">download</a>
       </div>
     </div>
-  </div>
-  <div class="newsletter-inline" id="newsletter-inline" style="display:none; margin-top: 24px; padding: 0 52px;">
-    <form id="newsletter-form-inline" class="newsletter-form-inline">
-      <div class="newsletter-inline-row">
-        <input type="email" id="newsletter-email-inline" placeholder="your email" required class="newsletter-input-inline">
-        <button type="submit" class="newsletter-submit-inline">subscribe</button>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="event.stopPropagation(); togglePcSub(this)">
+        <span class="pc-row-label">Press Photos</span>
+      </button>
+      <div class="pc-sub">
+        <a href="lovelee_press_photos.zip" download class="pc-sub-link">download</a>
       </div>
-      <label class="newsletter-consent">
-        <input type="checkbox" id="newsletter-consent-inline" required>
-        <span>i agree to receive updates from lovelee about new music, shows, and merch. <a href="/privacy-policy.html" target="_blank">privacy policy</a></span>
-      </label>
-    </form>
-    <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="event.stopPropagation(); togglePcSub(this)">
+        <span class="pc-row-label">Inquiries</span>
+      </button>
+      <div class="pc-sub">
+        <a id="pc-inquiry-link" class="pc-sub-link" href="#">—</a>
+      </div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="event.stopPropagation(); togglePcSub(this)">
+        <span class="pc-row-label">Support me</span>
+      </button>
+      <div class="pc-sub">
+        <a href="https://www.patreon.com/cw/itslovelee" target="_blank" rel="noopener" class="pc-sub-link">patreon</a>
+        <a href="https://buymeacoffee.com/itslovelee" target="_blank" rel="noopener" class="pc-sub-link">buy me a coffee</a>
+      </div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="event.stopPropagation(); closePanel(); document.getElementById('newsletter-section').scrollIntoView({behavior:'smooth'});">
+        <span class="pc-row-label">Newsletter</span>
+      </button>
+    </div>
   </div>
-</section>
+</div>
 
 </div>
 
@@ -1748,16 +2358,16 @@ if (newsletterForm) {
       });
       newsletterStatus.textContent = 'you are in :)';
       newsletterForm.reset();
-      btn.textContent = 'subscribe';
+      
     } catch {
       newsletterStatus.textContent = 'something went wrong — try again.';
-      btn.textContent = 'subscribe';
+      
     }
   });
 }
 
 // ── CRT NAV GLITCH ───────────────────────────────────────────────────────────
-const navLinks = document.querySelectorAll('nav a');
+const navLinks = document.querySelectorAll('.nav-left a');
 
 // On desktop, #epk and #contact are hidden inside .press-contact-row (display:none).
 // Redirect those nav clicks to #press-contact-desktop instead.
@@ -1797,41 +2407,7 @@ window.addEventListener('scroll', () => {
   heroLogo.style.opacity = opacity;
 }, { passive: true });
 
-// ── NAV FADE + GLITCH ON SCROLL ──────────────────────────────────────────────
-const navEl    = document.querySelector('nav');
-const socialEl = document.querySelector('.social-bar');
-
-window.addEventListener('scroll', () => {
-  // Fade nav out over the bottom 40% of the hero, fully gone past hero
-  const heroH    = window.innerHeight;
-  const fadeStart = heroH * 0.55;
-  const fadeEnd   = heroH * 0.92;
-  const y         = window.scrollY;
-  let opacity;
-  if (y <= fadeStart) {
-    opacity = 1;
-  } else if (y >= fadeEnd) {
-    opacity = 0;
-  } else {
-    opacity = 1 - (y - fadeStart) / (fadeEnd - fadeStart);
-  }
-
-  navEl.style.opacity = opacity;
-  if (socialEl) socialEl.style.opacity = opacity;
-
-  // Flicker: as opacity drops below 0.6, randomly glitch individual links
-  if (opacity < 0.6 && opacity > 0.02) {
-    const intensity = (0.6 - opacity) / 0.6;
-    if (Math.random() < intensity * 0.14) {
-      const links = navEl.querySelectorAll('a');
-      const link  = links[Math.floor(Math.random() * links.length)];
-      link.classList.remove('glitching');
-      void link.offsetWidth;
-      link.classList.add('glitching');
-      link.addEventListener('animationend', () => link.classList.remove('glitching'), { once: true });
-    }
-  }
-}, { passive: true });
+// ── NAV always visible ───────────────────────────────────────────────────────
 
 // ── RELEASE TILE COLOR ON SCROLL ─────────────────────────────────────────────
 // Lazy load release art
@@ -1873,20 +2449,50 @@ window.addEventListener('scroll', updateTiles, { passive: true });
 window.addEventListener('resize', updateTiles);
 updateTiles();
 
+// ── hero blur + logo fade on scroll ──────────────────────────────────────────
+const heroBgEl    = document.getElementById('heroBg');
+const heroContent = document.querySelector('.hero-content');
+const newsletterSection = document.getElementById('newsletter-section');
+const legalLinks  = document.getElementById('legal-links');
+function updateHeroScroll() {
+  heroBgEl.style.filter = '';
+  const scrollY = window.scrollY;
+
+  // logo fades out as user scrolls
+  if (heroContent) {
+    const fadeStart = window.innerHeight * 0.15;
+    const fadeEnd   = window.innerHeight * 0.4;
+    const logoOpacity = Math.max(0, Math.min(1, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart)));
+    heroContent.style.opacity = logoOpacity;
+  }
+
+}
+window.addEventListener('scroll', updateHeroScroll, { passive: true });
+window.addEventListener('resize', updateHeroScroll);
+// cancel CSS animation once done so JS opacity has full control
+if (heroContent) {
+  heroContent.addEventListener('animationend', () => {
+    heroContent.style.animation = 'none';
+    heroContent.style.transform = 'translateY(0)';
+    updateHeroScroll();
+  }, { once: true });
+}
+updateHeroScroll();
+
+
 // ── scroll reveals ────────────────────────────────────────────────────────────
 const io = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
+  entries.forEach(e => {
     if (e.isIntersecting) {
-      setTimeout(() => {
-        e.target.classList.add('visible');
-        // propagate to any nested epk-links so stagger animation fires
-        e.target.querySelectorAll('.epk-links').forEach(el => el.classList.add('visible'));
-      }, i * 90);
-      io.unobserve(e.target);
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.epk-links').forEach(el => el.classList.add('visible'));
+    } else {
+      e.target.classList.remove('visible');
+      e.target.querySelectorAll('.epk-links').forEach(el => el.classList.remove('visible'));
     }
   });
 }, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
 
 // ── TICKET NOTIFY TOAST ───────────────────────────────────────────────────────
 const ticketToast   = document.getElementById('ticket-toast');
@@ -1898,21 +2504,21 @@ function showTicketToast(gradient, soldOut) {
   ticketStatus.textContent = '';
   ticketStatus.className   = 'ticket-notify-status';
   document.getElementById('ticket-notify-email').value = '';
+  document.getElementById('ticket-notify-name').value  = '';
+  document.getElementById('ticket-notify-phone').value = '';
+  ticketForm.style.display = 'flex';
 
   const title = ticketToast.querySelector('.ticket-toast-title');
   const sub   = ticketToast.querySelector('.ticket-toast-sub');
 
   if (soldOut) {
     title.textContent = 'sold out';
-    sub.textContent   = window.innerWidth < 900
-      ? 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ <3'
-      : 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ ♥';
+    sub.textContent   = 'join the newsletter to hear about future shows (ɔ◔‿◔)ɔ ♥';
   } else {
     title.textContent = 'tickets coming soon';
     sub.textContent   = 'join the newsletter to be the first to know (✿◠‿◠)';
   }
 
-  ticketForm.style.display = 'flex';
   if (gradient) ticketToast.style.background = gradient;
   ticketToast.style.visibility = '';
   ticketToast.style.opacity    = '';
@@ -1929,20 +2535,31 @@ if (ticketClose) ticketClose.addEventListener('click', hideTicketToast);
 if (ticketForm) {
   ticketForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = document.getElementById('ticket-notify-email').value;
-    const consent = document.getElementById('ticket-notify-consent').checked;
+    const email      = document.getElementById('ticket-notify-email').value;
+    const name       = document.getElementById('ticket-notify-name').value.trim();
+    const phoneRaw   = document.getElementById('ticket-notify-phone').value.trim();
+    const countryCode = document.getElementById('ticket-notify-country').value;
+    const consent    = document.getElementById('ticket-notify-consent').checked;
     if (!consent) {
       ticketStatus.textContent = 'please accept to continue';
       return;
     }
-    const btn   = ticketForm.querySelector('.ticket-notify-btn');
-    btn.textContent = '...';
+    let phone = '';
+    if (phoneRaw) {
+      if (!countryCode) { ticketStatus.textContent = 'please select your country'; return; }
+      const digits = phoneRaw.replace(/[\s\-().+]/g, '');
+      if (!/^\d{5,12}$/.test(digits)) { ticketStatus.textContent = 'please enter a valid phone number'; return; }
+      phone = '+' + countryCode + digits;
+    }
+    const btn = ticketForm.querySelector('[type="submit"]');
+    btn.style.opacity = '0.5';
+    btn.disabled = true;
     try {
       const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true, eventId }),
+        body: JSON.stringify({ email, name, phone, consentGiven: true, eventId }),
       });
       if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       ticketForm.style.display = 'none';
@@ -1952,7 +2569,8 @@ if (ticketForm) {
     } catch {
       ticketStatus.textContent = 'something went wrong — try again.';
       ticketStatus.classList.add('error');
-      btn.textContent = 'notify me';
+      btn.style.opacity = '1';
+      btn.disabled = false;
     }
   });
 }
@@ -1963,19 +2581,19 @@ const musicDropdown  = document.getElementById('music-dropdown');
 const musicBackdrop  = document.getElementById('music-backdrop');
 
 function openMusicMenu() {
-  musicDropdown.classList.add('open');
-  musicBtn.classList.add('active');
   if (musicBackdrop) {
     musicBackdrop.style.display = 'block';
     requestAnimationFrame(() => musicBackdrop.classList.add('open'));
   }
+  musicDropdown.classList.add('open');
+  musicBtn.classList.add('active');
 }
 function closeMusicMenu() {
   musicDropdown.classList.remove('open');
   musicBtn.classList.remove('active');
   if (musicBackdrop) {
     musicBackdrop.classList.remove('open');
-    setTimeout(() => { musicBackdrop.style.display = 'none'; }, 200);
+    setTimeout(() => { musicBackdrop.style.display = 'none'; }, 220);
   }
 }
 
@@ -2176,36 +2794,37 @@ window.addEventListener('pageshow', function () {
     ['YE','Yemen','967'],['ZM','Zambia','260'],['ZW','Zimbabwe','263'],
   ];
 
-  const sel = document.getElementById('newsletter-country-popup');
-  if (!sel) return;
-
-  sel.innerHTML = '<option value="">select country</option>' +
+  const chevron = '<svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const optionsHTML = '<option value="">—</option>' +
     COUNTRIES.map(([iso, name, dial]) =>
       `<option value="${dial}" data-iso="${iso}">${name}</option>`
     ).join('');
 
-  const label = document.getElementById('country-select-label');
-  const chevron = '<svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-  function setLabel(text) {
-    if (label) label.innerHTML = `<span>${text}</span>${chevron}`;
+  function initCountrySelect(selId, labelId) {
+    const sel = document.getElementById(selId);
+    const label = document.getElementById(labelId);
+    if (!sel || !label) return;
+    sel.innerHTML = optionsHTML;
+    function setLabel(text) { label.innerHTML = `<span>${text}</span>${chevron}`; }
+    sel.addEventListener('change', () => {
+      const opt = sel.options[sel.selectedIndex];
+      if (opt && opt.value) setLabel(opt.dataset.iso + ' +' + opt.value);
+      else setLabel('—');
+    });
+    fetch('https://www.cloudflare.com/cdn-cgi/trace')
+      .then(r => r.text())
+      .then(txt => {
+        const loc = (txt.match(/loc=([A-Z]{2})/) || [])[1];
+        if (!loc) return;
+        const opt = sel.querySelector(`option[data-iso="${loc}"]`);
+        if (opt) { opt.selected = true; setLabel(loc + ' +' + opt.value); }
+      })
+      .catch(() => {});
   }
 
-  sel.addEventListener('change', () => {
-    const opt = sel.options[sel.selectedIndex];
-    if (opt && opt.value) setLabel(opt.dataset.iso + ' +' + opt.value);
-    else setLabel('—');
-  });
-
-  fetch('https://www.cloudflare.com/cdn-cgi/trace')
-    .then(r => r.text())
-    .then(txt => {
-      const loc = (txt.match(/loc=([A-Z]{2})/) || [])[1];
-      if (!loc) return;
-      const opt = sel.querySelector(`option[data-iso="${loc}"]`);
-      if (opt) { opt.selected = true; setLabel(loc + ' +' + opt.value); }
-    })
-    .catch(() => {});
+  initCountrySelect('newsletter-country-popup', 'country-select-label');
+  initCountrySelect('newsletter-country-inline', 'country-select-label-inline');
+  initCountrySelect('ticket-notify-country', 'ticket-country-label');
 })();
 
 // ── CONFIRMED SPLASH ──────────────────────────────────────────────────────────
@@ -2235,6 +2854,13 @@ window.addEventListener('pageshow', function () {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
   else show();
 })();
+
+// Hide all panels on init
+document.querySelectorAll('.section-panel').forEach(p => p.style.display = 'none');
+
+// Hash is read early but panel open deferred — stored here for after openPanel is defined
+window.__hashPanelTarget = { '#view-music': 'panel-music', '#view-upcoming': 'panel-tour', '#view-press': 'panel-press' }[window.location.hash] || null;
+if (window.__hashPanelTarget) history.replaceState(null, '', window.location.pathname);
 
 // ── NEWSLETTER POPUP FORM ─────────────────────────────────────────────────────
 const newsletterFormPopup   = document.getElementById('newsletter-form-popup');
@@ -2296,64 +2922,36 @@ if (newsletterFormInline) {
   newsletterFormInline.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('newsletter-email-inline').value;
+    const name = document.getElementById('newsletter-name-inline').value.trim();
+    const rawPhone = document.getElementById('newsletter-phone-inline').value.trim();
+    const countryCode = document.getElementById('newsletter-country-inline')?.value || '';
+    const phone = rawPhone ? (countryCode ? '+' + countryCode + rawPhone.replace(/\D/g,'') : rawPhone) : '';
     const consent = document.getElementById('newsletter-consent-inline').checked;
     if (!consent) {
       newsletterStatusInline.textContent = 'please accept to continue';
       return;
     }
-    const btn = newsletterFormInline.querySelector('.newsletter-submit-inline');
+    const btn = newsletterFormInline.querySelector('.newsletter-btn-modern');
     btn.textContent = '...';
     try {
       const eventId = crypto.randomUUID();
       await fetch('https://brevo-newsletter.lee-ai-list.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: '', consentGiven: true, eventId })
+        body: JSON.stringify({ email, name, phone, consentGiven: true, eventId })
       });
       if (typeof fbq !== 'undefined') fbq('track', 'Lead', {}, { eventID: eventId });
       newsletterStatusInline.textContent = 'check your email to confirm :)';
       newsletterFormInline.reset();
-      btn.textContent = 'subscribe';
+      
     } catch {
       newsletterStatusInline.textContent = 'something went wrong — try again.';
-      btn.textContent = 'subscribe';
+      
     }
   });
 }
 
 </script>
-<!-- ── SITE FOOTER ───────────────────────────────────────────────────────────── -->
-<footer style="
-  position: relative; z-index: 2;
-  padding: 32px 52px 44px;
-  text-align: center;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(245,240,234,0.2);
-">
-  <div style="margin-bottom: 14px;">
-    <button onclick="openSupportPopup()" style="
-      background: none; border: none; cursor: pointer;
-      font-family: 'Inter', sans-serif; font-size: 0.55rem;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: rgba(245,240,234,0.55); transition: color 0.2s; padding: 0;
-    "
-    onmouseover="this.style.color='rgba(245,240,234,0.9)'" onmouseout="this.style.color='rgba(245,240,234,0.55)'">
-      support me
-    </button>
-  </div>
-  <a href="/impressum.html" style="color:rgba(245,240,234,0.2); text-decoration:none; transition: color 0.2s;"
-     onmouseover="this.style.color='rgba(245,240,234,0.55)'" onmouseout="this.style.color='rgba(245,240,234,0.2)'">
-    impressum
-  </a>
-  <span style="color:rgba(245,240,234,0.15); margin: 0 10px;">·</span>
-  <a href="/privacy-policy.html" style="color:rgba(245,240,234,0.2); text-decoration:none; transition: color 0.2s;"
-     onmouseover="this.style.color='rgba(245,240,234,0.55)'" onmouseout="this.style.color='rgba(245,240,234,0.2)'">
-    privacy policy
-  </a>
-</footer>
 
 <!-- ── CONTACT MODAL CSS ─────────────────────────────────────────────────── -->
 <style>
@@ -2588,23 +3186,29 @@ if (newsletterFormInline) {
   }
   .ticket-toast-close:hover { color: rgba(245,240,234,0.8); }
   .ticket-notify-form { display: flex; flex-direction: column; }
+  .ticket-notify-fields { display: flex; flex-direction: column; gap: 0; }
   .ticket-notify-row {
     display: flex; gap: 0; align-items: center;
     border-bottom: 1px solid rgba(245,240,234,0.15); padding-bottom: 12px;
   }
-  .ticket-notify-input {
-    flex: 1;
+  .ticket-notify-fields .ticket-notify-input,
+  .ticket-notify-fields .newsletter-popup-input {
+    width: 100%;
     background: transparent;
     border: none;
+    border-bottom: 1px solid rgba(245,240,234,0.15);
     color: var(--cream);
     font-family: 'Inter', sans-serif;
     font-size: 0.65rem;
     font-weight: 300;
     letter-spacing: 0.08em;
-    padding: 4px 0;
+    padding: 10px 0;
     outline: none;
   }
-  .ticket-notify-input::placeholder { color: rgba(245,240,234,0.3); }
+  .ticket-notify-fields .newsletter-phone-row .ticket-notify-input { border-bottom: none; flex: 1; min-width: 0; }
+  .ticket-notify-fields .newsletter-phone-row { border-bottom: 1px solid rgba(245,240,234,0.15); }
+  .ticket-notify-input::placeholder,
+  .ticket-notify-fields .newsletter-popup-input::placeholder { color: rgba(245,240,234,0.3); }
   .ticket-notify-btn {
     font-family: 'Inter', sans-serif;
     font-size: 0.58rem;
@@ -2657,70 +3261,56 @@ if (newsletterFormInline) {
   #stream-popup-inner {
     background: transparent;
     border: none;
-    padding: 0 40px;
-    width: min(360px, calc(100vw - 48px));
+    padding: 0 32px;
+    width: min(340px, calc(100vw - 48px));
     display: flex;
     flex-direction: column;
-    transform: translateY(10px);
-    transition: transform 0.22s ease;
+    transform: translateY(12px);
+    transition: transform 0.26s cubic-bezier(0.22,1,0.36,1);
   }
-  #stream-popup.open #stream-popup-inner {
-    transform: translateY(0);
-  }
+  #stream-popup.open #stream-popup-inner { transform: translateY(0); }
   .stream-popup-top {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 28px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
   }
-  #stream-popup-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 10vw, 3.2rem);
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
-    color: var(--cream);
-    line-height: 1;
-  }
+  #stream-popup-title { display: none; }
   #stream-popup-close {
-    background: none;
-    border: none;
-    color: rgba(245,240,234,0.35);
-    font-size: 0.7rem;
-    cursor: pointer;
-    padding: 4px 0 0 16px;
-    transition: color 0.2s;
-    line-height: 1;
-    flex-shrink: 0;
+    background: none; border: none;
+    color: rgba(245,240,234,0.3); font-size: 0.65rem;
+    cursor: pointer; padding: 12px;
+    margin: -12px;
+    transition: color 0.2s; line-height: 1;
   }
   #stream-popup-close:hover { color: rgba(245,240,234,0.8); }
   .stream-popup-link {
     display: flex;
     align-items: center;
     gap: 14px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: normal;
-    letter-spacing: 0.12em;
-    text-transform: lowercase;
-    color: #fff;
+    color: rgba(245,240,234,0.75);
     text-decoration: none;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(245,240,234,0.15);
-    transition: color 0.2s;
+    padding: 13px 16px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
   }
-  .stream-popup-link:last-child { border-bottom: none; }
-  .stream-popup-link::before {
-    content: '';
-    display: block;
-    width: 14px;
-    height: 1px;
-    background: currentColor;
+  .stream-popup-link:last-child { margin-bottom: 0; }
+  .stream-popup-link:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-color: rgba(255,255,255,0.18);
+  }
+  .stream-popup-link svg {
+    width: 22px; height: 22px;
     flex-shrink: 0;
-    transition: width 0.2s;
+    opacity: 0.85;
   }
-  .stream-popup-link:hover { color: #fff; }
-  .stream-popup-link:hover::before { width: 22px; }
 </style>
 
 <div id="stream-popup" style="visibility:hidden;opacity:0">
@@ -2736,11 +3326,14 @@ if (newsletterFormInline) {
   // Update with per-song links whenever you have them
   const songLinks = {
     violet:       { displayName: 'violet', spotify: 'https://open.spotify.com/track/0w7zKDJJ916s9eUsXB0Oru?si=e42bab8cbb094a2a', apple: 'https://music.apple.com/de/album/violet/6815243973?i=6815243978&l=en-GB', amazon: 'https://music.amazon.com/tracks/B0HKSXNQ2R/?ref=dm_sh_z1xSp58DbbwJAwr575u2lVkog', tidal: 'https://tidal.com/track/563744772/u', bandcamp: 'https://itslovelee.bandcamp.com/track/violet', deezer: 'https://link.deezer.com/s/34L1T5JKbSxnFrJ7EJXhD', youtube: 'https://youtu.be/TkV38QtSp9g?si=pCSvOaSq2Pa_9aUT',
-      sub: 'single' },
+      sub: 'single',
+      backdrop: 'linear-gradient(225deg, rgba(160,40,100,0.72) 0%, rgba(14,12,13,0.62) 55%, rgba(100,20,60,0.65) 100%)' },
     feelingyou:   { displayName: 'feeling\nyou', spotify: 'https://open.spotify.com/track/7mKjnIQSZkrXuLRtyE0lRe?si=70dec3bc123047ed', apple: 'https://music.apple.com/de/album/feeling-you/6797563172?i=6797563174&l=en-GB', amazon: 'https://music.amazon.com/albums/B0HCPYDWMR', tidal: 'https://tidal.com/browse/track/548866312', bandcamp: 'https://itslovelee.bandcamp.com/track/feeling-you', deezer: 'https://www.deezer.com/track/4199155092', youtube: 'https://www.youtube.com/watch?v=OeRZydu8HHw',
-      sub: 'single' },
+      sub: 'single',
+      backdrop: 'linear-gradient(225deg, rgba(30,100,160,0.72) 0%, rgba(14,12,13,0.62) 55%, rgba(20,70,120,0.65) 100%)' },
     stormchasers: { displayName: 'storm\nchasers', spotify: 'https://open.spotify.com/album/336qhN4B49KyyFsCu06O75?si=1e6oeBzwQi2MJIwY4G2oyA', apple: 'https://music.apple.com/de/album/storm-chasers-ep/6778823329?l=en-GB', amazon: 'https://music.amazon.com/albums/B0H4RWBTLT?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_AESpJeZ9U4ZmwtV3yCUbiMx9c', tidal: 'https://tidal.com/album/532362770/u', bandcamp: 'https://itslovelee.bandcamp.com/album/storm-chasers', deezer: 'https://link.deezer.com/s/33OgPX8pGSFfYQa28VS6m', youtube: 'https://youtube.com/playlist?list=OLAK5uy_mDz949IXLPNvIWC2Cpy9EDSbUfMKEwI0c&si=oOhyKWFxQLqDgeY1',
-                   gradient: 'linear-gradient(155deg, rgba(80,12,30,0.85) 0%, rgba(14,12,13,0.62) 50%, rgba(50,8,20,0.75) 100%)' },
+                   gradient: 'linear-gradient(155deg, rgba(80,12,30,0.85) 0%, rgba(14,12,13,0.62) 50%, rgba(50,8,20,0.75) 100%)',
+                   backdrop: 'linear-gradient(225deg, rgba(180,160,140,0.55) 0%, rgba(14,12,13,0.62) 55%, rgba(140,120,100,0.48) 100%)' },
     tears:   { spotify: 'https://open.spotify.com/track/6Xwq2z4WOZmIiUFRp9fAnw', apple: 'https://music.apple.com/de/album/tears/6767345261?i=6767345263&l=en-GB', amazon: 'https://music.amazon.de/albums/B0GVP921JX?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_ZjfJSQiIV9MZ9K4OOS0GC0wnr', tidal: 'https://tidal.com/album/495169007', bandcamp: 'https://itslovelee.bandcamp.com/track/tears', deezer: 'https://www.deezer.com/us/track/3935973391', youtube: 'https://youtu.be/j8cZ_z4SPso?si=VkaSkNb_7bLrNqpO',
                gradient: 'linear-gradient(155deg, rgba(48,22,78,0.82) 0%, rgba(14,12,13,0.6) 50%, rgba(20,12,36,0.72) 100%)' },
     unahana: { spotify: 'https://open.spotify.com/track/2ZakSNW70Q86PVaJIIlvZy', apple: 'https://music.apple.com/de/album/unahana/1873902941?i=1873902945&l=en-GB', amazon: 'https://music.amazon.de/albums/B0GL2GKXPN?marketplaceId=A1PA6795UKMFR9&musicTerritory=DE&ref=dm_sh_Q5gxt1bRezLk5ixdD19GUuQQm', tidal: 'https://tidal.com/album/495169007', bandcamp: 'https://itslovelee.bandcamp.com/track/unahana', deezer: 'https://www.deezer.com/us/track/3817412902', youtube: 'https://www.youtube.com/watch?v=DKDkKsiw78g',
@@ -2765,18 +3358,29 @@ if (newsletterFormInline) {
     } else {
       streamPopupTitle.textContent = display;
     }
+    const streamIcons = {
+      spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.29c-.217.356-.683.47-1.039.254-2.843-1.737-6.424-2.13-10.642-1.167-.407.093-.813-.16-.906-.567-.093-.407.16-.813.567-.906 4.613-1.054 8.572-.6 11.767 1.347.356.217.47.683.253 1.039zm1.474-3.275c-.273.444-.854.583-1.297.31-3.254-2-8.213-2.58-12.063-1.411-.5.152-1.028-.131-1.18-.63-.152-.5.131-1.028.63-1.18 4.4-1.335 9.87-.689 13.6 1.613.444.273.583.854.31 1.298zm.127-3.407c-3.9-2.316-10.335-2.528-14.062-1.398-.598.182-1.23-.152-1.412-.75-.181-.598.152-1.23.75-1.411 4.285-1.3 11.408-1.049 15.906 1.617.539.32.716 1.016.396 1.554-.319.539-1.016.716-1.554.397l-.024-.009z"/></svg>`,
+      apple: `<svg viewBox="0 0 361 361" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M359.98,99.71c-0.02-3.62-0.06-7.24-0.16-10.86c-0.21-7.89-0.68-15.84-2.08-23.64c-1.42-7.92-3.75-15.29-7.41-22.49c-3.6-7.07-8.3-13.53-13.91-19.14c-5.61-5.61-12.08-10.31-19.15-13.91c-7.19-3.66-14.56-5.98-22.47-7.41c-7.8-1.4-15.76-1.87-23.65-2.08c-3.62-0.1-7.24-0.14-10.86-0.16C255.99,0,251.69,0,247.39,0H112.61c-4.3,0-8.6,0-12.9,0.02c-3.62,0.02-7.24,0.06-10.86,0.16C80.96,0.4,73,0.86,65.2,2.27c-7.92,1.42-15.28,3.75-22.47,7.41c-7.07,3.6-13.54,8.3-19.15,13.91c-5.61,5.61-10.31,12.07-13.91,19.14c-3.66,7.2-5.99,14.57-7.41,22.49c-1.4,7.8-1.87,15.76-2.08,23.64c-0.1,3.62-0.14,7.24-0.16,10.86C0,104.01,0,108.31,0,112.61v134.77c0,4.3,0,8.6,0.02,12.9c0.02,3.62,0.06,7.24,0.16,10.86c0.21,7.89,0.68,15.84,2.08,23.64c1.42,7.92,3.75,15.29,7.41,22.49c3.6,7.07,8.3,13.53,13.91,19.14c5.61,5.61,12.08,10.31,19.15,13.91c7.19,3.66,14.56,5.98,22.47,7.41c7.8,1.4,15.76,1.87,23.65,2.08c3.62,0.1,7.24,0.14,10.86,0.16c4.3,0.03,8.6,0.02,12.9,0.02h134.77c4.3,0,8.6,0,12.9-0.02c3.62-0.02,7.24-0.06,10.86-0.16c7.89-0.21,15.85-0.68,23.65-2.08c7.92-1.42,15.28-3.74,22.47-7.41c7.07-3.6,13.54-8.3,19.15-13.91c5.61-5.61,10.31-12.07,13.91-19.14c3.66-7.2,5.99-14.57,7.41-22.49c1.4-7.8,1.87-15.76,2.08-23.64c0.1-3.62,0.14-7.24,0.16-10.86c0.03-4.3,0.02-8.6,0.02-12.9V112.61C360,108.31,360,104.01,359.98,99.71z M263.54,234.26c0,4.56-0.04,8.7-1,13.26c-0.93,4.43-2.63,8.6-5.24,12.35c-2.61,3.74-5.95,6.81-9.85,9.11c-3.95,2.33-8.08,3.66-12.5,4.55c-8.3,1.67-13.97,2.05-19.31,0.98c-5.14-1.03-9.5-3.4-12.99-6.6c-5.17-4.74-8.39-11.14-9.09-17.82c-0.82-7.84,1.79-16.21,7.67-22.38c2.97-3.11,6.7-5.57,11.68-7.51c5.21-2.02,10.96-3.23,19.8-5.01c2.33-0.47,4.66-0.94,6.99-1.41c3.06-0.62,5.69-1.4,7.81-3.99c2.13-2.61,2.17-5.78,2.17-8.92l0-79.29c0-6.07-2.72-7.72-8.52-6.61c-4.14,0.81-93.09,18.75-93.09,18.75c-5.02,1.21-6.78,2.85-6.78,9.08l0,116.15c0,4.56-0.24,8.7-1.19,13.26c-0.93,4.43-2.63,8.6-5.24,12.35c-2.61,3.74-5.95,6.81-9.85,9.11c-3.95,2.33-8.08,3.72-12.5,4.61c-8.3,1.67-13.97,2.05-19.31,0.98c-5.14-1.03-9.5-3.47-12.99-6.66c-5.17-4.74-8.17-11.14-8.88-17.82c-0.82-7.84,1.57-16.21,7.46-22.38c2.97-3.11,6.7-5.57,11.68-7.51c5.21-2.02,10.96-3.23,19.8-5.01c2.33-0.47,4.66-0.94,6.99-1.41c3.06-0.62,5.69-1.4,7.81-3.99c2.12-2.59,2.37-5.64,2.37-8.76c0-24.6,0-133.92,0-133.92c0-1.8,0.15-3.02,0.24-3.62c0.43-2.82,1.56-5.24,3.6-6.95c1.7-1.42,3.88-2.41,6.67-3l0.04-0.01l107-21.59c0.93-0.19,8.66-1.56,9.53-1.64c5.78-0.5,9.03,3.3,9.03,9.46V234.26z"/></svg>`,
+      amazon: `<svg viewBox="0 0 80 48" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><text x="40" y="26" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="21" text-anchor="middle">music</text><path d="M11 37 Q38 52 65 37" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M61 32 L67 37 L60 40 Z"/></svg>`,
+      tidal: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7.5L9 9.5 7 11.5 5 9.5ZM12 7.5L14 9.5 12 11.5 10 9.5ZM17 7.5L19 9.5 17 11.5 15 9.5ZM12 12.5L14 14.5 12 16.5 10 14.5Z"/></svg>`,
+      bandcamp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+      deezer: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.944 16.242h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm-4.815 5.34h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm0-2.67h3.463v1.594h-3.463zm-4.816 8.01h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zm0-2.67h3.463v1.594H9.313zM4.498 16.242h3.463v1.594H4.498zm0-2.67h3.463v1.594H4.498zm-4.498 2.67h3.463v1.594H0z"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>`,
+    };
+    const streamLabels = { spotify: 'Spotify', apple: 'Apple Music', amazon: 'Amazon Music', tidal: 'Tidal', bandcamp: 'Bandcamp', deezer: 'Deezer', youtube: 'YouTube Music' };
     streamPopupLinks.innerHTML = [
-      ['spotify',      links.spotify],
-      ['apple music',  links.apple],
-      ['amazon music', links.amazon],
-      ['tidal',        links.tidal],
-      ['bandcamp',     links.bandcamp],
-      ['deezer',       links.deezer],
-      ['youtube music', links.youtube],
-    ].filter(([, url]) => url).map(([label, url]) =>
-      `<a href="${url}" target="_blank" rel="noopener" class="stream-popup-link">${label}</a>`
+      ['spotify', links.spotify],
+      ['apple',   links.apple],
+      ['amazon',  links.amazon],
+      ['tidal',   links.tidal],
+      ['bandcamp',links.bandcamp],
+      ['deezer',  links.deezer],
+      ['youtube', links.youtube],
+    ].filter(([, url]) => url).map(([key, url]) =>
+      `<a href="${url}" target="_blank" rel="noopener" class="stream-popup-link">${streamIcons[key]}<span>${streamLabels[key]}</span></a>`
     ).join('');
     if (links.gradient) streamPopup.style.background = links.gradient;
+    if (musicBackdrop) musicBackdrop.style.background = links.backdrop || 'linear-gradient(225deg, rgba(50,26,78,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(18,12,32,0.72) 100%)';
     streamPopup.style.visibility = '';
     streamPopup.style.opacity    = '';
     streamPopup.classList.add('open');
@@ -2856,7 +3460,7 @@ if (newsletterFormInline) {
   }
 </script>
 
-<!-- ── COOKIE CONSENT ───────────────────────────────────────────────────────── -->
+<!-- ── COOKIE CONSENT (disabled — re-enable if Meta Pixel or merch tracking needed) ──
 <style>
   #cookie-banner {
     position: fixed;
@@ -2994,6 +3598,7 @@ if (newsletterFormInline) {
     });
   })();
 </script>
+── end COOKIE CONSENT -->
 <section aria-hidden="false" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
   <h1>lovelee — Berlin indie pop artist</h1>
   <p>lovelee is the artist project of Leon Byvanck, a Berlin-based singer-songwriter and guitarist making indie pop and bedroom pop. Positioned between Steve Lacy and Clairo, lovelee's music is guitar-driven, emotionally direct, and modern without being nostalgic. His GEMA-registered catalogue has accumulated over 800,000 streams. He is releasing the Storm Chasers EP in June 2026 and the Violet EP across the second half of 2026. Alongside his solo work, he is the touring guitarist for Berlin indie act Dilla, with over 150 concerts at major festivals including Hurricane, Southside, and Superbloom, and television appearances on ProSieben, MDR, ARD, and ZDF. His singles Romeo, Demons, Unahana, and Tears are available on all streaming platforms.</p>
@@ -3014,194 +3619,118 @@ if (newsletterFormInline) {
   const SHOWS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7g26J6XtGA0irZqX7gpbFdDXDVIaXt5qsxk6FrX6L-8L46MeJlATxOEs2mB3pjM-hhKSZPFnB-JtY/pub?output=csv';
   // Leave blank to keep hardcoded rows. Fill in to go live.
 
-  if (!SHOWS_CSV_URL) return; // no URL yet — hardcoded rows stay visible
+  if (!SHOWS_CSV_URL) return;
 
-  const tourList = document.getElementById('tour-list-dynamic');
-  if (!tourList) return;
+  const upcomingEl = document.getElementById('tour-upcoming-section');
+  const pastEl     = document.getElementById('tour-past-section');
+  if (!upcomingEl || !pastEl) return;
 
-  // Show subtle loading state while fetching
-  tourList.innerHTML = '<div class="tour-loading">loading shows…</div>';
+  upcomingEl.innerHTML = '<div class="tour-loading">loading…</div>';
 
   fetch(SHOWS_CSV_URL + '&t=' + Date.now())
-    .then(r => {
-      if (!r.ok) throw new Error('fetch failed');
-      return r.text();
-    })
+    .then(r => { if (!r.ok) throw new Error('fetch failed'); return r.text(); })
     .then(csv => {
-      const rows    = parseCSV(csv).slice(1); // skip header row
-      const today   = new Date(); today.setHours(0, 0, 0, 0);
+      const rows  = parseCSV(csv).slice(1);
+      const today = new Date(); today.setHours(0,0,0,0);
 
       const upcoming = rows
-        .filter(r => {
-          const [date, venue, , , , status] = r;
-          if (!date || !venue) return false;
-          if (!status) return false;
-          return new Date(date) >= today;
-        })
-        .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+        .filter(r => r[0] && r[1] && r[5] && new Date(r[0]) >= today)
+        .sort((a,b) => new Date(a[0]) - new Date(b[0]));
 
-      if (upcoming.length === 0) {
-        tourList.innerHTML = '<div class="tour-loading">no upcoming shows scheduled</div>';
-        return;
+      const past = rows
+        .filter(r => r[0] && r[1] && new Date(r[0]) < today)
+        .sort((a,b) => new Date(b[0]) - new Date(a[0]));
+
+      const useEditorial = upcoming.length > 1;
+
+      upcomingEl.innerHTML = upcoming.length
+        ? upcoming.map(r => buildRow(r, false, useEditorial)).join('')
+        : '<div class="tour-loading">no upcoming shows</div>';
+
+      if (past.length > 0) {
+        pastEl.innerHTML = '<img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">' + past.map(r => buildRow(r, true, false)).join('');
       }
 
-      tourList.innerHTML = upcoming.map(r => buildRow(r)).join('');
-
-      // Stagger entrance animation
-      tourList.querySelectorAll('.tour-row').forEach((el, i) => {
+      const allRows = [...upcomingEl.querySelectorAll('.tour-featured-row, .tour-editorial-row'), ...pastEl.querySelectorAll('.tour-row')];
+      allRows.forEach((el, i) => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(14px)';
+        el.style.transform = 'translateY(8px)';
         setTimeout(() => {
-          el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
-          el.style.opacity    = '1';
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          el.style.opacity    = el.classList.contains('past') ? '0.55' : '1';
           el.style.transform  = 'translateY(0)';
-        }, i * 85);
+        }, i * 40);
       });
     })
-    .catch(() => {
-      // Silently fall back — keep whatever was in the DOM before the loading spinner
-      // (re-render hardcoded rows)
-      renderFallback(tourList);
-    });
+    .catch(() => {}); // keep hardcoded fallback rows
 
-  // inject sticker keyframes once
-  (function() {
-    const s = document.createElement('style');
-    s.textContent = `
-      @keyframes stickerOut {
-        0%   { transform: var(--sticker-rot) scale(1); }
-        40%  { transform: var(--sticker-rot) scale(0.6) rotate(160deg); }
-        100% { transform: var(--sticker-rot) scale(0) rotate(340deg); }
-      }
-      @keyframes stickerIn {
-        0%   { transform: var(--sticker-rot) scale(0) rotate(-340deg); }
-        60%  { transform: var(--sticker-rot) scale(1.15) rotate(-20deg); }
-        80%  { transform: var(--sticker-rot) scale(0.93) rotate(5deg); }
-        100% { transform: var(--sticker-rot) scale(1); }
-      }
-      #shows-sticker-img.spin-out { animation: stickerOut 0.32s cubic-bezier(0.4,0,1,1) forwards; }
-      #shows-sticker-img.spin-in  { animation: stickerIn  0.4s cubic-bezier(0.2,0.8,0.3,1) forwards; }
-    `;
-    document.head.appendChild(s);
-  })();
-
-  let _pastRows = null;
-  let _showingPast = false;
-  window.toggleShowsView = function() {
-    const img = document.getElementById('shows-sticker-img');
-    if (img.classList.contains('spin-out') || img.classList.contains('spin-in')) return; // debounce
-
-    _showingPast = !_showingPast;
-    const upcoming = document.getElementById('tour-list-dynamic');
-    const pastList = document.getElementById('past-shows-list');
-    const wrap     = document.getElementById('shows-sticker-wrap');
-
-    // spin out
-    img.classList.add('spin-out');
-
-    setTimeout(() => {
-      img.classList.remove('spin-out');
-
-      if (_showingPast) {
-        upcoming.style.display = 'none';
-        document.getElementById('tour-section-label').textContent = 'previous';
-        img.src = 'UpcomingShowsBtn.webp';
-        img.alt = 'upcoming shows';
-        img.style.setProperty('--sticker-rot', 'rotate(30deg)');
-        wrap.style.justifyContent = 'flex-start';
-        wrap.style.transform = 'translateX(-30px)';
-        if (_pastRows) { renderPast(_pastRows); }
-        else {
-          fetch(SHOWS_CSV_URL + '&t=' + Date.now())
-            .then(r => r.text())
-            .then(csv => {
-              const today = new Date(); today.setHours(0,0,0,0);
-              _pastRows = parseCSV(csv).slice(1)
-                .filter(r => r[0] && r[1] && new Date(r[0]) < today)
-                .sort((a,b) => new Date(b[0]) - new Date(a[0]));
-              renderPast(_pastRows);
-            })
-            .catch(() => {
-              pastList.innerHTML = '<div class="tour-loading">no past shows on record</div>';
-              pastList.style.display = 'flex';
-            });
-        }
-      } else {
-        pastList.style.display = 'none';
-        upcoming.style.display = '';
-        document.getElementById('tour-section-label').textContent = 'upcoming';
-        img.src = 'PreviousShowsBtn.webp';
-        img.alt = 'previous shows';
-        img.style.setProperty('--sticker-rot', 'rotate(-30deg)');
-        wrap.style.justifyContent = 'flex-end';
-        wrap.style.transform = 'translateX(30px)';
-      }
-
-      // spin in with new image — after animation ends, set final inline transform so removal is seamless
-      const finalRot = _showingPast ? 'rotate(30deg)' : 'rotate(-30deg)';
-      img.classList.add('spin-in');
-      setTimeout(() => {
-        img.classList.remove('spin-in');
-        img.style.transform = finalRot;
-      }, 420);
-    }, 320);
-  };
-
-  function renderPast(rows) {
-    const list = document.getElementById('past-shows-list');
-    list.innerHTML = rows.length === 0
-      ? '<div class="tour-loading" style="opacity:0.4;padding:16px 0;">no past shows on record</div>'
-      : rows.map(r => buildRow(r, true)).join('');
-    list.style.display = 'flex';
-  }
-
-  function buildRow(r, isPast) {
+  function buildRow(r, isPast, useEditorial) {
     const [date, venue, city, country, ticketUrl, status] = r;
-
-    const d        = new Date(date);
-    const dateStr  = d.toLocaleDateString('en-US', {
-      month: 'short', day: 'numeric', year: 'numeric'
-    }).toUpperCase().replace(',', '');   // "SEP 15 2026"
+    const d       = new Date(date);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
     const location = [city, country].filter(Boolean).join(', ');
-    const norm     = (status || '').toLowerCase().trim();
-    const soldOut  = norm === 'sold out';
-    const free     = norm === 'free';
-
-    let ticketHtml = '';
-    if (ticketUrl && !soldOut) {
-      ticketHtml = `<a href="${escHtml(ticketUrl)}" target="_blank" rel="noopener"
-        class="ticket-btn" onclick="event.stopPropagation(); return true;">tickets</a>`;
-    } else if (soldOut) {
-      ticketHtml = `<button class="ticket-btn sold-out" onclick="event.stopPropagation(); showTicketToast(undefined, true)">sold out</button>`;
-    } else if (free) {
-      ticketHtml = `<span class="ticket-btn free-label">free</span>`;
-    } else {
-      // No ticket URL yet — show newsletter toast (tickets coming soon)
-      ticketHtml = `<button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>`;
-    }
-
-    const rowClick = ticketUrl && !soldOut
-      ? `onclick="window.open('${escHtml(ticketUrl)}','_blank')"`
-      : `onclick="showTicketToast(undefined, ${soldOut})"`;
+    const norm    = (status || '').toLowerCase().trim();
+    const soldOut = norm === 'sold out';
+    const free    = norm === 'free';
 
     if (isPast) {
-      return `
-        <div class="tour-row" style="cursor:default;">
-          <div class="tour-info">
-            <span class="tour-name">${escHtml(venue.toUpperCase())}</span>
-            <span class="tour-meta">${escHtml(dateStr)} · ${escHtml(location)}</span>
-          </div>
-        </div>`;
+      return `<div class="tour-row past">
+        <span class="tour-date">${escHtml(dateStr)}</span>
+        <span class="tour-venue">${escHtml(venue.toUpperCase())}</span>
+        <span class="tour-city">${escHtml(location)}</span>
+        <span></span>
+      </div>`;
     }
 
-    return `
-      <div class="tour-row" ${rowClick} style="cursor:pointer">
-        <div class="tour-info">
-          <span class="tour-name">${escHtml(venue.toUpperCase())}</span>
-          <span class="tour-meta">${escHtml(dateStr)} · ${escHtml(location)}</span>
+    const month = d.toLocaleDateString('en-US', { month: 'short' });
+    const day   = d.getDate();
+
+    if (useEditorial) {
+      let ticketHtml = '';
+      if (ticketUrl && !soldOut) {
+        ticketHtml = `<a href="${escHtml(ticketUrl)}" target="_blank" rel="noopener" class="tour-editorial-ticket" onclick="event.stopPropagation()">Get Tickets</a>`;
+      } else if (soldOut) {
+        ticketHtml = `<span class="tour-editorial-ticket" style="opacity:0.4;cursor:default;pointer-events:none">Sold Out</span>`;
+      } else if (free) {
+        ticketHtml = `<span class="tour-editorial-ticket" style="color:rgba(168,200,160,0.8);border-color:rgba(168,200,160,0.3);cursor:default;pointer-events:none">Free</span>`;
+      } else {
+        ticketHtml = `<button class="tour-editorial-ticket" onclick="event.stopPropagation(); showTicketToast()">Get Tickets</button>`;
+      }
+      return `<div class="tour-editorial-row">
+        <div class="tour-editorial-date">
+          <span class="tour-editorial-month">${escHtml(month)}</span>
+          <span class="tour-editorial-day">${day}</span>
+        </div>
+        <div class="tour-editorial-info">
+          <div class="tour-editorial-venue">${escHtml(venue)}</div>
+          <div class="tour-editorial-city">${escHtml(location)}</div>
         </div>
         ${ticketHtml}
       </div>`;
+    }
+
+    let ticketHtml = '';
+    if (ticketUrl && !soldOut) {
+      ticketHtml = `<a href="${escHtml(ticketUrl)}" target="_blank" rel="noopener" class="tour-featured-ticket" onclick="event.stopPropagation()">Get Tickets</a>`;
+    } else if (soldOut) {
+      ticketHtml = `<button class="tour-featured-ticket" style="opacity:0.4;cursor:default;pointer-events:none" onclick="event.stopPropagation()">Sold Out</button>`;
+    } else if (free) {
+      ticketHtml = `<span class="tour-featured-ticket" style="color:rgba(168,200,160,0.8);border-color:rgba(168,200,160,0.3);cursor:default;pointer-events:none">Free</span>`;
+    } else {
+      ticketHtml = `<button class="tour-featured-ticket" onclick="event.stopPropagation(); showTicketToast()">Get Tickets</button>`;
+    }
+
+    return `<div class="tour-featured-row">
+      <div class="tour-featured-date">
+        <span class="tour-featured-month">${escHtml(month)}</span>
+        <span class="tour-featured-day">${day}</span>
+      </div>
+      <div class="tour-featured-info">
+        <div class="tour-featured-venue">${escHtml(venue)}</div>
+        <div class="tour-featured-city">${escHtml(location)}</div>
+      </div>
+      ${ticketHtml}
+    </div>`;
   }
 
   function escHtml(str) {
@@ -3233,157 +3762,454 @@ if (newsletterFormInline) {
   }
 
   // Hardcoded fallback (shown if CSV fetch fails)
+  // ── past shows: manual scroll + lens ────────────────────────────────────────
+  (function() {
+    const past = document.getElementById('tour-past-section');
+    if (!past) return;
+
+    // wheel → scroll past section, not page
+    past.addEventListener('wheel', e => {
+      e.preventDefault();
+      past.scrollTop += e.deltaY;
+      updateLens();
+    }, { passive: false });
+
+    // touch → scroll past section
+    let _ty = null;
+    past.addEventListener('touchstart', e => { _ty = e.touches[0].clientY; }, { passive: true });
+    past.addEventListener('touchmove', e => {
+      if (_ty === null) return;
+      e.preventDefault();
+      past.scrollTop += _ty - e.touches[0].clientY;
+      _ty = e.touches[0].clientY;
+      updateLens();
+    }, { passive: false });
+    past.addEventListener('touchend', () => { _ty = null; }, { passive: true });
+
+    past.addEventListener('scroll', updateLens, { passive: true });
+
+    function updateLens() {
+      const focalY = window.innerHeight * 0.65;
+      const range  = window.innerHeight * 0.28;
+      past.querySelectorAll('.tour-row.past').forEach(row => {
+        const rect = row.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const t = Math.max(0, 1 - Math.abs(mid - focalY) / range);
+        row.style.opacity = 0.55 + t * 0.3;
+        row.style.transition = 'none';
+      });
+    }
+    window.updateTourLens = updateLens;
+    window.startTourScroll = updateLens;
+    window.stopTourScroll = function() {};
+  })();
+
   function renderFallback(container) {
-    const grad = (dir, a, b) =>
-      `linear-gradient(${dir}, ${a} 0%, rgba(14,12,13,0.62) 55%, ${b} 100%)`;
     container.innerHTML = `
-      <div class="tour-row" onclick="showTicketToast('${grad('70deg','rgba(44,20,72,0.82)','rgba(20,12,36,0.7)')}')">
-        <div class="tour-info">
-          <span class="tour-name">TRGRS</span>
-          <span class="tour-meta">SEP 15 2026 · Berlin</span>
-        </div>
-        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('${grad('70deg','rgba(44,20,72,0.82)','rgba(20,12,36,0.7)')}')">tickets</button>
+      <div class="tour-row" onclick="showTicketToast()">
+        <span class="tour-date">Sep 15</span>
+        <span class="tour-venue">TRGRS</span>
+        <span class="tour-city">Berlin</span>
+        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>
       </div>
-      <div class="tour-row" onclick="showTicketToast('${grad('300deg','rgba(38,16,65,0.82)','rgba(24,14,42,0.7)')}')">
-        <div class="tour-info">
-          <span class="tour-name">KRANSAAL</span>
-          <span class="tour-meta">OCT 2 2026 · Werder</span>
-        </div>
-        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('${grad('300deg','rgba(38,16,65,0.82)','rgba(24,14,42,0.7)')}')">tickets</button>
+      <div class="tour-row" onclick="showTicketToast()">
+        <span class="tour-date">Oct 2</span>
+        <span class="tour-venue">KRANSAAL</span>
+        <span class="tour-city">Werder</span>
+        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>
       </div>
-      <div class="tour-row" onclick="showTicketToast('${grad('170deg','rgba(50,24,76,0.8)','rgba(18,10,34,0.72)')}')">
-        <div class="tour-info">
-          <span class="tour-name">THF RADIO BERLIN</span>
-          <span class="tour-meta">OCT 17 2026 · Berlin</span>
-        </div>
-        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('${grad('170deg','rgba(50,24,76,0.8)','rgba(18,10,34,0.72)')}')">tickets</button>
+      <div class="tour-row" onclick="showTicketToast()">
+        <span class="tour-date">Oct 17</span>
+        <span class="tour-venue">THF RADIO BERLIN</span>
+        <span class="tour-city">Berlin</span>
+        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>
       </div>
-      <div class="tour-row" onclick="showTicketToast('${grad('340deg','rgba(42,18,70,0.84)','rgba(22,12,40,0.7)')}')">
-        <div class="tour-info">
-          <span class="tour-name">EP RELEASE SHOW</span>
-          <span class="tour-meta">DEC 13 2026 · Berlin</span>
-        </div>
-        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast('${grad('340deg','rgba(42,18,70,0.84)','rgba(22,12,40,0.7)')}')">tickets</button>
+      <div class="tour-row" onclick="showTicketToast()">
+        <span class="tour-date">Dec 13</span>
+        <span class="tour-venue">EP RELEASE SHOW</span>
+        <span class="tour-city">Berlin</span>
+        <button class="ticket-btn" onclick="event.stopPropagation(); showTicketToast()">tickets</button>
       </div>`;
   }
 })();
 </script>
 
+</script>
+
 <script>
-/* ── VIOLET SCROLL ANIMATION ─────────────────────────────────────────────── */
+// ── SECTION PANELS ────────────────────────────────────────────────────────────
+const flowerRight = document.getElementById('violet-float');
+const flowerLeft  = document.getElementById('violet-float-left');
+
+function showFlowers() { return; // parked until scroll-trigger is rebuilt
+  const dur = 'opacity 0.5s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1)';
+  if (flowerRight) {
+    flowerRight.style.transition = 'none';
+    flowerRight.style.opacity = '0';
+    flowerRight.style.transform = 'rotate(65deg) translateZ(0)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      flowerRight.style.transition = dur;
+      flowerRight.style.opacity = '1';
+      flowerRight.style.transform = 'rotate(-20deg) translateZ(0)';
+    }));
+  }
+  if (flowerLeft) {
+    flowerLeft.style.transition = 'none';
+    flowerLeft.style.opacity = '0';
+    flowerLeft.style.transform = 'scaleX(-1) rotate(65deg) translateZ(0)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      flowerLeft.style.transition = dur;
+      flowerLeft.style.opacity = '1';
+      flowerLeft.style.transform = 'scaleX(-1) rotate(-20deg) translateZ(0)';
+    }));
+  }
+}
+function hideFlowers() {
+  const dur = 'opacity 0.4s ease, transform 0.6s ease';
+  if (flowerRight) {
+    flowerRight.style.transition = dur;
+    flowerRight.style.opacity = '0';
+    flowerRight.style.transform = 'rotate(65deg) translateZ(0)';
+  }
+  if (flowerLeft) {
+    flowerLeft.style.transition = dur;
+    flowerLeft.style.opacity = '0';
+    flowerLeft.style.transform = 'scaleX(-1) rotate(65deg) translateZ(0)';
+  }
+}
+
+// scroll-triggered right flower — rAF loop, desktop only
 (function () {
-  const el = document.getElementById('violet-float');
+  const el = flowerRight;
   if (!el) return;
-
-  const DESKTOP = () => window.innerWidth >= 900;
-
-  // Mobile config
-  const MOB = { start: 50, end: -28, w: 170, right: -88, topVh: 20 };
-  // Desktop config: smaller, fixed in viewport
-  const DSK = { start: 50, end: -40, w: 190, right: -90, topVh: 32 };
-
-  function getPressEl() {
-    return DESKTOP()
-      ? document.getElementById('press-contact-desktop')
-      : document.getElementById('epk');
-  }
-
+  const DESKTOP = () => window.innerWidth >= 1024;
+  const TABLET  = () => window.innerWidth >= 700;
+  const DSK = { start: 50, end: -85, w: 300, right: -155, topVh: 55 };
+  const TAB = { start: 50, end: -85, w: 300, right: -145, topVh: 55 };
+  const MOB = { start: 50, end: -28, w: 170, right: -88,  topVh: 20 };
   function applyLayout() {
-    const cfg = DESKTOP() ? DSK : MOB;
-    el.style.position = 'fixed';
-    el.style.width    = cfg.w + 'px';
-    el.style.height   = cfg.w + 'px';
-    el.style.right    = cfg.right + 'px';
-    el.style.top      = cfg.topVh + 'vh';
+    const cfg = DESKTOP() ? DSK : TABLET() ? TAB : MOB;
+    el.style.width  = cfg.w + 'px';
+    el.style.height = cfg.w + 'px';
+    el.style.right  = cfg.right + 'px';
+    el.style.top    = cfg.topVh + 'vh';
   }
-
   function ease(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
-
-  function update() {
-    if (window.scrollY < 80) return;
-
-    const pressEl = getPressEl();
-    if (!pressEl) return;
-
-    const cfg = DESKTOP() ? DSK : MOB;
+  function updateScrollFlower() {
+    if (!TABLET()) { el.style.opacity = '0'; return; }
+    if (document.querySelector('.section-panel.open')) { el.style.opacity = '0'; return; }
+    if (window.scrollY < 80) { el.style.opacity = '0'; return; }
+    const anchor = document.getElementById('newsletter-section');
+    if (!anchor) return;
+    const cfg = DESKTOP() ? DSK : TAB;
     const vh  = window.innerHeight;
-    const top = pressEl.getBoundingClientRect().top;
-    // Mobile: starts late (40% vh), Desktop: starts earlier (80% vh) since page is shorter
-    const trigStart = DESKTOP() ? vh * 0.8 : vh * 0.4;
-    const trigRange = vh * 0.5;
+    const top = anchor.getBoundingClientRect().top;
+    const trigStart = vh * 0.9;
+    const trigRange = vh * 0.6;
     const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
     const eased = ease(prog);
-
     el.style.transform = `rotate(${(cfg.start + (cfg.end - cfg.start) * eased).toFixed(1)}deg) translateZ(0)`;
-    el.style.opacity   = Math.min(1, prog * 4).toFixed(3);
+    el.style.opacity   = '1';
   }
-
   window.addEventListener('resize', applyLayout);
   applyLayout();
+  (function loop() { updateScrollFlower(); requestAnimationFrame(loop); })();
+})();
 
-  // rAF loop — reliable across Safari, avoids scroll event quirks
-  (function loop() {
-    update();
-    requestAnimationFrame(loop);
-  })();
+(function() {
+  const e = [109,103,109,116,64,105,116,115,108,111,118,101,108,101,101,101,46,99,111,109].map(c=>String.fromCharCode(c)).join('');
+  const el = document.getElementById('pc-inquiry-link');
+  if (el) { el.href = 'mailto:' + e; el.textContent = e; }
+})();
+
+function togglePcSub(btn) {
+  const item = btn.closest('.pc-row-item');
+  if (!item) return;
+  const sub = item.querySelector('.pc-sub');
+  if (!sub) return;
+  const isOpen = sub.classList.contains('open');
+  // close all others
+  document.querySelectorAll('.pc-sub.open').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.pc-row.expanded').forEach(r => r.classList.remove('expanded'));
+  if (!isOpen) {
+    sub.classList.add('open');
+    btn.classList.add('expanded');
+  }
+}
+
+function openPanel(id) {
+  if (id === 'panel-music' || id === 'panel-tour' || id === 'panel-press') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  const hashMap = { 'panel-music': 'view-music', 'panel-tour': 'view-upcoming', 'panel-press': 'view-press' };
+  if (hashMap[id]) history.replaceState(null, '', '#' + hashMap[id]);
+  const switching = !!document.querySelector('.section-panel.open');
+  document.querySelectorAll('.section-panel').forEach(p => {
+    p.classList.remove('open');
+    if (switching) {
+      // instant hide — no fade, no display:none delay, keeps backdrop visible
+      p.style.opacity = '0';
+      p.style.pointerEvents = 'none';
+      setTimeout(() => { if (!p.classList.contains('open')) p.style.display = 'none'; p.style.opacity = ''; p.style.pointerEvents = ''; }, 0);
+    } else {
+      p.style.display = 'none';
+    }
+  });
+  const panel = document.getElementById(id);
+  if (panel) {
+    panel.style.display = 'flex';
+    if (switching) {
+      // skip fade-in — just snap to visible since blur is already there
+      panel.style.opacity = '1';
+      panel.style.pointerEvents = 'auto';
+      panel.classList.add('open');
+      setTimeout(() => { panel.style.opacity = ''; panel.style.pointerEvents = ''; }, 0);
+    } else {
+      requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('open')));
+    }
+    if (id === 'panel-music') {
+      mcReset();
+      const mc = panel.querySelector('.music-carousel');
+      if (mc) { mc.classList.remove('visible'); setTimeout(() => mc.classList.add('visible'), switching ? 30 : 80); }
+    }
+    if (id === 'panel-tour') {
+      if (window.stopTourScroll) stopTourScroll();
+      const upcoming = document.getElementById('tour-upcoming-section');
+      const past     = document.getElementById('tour-past-section');
+      if (upcoming) upcoming.classList.remove('visible');
+      if (past)     past.classList.remove('visible');
+      setTimeout(() => { if (upcoming) upcoming.classList.add('visible'); }, switching ? 30 : 80);
+      setTimeout(() => { if (past)     past.classList.add('visible');     }, switching ? 110 : 180);
+    }
+    if (id === 'panel-press') {
+      const topLevel = panel.querySelectorAll('.pc-list > .pc-row-item');
+      panel.querySelectorAll('.pc-sub').forEach(s => s.classList.remove('open'));
+      topLevel.forEach(r => r.classList.remove('visible'));
+      topLevel.forEach((r, i) => setTimeout(() => r.classList.add('visible'), 120 + i * 100));
+    }
+  }
+  document.addEventListener('keydown', onPanelKey);
+  showFlowers();
+}
+function closePanel() {
+  history.replaceState(null, '', window.location.pathname);
+  const upcoming = document.getElementById('tour-upcoming-section');
+  const past     = document.getElementById('tour-past-section');
+  if (upcoming) upcoming.classList.remove('visible');
+  if (past)     past.classList.remove('visible');
+  const mc = document.querySelector('.music-carousel');
+  if (mc) mc.classList.remove('visible');
+  document.querySelectorAll('.section-panel').forEach(p => {
+    p.classList.remove('open');
+    p.querySelectorAll('.pc-row, .pc-row-item').forEach(r => r.classList.remove('visible'));
+    p.querySelectorAll('.pc-sub').forEach(s => s.classList.remove('open'));
+    p.style.zIndex = '';
+    setTimeout(() => { if (!p.classList.contains('open')) p.style.display = 'none'; }, 420);
+  });
+  document.removeEventListener('keydown', onPanelKey);
+  if (window.stopTourScroll) stopTourScroll();
+  hideFlowers();
+}
+function onPanelKey(e) {
+  if (e.key === 'Escape') closePanel();
+  if (e.key === 'ArrowRight') mcStep(1);
+  if (e.key === 'ArrowLeft')  mcStep(-1);
+}
+
+// Restore panel from hash (target captured before openPanel was defined)
+if (window.__hashPanelTarget) {
+  const target = window.__hashPanelTarget;
+  if (sessionStorage.getItem('splashSeen')) {
+    setTimeout(() => openPanel(target), 50);
+  } else {
+    document.addEventListener('splashDone', () => openPanel(target), { once: true });
+  }
+}
+
+// ── Cover Flow carousel ──────────────────────────────────────────────────────
+let mcPos   = 0;   // continuous float — 0 = first, 1 = second, etc.
+let mcIndex = 0;   // snapped integer
+const MC_TOTAL = 3;
+const mcTracks = () => document.querySelectorAll('.mc-track');
+const mcDots   = () => document.querySelectorAll('.mc-dot');
+
+function mcWrap(n) {
+  return ((n % MC_TOTAL) + MC_TOTAL) % MC_TOTAL;
+}
+
+function mcApply(animated) {
+  const tracks = mcTracks();
+  const nearest = mcWrap(Math.round(mcPos));
+  const activeKey = tracks[nearest]?.dataset?.key;
+
+  tracks.forEach((t, i) => {
+    // find shortest circular offset so each track wraps around
+    const rawOff = i - mcPos;
+    let off = rawOff - MC_TOTAL * Math.round(rawOff / MC_TOTAL);
+    // suppress wrap-around at start and end so no ghost tracks bleed in
+    if (rawOff > 0 && off < 0 && mcPos < MC_TOTAL / 2) off = rawOff;
+    if (rawOff < 0 && off > 0 && mcPos > MC_TOTAL * 20 - MC_TOTAL / 2) off = rawOff;
+    const abs = Math.abs(off);
+    const sign = off < 0 ? -1 : 1;
+
+    const tx     = sign * 65 * Math.min(abs, 1.5);
+    const ry     = sign * -52 * Math.min(abs, 1);
+    const scale  = 1 - 0.32 * Math.min(abs, 1);
+    const op     = Math.max(0, 1 - 0.55 * Math.min(abs, 1) - Math.max(0, abs - 1) * 2.2);
+    const bright = 1 - 0.58 * Math.min(abs, 1);
+    const z      = Math.round(10 - abs * 5);
+
+    t.style.transition = animated
+      ? 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease, filter 0.45s ease'
+      : 'none';
+    t.style.transform  = `translateX(${tx}%) rotateY(${ry}deg) scale(${scale})`;
+    t.style.opacity    = String(Math.max(0, op));
+    t.style.filter     = `brightness(${bright})`;
+    t.style.zIndex     = String(z);
+    t.classList.toggle('active', i === nearest);
+  });
+
+  document.querySelectorAll('.mc-title-img').forEach(img =>
+    img.classList.toggle('visible', img.dataset.for === activeKey));
+  mcDots().forEach((d,i) => d.classList.toggle('active', i === nearest));
+  mcIndex = nearest;
+}
+
+function mcSnap() {
+  mcPos = Math.round(mcPos);
+  mcApply(true);
+}
+
+function mcStep(dir) {
+  mcPos = Math.round(mcPos) + dir;
+  mcApply(true);
+}
+
+function mcReset() { mcPos = 0; mcApply(true); }
+
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const stage = document.querySelector('.mc-stage');
+    if (!stage) return;
+    mcApply(false);
+
+    // ── trackpad: live follow + momentum drift + snap ────────────────────
+    let snapTimer   = null;
+    let driftRaf    = null;
+    let velocity    = 0;   // covers per ms
+    let lastWheelT  = 0;
+
+    function driftFrame() {
+      velocity *= 0.88;                          // friction per frame
+      if (Math.abs(velocity) < 0.0003) { mcSnap(); return; }
+      mcPos += velocity * 16;
+      mcPos = Math.max(0, Math.min(MC_TOTAL * 20 - 1, mcPos));
+      mcApply(false);
+      if (mcPos <= 0 || mcPos >= MC_TOTAL * 20 - 1) { velocity = 0; mcSnap(); return; }
+      driftRaf = requestAnimationFrame(driftFrame);
+    }
+
+    document.getElementById('panel-music').addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) < Math.abs(e.deltaY) * 0.5) return;
+      e.preventDefault();
+      cancelAnimationFrame(driftRaf);
+
+      const now = performance.now();
+      const dt  = Math.max(now - lastWheelT, 4);
+      velocity  = (e.deltaX / 260) / dt;         // covers/ms at this instant
+      lastWheelT = now;
+
+      mcPos += e.deltaX / 260;
+      mcPos = Math.max(0, Math.min(MC_TOTAL * 20 - 1, mcPos));
+      mcApply(false);
+
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        driftRaf = requestAnimationFrame(driftFrame);
+      }, 400);
+    }, { passive: false });
+
+    // ── touch swipe ──────────────────────────────────────────────────────
+    let tx0 = 0, pos0 = 0, touching = false;
+    stage.addEventListener('touchstart', e => {
+      tx0 = e.touches[0].clientX; pos0 = mcPos; touching = true;
+    }, { passive: true });
+    stage.addEventListener('touchmove', e => {
+      if (!touching) return;
+      const dx = e.touches[0].clientX - tx0;
+      if (Math.abs(dx) > 8) e.preventDefault();
+      mcPos = Math.max(0, Math.min(MC_TOTAL * 20 - 1, pos0 - dx / 220));
+      mcApply(false);
+    }, { passive: false });
+    stage.addEventListener('touchend', () => { touching = false; mcSnap(); }, { passive: true });
+
+    // ── mouse drag ───────────────────────────────────────────────────────
+    let mx0 = 0, mpos0 = 0, dragging = false;
+    stage.addEventListener('mousedown', e => { mx0 = e.clientX; mpos0 = mcPos; dragging = true; });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      mcPos = Math.max(0, Math.min(MC_TOTAL * 20 - 1, mpos0 - (e.clientX - mx0) / 220));
+      mcApply(false);
+    });
+    document.addEventListener('mouseup', () => { if (dragging) { dragging = false; mcSnap(); } });
+
+    // ── click side cover ─────────────────────────────────────────────────
+    stage.addEventListener('click', e => {
+      const track = e.target.closest('.mc-track');
+      if (!track || track.classList.contains('active')) return;
+      const idx = [...mcTracks()].indexOf(track);
+      if (idx !== -1) { mcPos = idx; mcApply(true); }
+    });
+  });
 })();
 </script>
 
 <script>
-/* ── VIOLET LEFT FLOWER ANIMATION ───────────────────────────────────────── */
-(function () {
-  const el = document.getElementById('violet-float-left');
-  if (!el) return;
+(function() {
+  const splash  = document.getElementById('splash');
+  const video   = document.getElementById('splash-video-src');
+  const canvas  = document.getElementById('splash-canvas');
 
-  const DESKTOP = () => window.innerWidth >= 900;
+  // Only play once per session
+  if (sessionStorage.getItem('splashSeen')) {
+    splash.remove();
+    return;
+  }
+  sessionStorage.setItem('splashSeen', '1');
 
-  // Mirror of right flower configs — left side, scaleX(-1) applied in CSS
-  const MOB = { start: 50, end: -28, w: 170, left: -82, topVh: 55 };
-  const DSK = { start: 50, end: -48, w: 190, left: -110, topVh: 48 };
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  let   raf;
 
-  function getContactEl() {
-    return DESKTOP()
-      ? document.getElementById('press-contact-desktop')
-      : document.getElementById('contact');
+  function dismiss() {
+    cancelAnimationFrame(raf);
+    splash.classList.add('fade-out');
+    setTimeout(() => { splash.remove(); document.dispatchEvent(new Event('splashDone')); }, 750);
   }
 
-  function applyLayout() {
-    const cfg = DESKTOP() ? DSK : MOB;
-    el.style.position = 'fixed';
-    el.style.width    = cfg.w + 'px';
-    el.style.height   = cfg.w + 'px';
-    el.style.left     = cfg.left + 'px';
-    el.style.right    = '';
-    el.style.top      = cfg.topVh + 'vh';
+  function drawFrame() {
+    if (video.readyState < 2) { raf = requestAnimationFrame(drawFrame); return; }
+    const w = video.videoWidth, h = video.videoHeight;
+    if (canvas.width !== w)  canvas.width  = w;
+    if (canvas.height !== h) canvas.height = h;
+
+    ctx.drawImage(video, 0, 0, w, h);
+    const img  = ctx.getImageData(0, 0, w, h);
+    const data = img.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i+1], b = data[i+2];
+      // Key out pixels where blue dominates
+      if (b > 100 && b > r * 1.3 && b > g * 1.1) {
+        data[i+3] = 0;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    raf = requestAnimationFrame(drawFrame);
   }
 
-  function ease(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
-
-  function update() {
-    if (window.scrollY < 80) return;
-    const contactEl = getContactEl();
-    if (!contactEl) return;
-
-    const cfg = DESKTOP() ? DSK : MOB;
-    const vh  = window.innerHeight;
-    const top = contactEl.getBoundingClientRect().top;
-
-    const trigStart = DESKTOP() ? vh * 0.9 : vh * 0.8;
-    const trigRange = vh * 0.6;
-    const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
-    const eased = ease(prog);
-
-    el.style.transform = `scaleX(-1) rotate(${(cfg.start + (cfg.end - cfg.start) * eased).toFixed(1)}deg) translateZ(0)`;
-    el.style.opacity   = Math.min(1, prog * 4).toFixed(3);
-  }
-
-  window.addEventListener('resize', applyLayout);
-  applyLayout();
-
-  (function loop() {
-    update();
-    requestAnimationFrame(loop);
-  })();
+  video.addEventListener('play', drawFrame);
+  video.addEventListener('ended', dismiss);
+  setTimeout(dismiss, 8000); // fallback
 })();
 </script>
 </body>

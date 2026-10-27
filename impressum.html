@@ -45,6 +45,20 @@
       );
     }
 
+    .page-close {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      z-index: 20;
+      color: rgba(245,240,234,0.35);
+      font-size: 0.75rem;
+      text-decoration: none;
+      border: none !important;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .page-close:hover { color: var(--cream); opacity: 1; }
+
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -58,7 +72,7 @@
     }
 
     nav .nav-logo {
-      height: 56px;
+      height: 80px;
       width: auto;
       opacity: 0.9;
       display: block;
@@ -173,8 +187,10 @@
 </head>
 <body>
 
+  <a href="/" class="page-close" title="back">✕</a>
+
   <nav>
-    <a href="/"><img src="logo.png" class="nav-logo" alt="lovelee"></a>
+    <a href="/"><img src="logo.webp" class="nav-logo" alt="lovelee"></a>
   </nav>
 
   <main>
@@ -191,7 +207,7 @@
 
     <h2>Kontakt</h2>
     <p>
-      E-Mail: <a href="mailto:management@itsloveleee.com">management@itsloveleee.com</a><br>
+      E-Mail: <a href="mailto:mgmt@itsloveleee.com">mgmt@itsloveleee.com</a><br>
       Kontaktformular: <a href="https://itsloveleee.com/#contact">itsloveleee.com/#contact</a>
     </p>
 

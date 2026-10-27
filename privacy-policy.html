@@ -44,6 +44,20 @@
       );
     }
 
+    .page-close {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      z-index: 20;
+      color: rgba(245,240,234,0.35);
+      font-size: 0.75rem;
+      text-decoration: none;
+      border: none !important;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .page-close:hover { color: var(--cream); opacity: 1; }
+
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -57,7 +71,7 @@
     }
 
     nav .nav-logo {
-      height: 56px;
+      height: 80px;
       width: auto;
       opacity: 0.9;
       display: block;
@@ -205,8 +219,10 @@
 </head>
 <body>
 
+  <a href="/" class="page-close" title="back">✕</a>
+
   <nav>
-    <a href="/"><img src="logo.png" class="nav-logo" alt="lovelee"></a>
+    <a href="/"><img src="logo.webp" class="nav-logo" alt="lovelee"></a>
   </nav>
 
   <main>
@@ -214,24 +230,23 @@
     <p class="date">last updated may 2026</p>
 
     <h2>who runs this site</h2>
-    <p>Leon Byvanck (lovelee), based in Germany. Questions? <a href="mailto:management@itsloveleee.com">management@itsloveleee.com</a> — or see the <a href="/impressum.html">Impressum</a>.</p>
+    <p>Leon Byvanck (lovelee), based in Germany. Questions? <a href="mailto:mgmt@itsloveleee.com">mgmt@itsloveleee.com</a> — or see the <a href="/impressum.html">Impressum</a>.</p>
 
     <h2>what is collected</h2>
     <p>This site only collects data when you actively do something:</p>
     <p>If you <strong>sign up for the newsletter</strong>, your email is stored with Brevo (France) and used only to send updates. Unsubscribe anytime via the link in any email.</p>
     <p>If you <strong>send a message</strong> via the contact form, your name, email, and message are forwarded to the site owner via Web3Forms (me, Leon Byvanck). Nothing is stored beyond what's needed to reply.</p>
-    <p>If you <strong>accept cookies</strong>, a Meta Pixel loads to help understand how people find the site. This is optional and only happens with your consent.</p>
-    <p>A <strong>cookie preference</strong> is saved in your browser to remember your choice. That's the only thing stored without asking.</p>
-
     <h2>third-party services</h2>
-    <p>Depending on what you do, your data may pass through: <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener">Brevo</a> (newsletter), <a href="https://web3forms.com/privacy" target="_blank" rel="noopener">Web3Forms</a> (contact form), <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">Meta</a> (analytics, if consented), and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare</a> (newsletter infrastructure).</p>
+    <p>Depending on what you do, your data may pass through: <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener">Brevo</a> (newsletter), <a href="https://web3forms.com/privacy" target="_blank" rel="noopener">Web3Forms</a> (contact form), and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare</a> (newsletter infrastructure).</p>
 
     <h2>your rights</h2>
-    <p>Under GDPR you can request access to, correction, or deletion of your data at any time. Email <a href="mailto:management@itsloveleee.com">management@itsloveleee.com</a>. You can also file a complaint with the <a href="https://www.bfdi.bund.de" target="_blank" rel="noopener">BfDI</a> (Germany's data protection authority).</p>
+    <p>Under GDPR you can request access to, correction, or deletion of your data at any time. Email <a href="mailto:mgmt@itsloveleee.com">mgmt@itsloveleee.com</a>. You can also file a complaint with the <a href="https://www.bfdi.bund.de" target="_blank" rel="noopener">BfDI</a> (Germany's data protection authority).</p>
 
+    <!-- withdraw cookie consent button — re-enable if cookie banner is restored
     <h2>withdraw cookie consent</h2>
     <p>Click below to clear your cookie preference. The banner will reappear on your next visit.</p>
     <button class="withdraw-btn" id="withdraw-btn" onclick="withdrawConsent()">withdraw cookie consent</button>
+    -->
 
     <hr class="divider">
 
@@ -253,6 +268,7 @@
     });
   </script>
 
+  <!-- withdrawConsent function — re-enable if cookie banner is restored
   <script>
     function withdrawConsent() {
       localStorage.removeItem('cookie-consent');
@@ -264,6 +280,7 @@
       btn.onclick = null;
     }
   </script>
+  -->
 
 </body>
 </html>
