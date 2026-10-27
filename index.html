@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0e0c0d">
   <title>lovelee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4186,6 +4187,7 @@ function mcReset() { mcPos = 0; mcApply(true); }
 
   video.addEventListener('ended', dismiss);
   setTimeout(dismiss, 8000); // fallback
+  video.play().catch(() => dismiss()); // force play on iOS; dismiss immediately if blocked
 })();
 </script>
 </body>
