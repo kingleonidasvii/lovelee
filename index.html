@@ -443,6 +443,31 @@
       will-change: filter;
       transition: filter 0.2s linear;
     }
+    @keyframes chevronBob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    #scroll-chevron {
+      display: none;
+    }
+    @media (max-width: 699px) {
+      #scroll-chevron {
+        display: block;
+        position: fixed;
+        bottom: calc(28px + env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        animation: chevronBob 2s ease-in-out infinite;
+        pointer-events: none;
+      }
+    }
+
+    /* Prevent iOS zoom-on-scroll artifact */
+    @supports (-webkit-touch-callout: none) {
+      .hero-photo { position: absolute; height: 100dvh; }
+    }
     .hero-photo::after {
       content: '';
       position: absolute; inset: 0;
@@ -1778,6 +1803,11 @@
 
 <section id="home">
   <div class="hero-photo" id="heroBg"></div>
+  <div id="scroll-chevron">
+    <svg width="22" height="11" viewBox="0 0 22 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="1,1 11,10 21,1" stroke="rgba(245,240,234,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
 </section>
 
 <div id="newsletter-section">
@@ -2460,9 +2490,12 @@ const heroBgEl    = document.getElementById('heroBg');
 const heroContent = document.querySelector('.hero-content');
 const newsletterSection = document.getElementById('newsletter-section');
 const legalLinks  = document.getElementById('legal-links');
+const scrollChevron = document.getElementById('scroll-chevron');
 function updateHeroScroll() {
   heroBgEl.style.filter = '';
   const scrollY = window.scrollY;
+
+  if (scrollChevron) scrollChevron.style.opacity = scrollY > 40 ? '0' : '1';
 
   // logo fades out as user scrolls
   if (heroContent) {
