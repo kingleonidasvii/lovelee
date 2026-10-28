@@ -2582,13 +2582,8 @@ if (ticketForm) {
       ticketStatus.textContent = 'please accept to continue';
       return;
     }
-    let phone = '';
-    if (phoneRaw) {
-      if (!countryCode) { ticketStatus.textContent = 'please select your country'; return; }
-      const digits = phoneRaw.replace(/[\s\-().+]/g, '');
-      if (!/^\d{5,12}$/.test(digits)) { ticketStatus.textContent = 'please enter a valid phone number'; return; }
-      phone = '+' + countryCode + digits;
-    }
+    const { phone, error: phoneError } = window.buildPhone(phoneRaw, countryCode);
+    if (phoneError) { ticketStatus.textContent = phoneError; return; }
     const btn = ticketForm.querySelector('[type="submit"]');
     btn.style.opacity = '0.5';
     btn.disabled = true;
@@ -2853,7 +2848,7 @@ window.addEventListener('pageshow', function () {
     if (phoneId) {
       const phoneEl = document.getElementById(phoneId);
       if (phoneEl) {
-        function detectCountryFromPhone() {
+        function syncSelectorFromPhone() {
           const val = phoneEl.value.trim();
           if (!val.startsWith('+')) return;
           const opts = Array.from(sel.options).filter(o => o.value);
@@ -2862,22 +2857,21 @@ window.addEventListener('pageshow', function () {
             if (val.startsWith('+' + opt.value)) {
               opt.selected = true;
               setLabel(opt.dataset.iso + ' +' + opt.value);
-              phoneEl.value = val.slice(1 + opt.value.length).trim();
               break;
             }
           }
         }
-        phoneEl.addEventListener('input', detectCountryFromPhone);
-        phoneEl.addEventListener('change', detectCountryFromPhone);
-        phoneEl.addEventListener('blur', detectCountryFromPhone);
-        // iOS autofill fires no events — poll after focus
+        phoneEl.addEventListener('input', syncSelectorFromPhone);
+        phoneEl.addEventListener('change', syncSelectorFromPhone);
+        phoneEl.addEventListener('blur', syncSelectorFromPhone);
+        // iOS autofill fires no reliable events — poll for 3s after focus
         phoneEl.addEventListener('focus', () => {
           let polls = 0;
           const id = setInterval(() => {
-            detectCountryFromPhone();
-            if (++polls > 20) clearInterval(id);
-          }, 100);
-          phoneEl.addEventListener('blur', () => clearInterval(id), { once: true });
+            syncSelectorFromPhone();
+            if (++polls > 60) clearInterval(id);
+          }, 50);
+          setTimeout(() => clearInterval(id), 3000);
         });
       }
     }
@@ -2895,6 +2889,20 @@ window.addEventListener('pageshow', function () {
   initCountrySelect('newsletter-country-popup', 'country-select-label', 'newsletter-phone-popup');
   initCountrySelect('newsletter-country-inline', 'country-select-label-inline', 'newsletter-phone-inline');
   initCountrySelect('ticket-notify-country', 'ticket-country-label', 'ticket-notify-phone');
+
+  // Shared phone builder — handles autofill (+prefix) and manual entry
+  window.buildPhone = function(raw, countryCode) {
+    if (!raw) return { phone: '', error: null };
+    if (raw.startsWith('+')) {
+      const digits = raw.replace(/[^\d]/g, '');
+      if (digits.length < 7 || digits.length > 15) return { phone: null, error: 'please enter a valid phone number' };
+      return { phone: '+' + digits, error: null };
+    }
+    if (!countryCode) return { phone: null, error: 'please select your country code' };
+    const digits = raw.replace(/[^\d]/g, '');
+    if (digits.length < 5 || digits.length > 12) return { phone: null, error: 'please enter a valid phone number' };
+    return { phone: '+' + countryCode + digits, error: null };
+  };
 })();
 
 // ── CONFIRMED SPLASH ──────────────────────────────────────────────────────────
@@ -2943,20 +2951,11 @@ if (newsletterFormPopup) {
     const phoneRaw = document.getElementById('newsletter-phone-popup').value.trim();
     const countryCode = document.getElementById('newsletter-country-popup').value;
     const consent = document.getElementById('newsletter-consent-popup').checked;
-    let phone = '';
-    if (phoneRaw) {
-      if (!countryCode) {
-        newsletterStatusPopup.textContent = 'please select your country';
-        newsletterStatusPopup.className = 'newsletter-popup-status';
-        return;
-      }
-      const digits = phoneRaw.replace(/[\s\-().+]/g, '');
-      if (!/^\d{5,12}$/.test(digits)) {
-        newsletterStatusPopup.textContent = 'please enter a valid phone number';
-        newsletterStatusPopup.className = 'newsletter-popup-status';
-        return;
-      }
-      phone = '+' + countryCode + digits;
+    const { phone, error: phoneError } = window.buildPhone(phoneRaw, countryCode);
+    if (phoneError) {
+      newsletterStatusPopup.textContent = phoneError;
+      newsletterStatusPopup.className = 'newsletter-popup-status';
+      return;
     }
     if (!consent) {
       newsletterStatusPopup.textContent = 'please accept to continue';
@@ -2995,7 +2994,8 @@ if (newsletterFormInline) {
     const name = document.getElementById('newsletter-name-inline').value.trim();
     const rawPhone = document.getElementById('newsletter-phone-inline').value.trim();
     const countryCode = document.getElementById('newsletter-country-inline')?.value || '';
-    const phone = rawPhone ? (countryCode ? '+' + countryCode + rawPhone.replace(/\D/g,'') : rawPhone) : '';
+    const { phone, error: phoneError } = window.buildPhone(rawPhone, countryCode);
+    if (phoneError) { newsletterStatusInline.textContent = phoneError; return; }
     const consent = document.getElementById('newsletter-consent-inline').checked;
     if (!consent) {
       newsletterStatusInline.textContent = 'please accept to continue';
