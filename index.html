@@ -51,6 +51,7 @@
       font-weight: 300;
       letter-spacing: 0.03em;
       padding-bottom: env(safe-area-inset-bottom);
+      overscroll-behavior: none;
     }
 
     /* Sections overlay the fixed hero photo */
@@ -462,9 +463,9 @@
       }
     }
 
-    /* Prevent iOS zoom-on-scroll artifact */
+    /* Prevent iOS zoom-on-scroll artifact: override bottom so height:100dvh wins */
     @supports (-webkit-touch-callout: none) {
-      .hero-photo { height: 100dvh; }
+      .hero-photo { bottom: auto; height: 100dvh; }
     }
     .hero-photo::after {
       content: '';
@@ -2837,7 +2838,7 @@ window.addEventListener('pageshow', function () {
       `<option value="${dial}" data-iso="${iso}">${name}</option>`
     ).join('');
 
-  function initCountrySelect(selId, labelId) {
+  function initCountrySelect(selId, labelId, phoneId) {
     const sel = document.getElementById(selId);
     const label = document.getElementById(labelId);
     if (!sel || !label) return;
@@ -2848,6 +2849,27 @@ window.addEventListener('pageshow', function () {
       if (opt && opt.value) setLabel(opt.dataset.iso + ' +' + opt.value);
       else setLabel('—');
     });
+    // Detect autofill: if number starts with +, extract country code and update selector
+    if (phoneId) {
+      const phoneEl = document.getElementById(phoneId);
+      if (phoneEl) {
+        phoneEl.addEventListener('input', () => {
+          const val = phoneEl.value.trim();
+          if (!val.startsWith('+')) return;
+          // Find longest matching dial code
+          const opts = Array.from(sel.options).filter(o => o.value);
+          opts.sort((a, b) => b.value.length - a.value.length);
+          for (const opt of opts) {
+            if (val.startsWith('+' + opt.value)) {
+              opt.selected = true;
+              setLabel(opt.dataset.iso + ' +' + opt.value);
+              phoneEl.value = val.slice(1 + opt.value.length).trim();
+              break;
+            }
+          }
+        });
+      }
+    }
     fetch('https://www.cloudflare.com/cdn-cgi/trace')
       .then(r => r.text())
       .then(txt => {
@@ -2859,9 +2881,9 @@ window.addEventListener('pageshow', function () {
       .catch(() => {});
   }
 
-  initCountrySelect('newsletter-country-popup', 'country-select-label');
-  initCountrySelect('newsletter-country-inline', 'country-select-label-inline');
-  initCountrySelect('ticket-notify-country', 'ticket-country-label');
+  initCountrySelect('newsletter-country-popup', 'country-select-label', 'newsletter-phone-popup');
+  initCountrySelect('newsletter-country-inline', 'country-select-label-inline', 'newsletter-phone-inline');
+  initCountrySelect('ticket-notify-country', 'ticket-country-label', 'ticket-notify-phone');
 })();
 
 // ── CONFIRMED SPLASH ──────────────────────────────────────────────────────────
