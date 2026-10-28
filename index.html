@@ -2853,10 +2853,9 @@ window.addEventListener('pageshow', function () {
     if (phoneId) {
       const phoneEl = document.getElementById(phoneId);
       if (phoneEl) {
-        phoneEl.addEventListener('input', () => {
+        function detectCountryFromPhone() {
           const val = phoneEl.value.trim();
           if (!val.startsWith('+')) return;
-          // Find longest matching dial code
           const opts = Array.from(sel.options).filter(o => o.value);
           opts.sort((a, b) => b.value.length - a.value.length);
           for (const opt of opts) {
@@ -2867,6 +2866,18 @@ window.addEventListener('pageshow', function () {
               break;
             }
           }
+        }
+        phoneEl.addEventListener('input', detectCountryFromPhone);
+        phoneEl.addEventListener('change', detectCountryFromPhone);
+        phoneEl.addEventListener('blur', detectCountryFromPhone);
+        // iOS autofill fires no events — poll after focus
+        phoneEl.addEventListener('focus', () => {
+          let polls = 0;
+          const id = setInterval(() => {
+            detectCountryFromPhone();
+            if (++polls > 20) clearInterval(id);
+          }, 100);
+          phoneEl.addEventListener('blur', () => clearInterval(id), { once: true });
         });
       }
     }
