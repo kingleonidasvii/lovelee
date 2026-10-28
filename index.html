@@ -2880,6 +2880,9 @@ window.addEventListener('pageshow', function () {
       .then(txt => {
         const loc = (txt.match(/loc=([A-Z]{2})/) || [])[1];
         if (!loc) return;
+        // Don't override if user already has a +number in the phone field
+        const phoneEl2 = phoneId ? document.getElementById(phoneId) : null;
+        if (phoneEl2 && phoneEl2.value.trim().startsWith('+')) return;
         const opt = sel.querySelector(`option[data-iso="${loc}"]`);
         if (opt) { opt.selected = true; setLabel(loc + ' +' + opt.value); }
       })
