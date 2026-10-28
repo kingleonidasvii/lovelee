@@ -463,9 +463,9 @@
       }
     }
 
-    /* Prevent iOS zoom-on-scroll artifact: override bottom so height:100dvh wins */
+    /* Prevent iOS zoom-on-scroll artifact: svh = small viewport (stable, toolbar-insensitive) */
     @supports (-webkit-touch-callout: none) {
-      .hero-photo { bottom: auto; height: 100dvh; }
+      .hero-photo { bottom: auto; height: 100svh; }
     }
     .hero-photo::after {
       content: '';
@@ -1822,7 +1822,7 @@
         <span class="country-select-label" id="country-select-label-inline"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <select id="newsletter-country-inline" class="newsletter-country-select"></select>
       </div>
-      <input type="tel" id="newsletter-phone-inline" placeholder="phone number (optional)" class="newsletter-input-modern" style="flex:1; min-width:0;">
+      <input type="tel" id="newsletter-phone-inline" placeholder="phone number (optional)" class="newsletter-input-modern" style="flex:1; min-width:0;" autocomplete="tel">
     </div>
     <div class="newsletter-row-modern" style="border-bottom:none; margin-top:8px;">
       <label class="newsletter-consent-modern" style="margin-top:0;">
@@ -1882,7 +1882,7 @@
             <span class="country-select-label" id="ticket-country-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <select id="ticket-notify-country" class="newsletter-country-select"></select>
           </div>
-          <input type="tel" id="ticket-notify-phone" placeholder="phone number (optional)" class="ticket-notify-input">
+          <input type="tel" id="ticket-notify-phone" placeholder="phone number (optional)" class="ticket-notify-input" autocomplete="tel">
         </div>
       </div>
       <label class="newsletter-consent" style="margin-top:16px">
@@ -1940,7 +1940,7 @@
               <span class="country-select-label" id="country-select-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <select id="newsletter-country-popup" class="newsletter-country-select"></select>
             </div>
-            <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input">
+            <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input" autocomplete="tel">
           </div>
         </div>
       </div>
@@ -2864,15 +2864,17 @@ window.addEventListener('pageshow', function () {
         phoneEl.addEventListener('input', syncSelectorFromPhone);
         phoneEl.addEventListener('change', syncSelectorFromPhone);
         phoneEl.addEventListener('blur', syncSelectorFromPhone);
-        // iOS autofill fires no reliable events — poll for 3s after focus
-        phoneEl.addEventListener('focus', () => {
+        // iOS autofill fires no reliable events — poll for 3s after touch or focus
+        function startAutofillPoll() {
           let polls = 0;
           const id = setInterval(() => {
             syncSelectorFromPhone();
             if (++polls > 60) clearInterval(id);
           }, 50);
           setTimeout(() => clearInterval(id), 3000);
-        });
+        }
+        phoneEl.addEventListener('focus', startAutofillPoll);
+        phoneEl.addEventListener('touchstart', startAutofillPoll, { passive: true });
       }
     }
     fetch('https://www.cloudflare.com/cdn-cgi/trace')
