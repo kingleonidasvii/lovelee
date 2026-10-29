@@ -126,6 +126,7 @@
       align-items: center;
       justify-content: center;
       padding: 80px 52px 52px;
+      overflow-x: hidden;
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
@@ -554,6 +555,7 @@
       cursor: grab;
       user-select: none;
       overflow: visible;
+      touch-action: pan-y;
     }
     .mc-stage:active { cursor: grabbing; }
     .mc-track {
@@ -2061,16 +2063,19 @@
 
   lockHeight();
 
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+  // Re-measure after short delay so in-app browser toolbars (Instagram etc.) have settled
+  if (isMobile) setTimeout(lockHeight, 350);
+
   // Re-lock only on real orientation change (not scroll-triggered resize)
   window.addEventListener('orientationchange', function () {
-    // Short delay to let the browser finish rotating before we measure
     setTimeout(lockHeight, 350);
   });
 
   // On desktop, allow clean resize (no in-app browser weirdness)
-  var resizeTimer;
-  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   if (!isMobile) {
+    var resizeTimer;
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(lockHeight, 150);
