@@ -37,12 +37,13 @@
       width: 100%;
       max-width: 480px;
       object-fit: contain;
+      background: #f5f0ea;
     }
     @media (max-width: 600px) {
       #splash-video-src { max-width: 320px; }
     }
 
-    html { background: var(--ink); }
+    html { background: var(--ink); overscroll-behavior: none; }
 
     body {
       background: var(--ink);
@@ -463,9 +464,9 @@
       }
     }
 
-    /* Prevent iOS zoom-on-scroll artifact: svh = small viewport (stable, toolbar-insensitive) */
+    /* iOS: lvh = large viewport (toolbar hidden). Slightly overflows when toolbar visible, never gaps. */
     @supports (-webkit-touch-callout: none) {
-      .hero-photo { bottom: auto; height: 100svh; }
+      .hero-photo { bottom: auto; height: 100lvh; }
     }
     .hero-photo::after {
       content: '';
@@ -943,10 +944,8 @@
         display: flex;
         justify-content: center;
         gap: 32px;
-        padding: 20px 20px 32px;
-        background: rgba(0,0,0,0.75);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        padding: 20px 20px calc(32px + env(safe-area-inset-bottom));
+        background: var(--ink);
       }
     }
 
@@ -1820,9 +1819,9 @@
     <div class="newsletter-row-modern" style="gap:0;">
       <div class="country-select-wrap" style="margin-right:6px;">
         <span class="country-select-label" id="country-select-label-inline"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <select id="newsletter-country-inline" class="newsletter-country-select"></select>
+        <select id="newsletter-country-inline" class="newsletter-country-select" autocomplete="tel-country-code"></select>
       </div>
-      <input type="tel" id="newsletter-phone-inline" placeholder="phone number (optional)" class="newsletter-input-modern" style="flex:1; min-width:0;" autocomplete="tel">
+      <input type="tel" id="newsletter-phone-inline" placeholder="phone number (optional)" class="newsletter-input-modern" style="flex:1; min-width:0;" autocomplete="tel-national">
     </div>
     <div class="newsletter-row-modern" style="border-bottom:none; margin-top:8px;">
       <label class="newsletter-consent-modern" style="margin-top:0;">
@@ -1880,9 +1879,9 @@
         <div class="newsletter-phone-row">
           <div class="country-select-wrap">
             <span class="country-select-label" id="ticket-country-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <select id="ticket-notify-country" class="newsletter-country-select"></select>
+            <select id="ticket-notify-country" class="newsletter-country-select" autocomplete="tel-country-code"></select>
           </div>
-          <input type="tel" id="ticket-notify-phone" placeholder="phone number (optional)" class="ticket-notify-input" autocomplete="tel">
+          <input type="tel" id="ticket-notify-phone" placeholder="phone number (optional)" class="ticket-notify-input" autocomplete="tel-national">
         </div>
       </div>
       <label class="newsletter-consent" style="margin-top:16px">
@@ -1938,9 +1937,9 @@
           <div class="newsletter-phone-row">
             <div class="country-select-wrap">
               <span class="country-select-label" id="country-select-label"><span>—</span><svg width="10" height="5" viewBox="0 0 16 8"><polyline points="1,1 8,7 15,1" fill="none" stroke="rgba(245,240,234,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <select id="newsletter-country-popup" class="newsletter-country-select"></select>
+              <select id="newsletter-country-popup" class="newsletter-country-select" autocomplete="tel-country-code"></select>
             </div>
-            <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input" autocomplete="tel">
+            <input type="tel" id="newsletter-phone-popup" placeholder="phone number (optional)" class="newsletter-popup-input" autocomplete="tel-national">
           </div>
         </div>
       </div>
@@ -2839,10 +2838,22 @@ window.addEventListener('pageshow', function () {
     if (!sel || !label) return;
     sel.innerHTML = optionsHTML;
     function setLabel(text) { label.innerHTML = `<span>${text}</span>${chevron}`; }
+    const STORAGE_KEY = 'lovelee_country';
+    function applyCountry(iso, code) {
+      const opt = sel.querySelector(`option[data-iso="${iso}"]`);
+      if (opt) { opt.selected = true; setLabel(iso + ' +' + code); }
+    }
     sel.addEventListener('change', () => {
-      const opt = sel.options[sel.selectedIndex];
-      if (opt && opt.value) setLabel(opt.dataset.iso + ' +' + opt.value);
-      else setLabel('—');
+      // iOS autocomplete may set value as "+49" — strip the + and find the matching option
+      const raw = sel.value.replace(/^\+/, '');
+      const opt = raw !== sel.value
+        ? Array.from(sel.options).find(o => o.value === raw) || sel.options[sel.selectedIndex]
+        : sel.options[sel.selectedIndex];
+      if (opt && opt.value) {
+        if (raw !== sel.value) opt.selected = true;
+        setLabel(opt.dataset.iso + ' +' + opt.value);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ iso: opt.dataset.iso, code: opt.value })); } catch(e) {}
+      } else setLabel('—');
     });
     // Detect autofill: if number starts with +, extract country code and update selector
     if (phoneId) {
@@ -2857,6 +2868,7 @@ window.addEventListener('pageshow', function () {
             if (val.startsWith('+' + opt.value)) {
               opt.selected = true;
               setLabel(opt.dataset.iso + ' +' + opt.value);
+              try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ iso: opt.dataset.iso, code: opt.value })); } catch(e) {}
               break;
             }
           }
@@ -2864,7 +2876,6 @@ window.addEventListener('pageshow', function () {
         phoneEl.addEventListener('input', syncSelectorFromPhone);
         phoneEl.addEventListener('change', syncSelectorFromPhone);
         phoneEl.addEventListener('blur', syncSelectorFromPhone);
-        // iOS autofill fires no reliable events — poll for 3s after touch or focus
         function startAutofillPoll() {
           let polls = 0;
           const id = setInterval(() => {
@@ -2875,14 +2886,19 @@ window.addEventListener('pageshow', function () {
         }
         phoneEl.addEventListener('focus', startAutofillPoll);
         phoneEl.addEventListener('touchstart', startAutofillPoll, { passive: true });
+        setInterval(syncSelectorFromPhone, 500);
       }
     }
+    // Priority: 1) localStorage saved preference, 2) Cloudflare geo
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved && saved.iso && saved.code) { applyCountry(saved.iso, saved.code); return; }
+    } catch(e) {}
     fetch('https://www.cloudflare.com/cdn-cgi/trace')
       .then(r => r.text())
       .then(txt => {
         const loc = (txt.match(/loc=([A-Z]{2})/) || [])[1];
         if (!loc) return;
-        // Don't override if user already has a +number in the phone field
         const phoneEl2 = phoneId ? document.getElementById(phoneId) : null;
         if (phoneEl2 && phoneEl2.value.trim().startsWith('+')) return;
         const opt = sel.querySelector(`option[data-iso="${loc}"]`);
@@ -2904,7 +2920,8 @@ window.addEventListener('pageshow', function () {
       return { phone: '+' + digits, error: null };
     }
     if (!countryCode) return { phone: null, error: 'please select your country code' };
-    const digits = raw.replace(/[^\d]/g, '');
+    // strip leading trunk prefix (0) — e.g. 015912345 → 15912345 before prepending country code
+    const digits = raw.replace(/[^\d]/g, '').replace(/^0+/, '');
     if (digits.length < 5 || digits.length > 12) return { phone: null, error: 'please enter a valid phone number' };
     return { phone: '+' + countryCode + digits, error: null };
   };
