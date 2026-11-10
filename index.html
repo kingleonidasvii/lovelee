@@ -107,6 +107,77 @@
       margin-left: -1px;
       padding-left: 53px;
     }
+    #newsletter-music-col {
+      display: none;
+    }
+    @media (min-width: 900px) {
+      #newsletter-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+        padding: 40px 72px;
+      }
+      #newsletter-music-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      #newsletter-music-col.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .nl-music-carousel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .nl-mc-stage {
+        width: min(180px, 14vw); height: min(180px, 14vw);
+        position: relative;
+        perspective: 700px;
+        cursor: grab;
+        user-select: none;
+        overflow: visible;
+        touch-action: pan-y;
+      }
+      .nl-mc-stage:active { cursor: grabbing; }
+      .nl-mc-track {
+        position: absolute;
+        top: 0; left: 50%;
+        display: flex; flex-direction: column; align-items: center;
+        width: min(180px, 14vw);
+        margin-left: calc(min(180px, 14vw) / -2);
+        transform-origin: center center;
+        transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease, filter 0.45s ease;
+        pointer-events: auto;
+        will-change: transform, opacity;
+      }
+      .nl-mc-track.active { pointer-events: auto; z-index: 10; opacity: 1 !important; filter: none !important; }
+      .nl-mc-cover {
+        width: min(180px, 14vw); height: min(180px, 14vw);
+        overflow: hidden; cursor: pointer; position: relative;
+        box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+      }
+      .nl-mc-cover img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+      .nl-mc-cover--storm img { transform: scale(1.3); }
+      .nl-mc-title-area {
+        min-height: 60px;
+        display: flex; align-items: center; justify-content: center;
+        position: relative;
+      }
+      .nl-mc-title-img {
+        height: min(90px, 7vw); width: auto; max-width: 300px;
+        display: block; position: absolute;
+        opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+      }
+      .nl-mc-title-img.visible { opacity: 0.9; }
+    }
     #scroll-content {
       position: relative;
       z-index: 5;
@@ -860,6 +931,9 @@
       padding: 0 52px 44px;
       font-size: 0.48rem; letter-spacing: 0.16em;
       text-transform: uppercase; color: rgba(245,240,234,0.18);
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .reveal {
@@ -947,7 +1021,9 @@
         justify-content: center;
         gap: 32px;
         padding: 20px 20px calc(32px + env(safe-area-inset-bottom));
-        background: var(--ink);
+        background: rgba(0,0,0,0.75);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
       }
     }
 
@@ -1067,6 +1143,7 @@
       z-index: 200;
       user-select: none;
       -webkit-user-select: none;
+      transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
     }
 
     #violet-float-left {
@@ -1838,6 +1915,29 @@
     </div>
     <p id="newsletter-status-inline" class="newsletter-status-inline"></p>
   </form>
+
+  <div id="newsletter-music-col">
+    <div class="nl-music-carousel">
+      <div class="nl-mc-stage">
+        <div class="nl-mc-track active" data-nlkey="violet">
+          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('violet')">
+            <img src="VioletSongCoverPlastic.webp" alt="violet">
+          </div>
+        </div>
+        <div class="nl-mc-track" data-nlkey="feelingyou">
+          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('feelingyou')">
+            <img src="FeelingYouCVRWeb.png" alt="feeling you">
+          </div>
+        </div>
+        <div class="nl-mc-track" data-nlkey="stormchasers">
+          <div class="nl-mc-cover nl-mc-cover--storm" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('stormchasers')">
+            <img src="StormChasersCover.webp" alt="storm chasers">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -2535,6 +2635,22 @@ const io = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+// ── newsletter music col fade-in ───────────────────────────────────────────────
+const nlMusicCol = document.getElementById('newsletter-music-col');
+if (nlMusicCol) {
+  const nlMusicObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        nlMusicCol.classList.add('visible');
+        nlMusicObs.disconnect();
+        // slight delay so the fade-in transition starts first
+        setTimeout(() => { if (typeof nlSpinIn === 'function') nlSpinIn(); }, 150);
+      }
+    });
+  }, { threshold: 0.2 });
+  nlMusicObs.observe(nlMusicCol);
+}
 
 // ── TICKET NOTIFY TOAST ───────────────────────────────────────────────────────
 const ticketToast   = document.getElementById('ticket-toast');
@@ -3743,6 +3859,7 @@ if (newsletterFormInline) {
       upcomingEl.innerHTML = upcoming.length
         ? upcoming.map(r => buildRow(r, false, useEditorial)).join('')
         : '<div class="tour-loading">no upcoming shows</div>';
+      upcomingEl.dispatchEvent(new CustomEvent('tourRendered'));
 
       if (past.length > 0) {
         pastEl.innerHTML = '<img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">' + past.map(r => buildRow(r, true, false)).join('');
@@ -4005,7 +4122,13 @@ function hideFlowers() {
     const trigRange = vh * 0.6;
     const prog  = Math.max(0, Math.min(1, (trigStart - top) / trigRange));
     const eased = ease(prog);
-    el.style.transform = `rotate(${(cfg.start + (cfg.end - cfg.start) * eased).toFixed(1)}deg) translateZ(0)`;
+    // On desktop (≥900px), shrink flower and limit rotation when music column is showing
+    const musicColVisible = window.innerWidth >= 900 &&
+      document.getElementById('newsletter-music-col')?.classList.contains('visible');
+    const scale  = musicColVisible ? 0.5 : 1;
+    const endRot = musicColVisible ? -55 : cfg.end;
+    const rot    = (cfg.start + (endRot - cfg.start) * eased).toFixed(1);
+    el.style.transform = `rotate(${rot}deg) scale(${scale}) translateZ(0)`;
     el.style.opacity   = '1';
   }
   window.addEventListener('resize', applyLayout);
@@ -4032,6 +4155,36 @@ function togglePcSub(btn) {
     sub.classList.add('open');
     btn.classList.add('expanded');
   }
+}
+
+function animateTourDay() {
+  const el = document.querySelector('#panel-tour .tour-featured-day');
+  if (!el) return;
+  const target = parseInt(el.textContent.trim(), 10);
+  if (isNaN(target)) return;
+
+  // Slot machine: count down from (target + overshoot) to target, decelerating.
+  // Geometric series sum for speed=5, friction=0.97 ≈ 167 → overshoot = 167, starts near 100+target.
+  const maxDay = 100;
+  let pos   = target + 167;
+  let speed = 5.0;
+  const friction = 0.97;
+
+  function frame() {
+    pos -= speed;
+    speed *= friction;
+
+    if (pos <= target) {
+      el.textContent = target < 10 ? '0' + target : String(target);
+      return;
+    }
+
+    // Wrap into 1–31 range so it looks like a calendar wheel
+    const d = ((Math.round(pos) - 1 + maxDay * 100) % maxDay) + 1;
+    el.textContent = d < 10 ? '0' + d : String(d);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 function openPanel(id) {
@@ -4067,7 +4220,12 @@ function openPanel(id) {
     if (id === 'panel-music') {
       mcReset();
       const mc = panel.querySelector('.music-carousel');
-      if (mc) { mc.classList.remove('visible'); setTimeout(() => mc.classList.add('visible'), switching ? 30 : 80); }
+      if (mc) {
+        mc.classList.remove('visible');
+        const delay = switching ? 30 : 80;
+        setTimeout(() => mc.classList.add('visible'), delay);
+        setTimeout(() => mcSpinIn(), delay + 80);
+      }
     }
     if (id === 'panel-tour') {
       if (window.stopTourScroll) stopTourScroll();
@@ -4077,6 +4235,15 @@ function openPanel(id) {
       if (past)     past.classList.remove('visible');
       setTimeout(() => { if (upcoming) upcoming.classList.add('visible'); }, switching ? 30 : 80);
       setTimeout(() => { if (past)     past.classList.add('visible');     }, switching ? 110 : 180);
+      // Animate day counter after content is ready (CSV or static)
+      const upEl = document.getElementById('tour-upcoming-section');
+      if (upEl) {
+        let fired = false;
+        function fireDay() { if (fired) return; fired = true; setTimeout(animateTourDay, 60); }
+        upEl.addEventListener('tourRendered', fireDay, { once: true });
+        // Fallback: if no CSV fetch (static HTML), animate after panel reveal
+        setTimeout(fireDay, switching ? 400 : 600);
+      }
     }
     if (id === 'panel-press') {
       const topLevel = panel.querySelectorAll('.pc-list > .pc-row-item');
@@ -4184,6 +4351,29 @@ function mcStep(dir) {
 
 function mcReset() { mcPos = 0; mcApply(true); }
 
+function mcSpinIn() {
+  const stage = document.querySelector('#panel-music .mc-stage');
+  if (!stage) return;
+  mcPos = 5.5;
+  let prev = mcPos;
+  function frame() {
+    prev = mcPos;
+    mcPos *= 0.94;
+    const speed = Math.abs(prev - mcPos);
+    const blurPx = Math.min(speed * 300, 16);
+    stage.style.filter = blurPx > 0.3 ? `blur(${blurPx.toFixed(1)}px)` : '';
+    mcApply(false);
+    if (mcPos > 0.015) {
+      requestAnimationFrame(frame);
+    } else {
+      mcPos = 0;
+      stage.style.filter = '';
+      mcApply(true);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
 (function() {
   document.addEventListener('DOMContentLoaded', () => {
     const stage = document.querySelector('.mc-stage');
@@ -4256,6 +4446,161 @@ function mcReset() { mcPos = 0; mcApply(true); }
       if (!track || track.classList.contains('active')) return;
       const idx = [...mcTracks()].indexOf(track);
       if (idx !== -1) { mcPos = idx; mcApply(true); }
+    });
+  });
+})();
+
+// ── Newsletter column carousel (scoped, independent of panel-music) ───────────
+(function() {
+  const NL_TOTAL = 3;
+  let nlPos = 0;
+
+  function nlWrap(n) { return ((n % NL_TOTAL) + NL_TOTAL) % NL_TOTAL; }
+
+  function nlApply(animated) {
+    const stage = document.querySelector('.nl-mc-stage');
+    if (!stage) return;
+    const tracks = stage.querySelectorAll('.nl-mc-track');
+    const nearest = nlWrap(Math.round(nlPos));
+    const activeKey = tracks[nearest]?.dataset?.nlkey;
+
+    tracks.forEach((t, i) => {
+      const rawOff = i - nlPos;
+      let off = rawOff - NL_TOTAL * Math.round(rawOff / NL_TOTAL);
+      if (rawOff > 0 && off < 0 && nlPos < NL_TOTAL / 2) off = rawOff;
+      if (rawOff < 0 && off > 0 && nlPos > NL_TOTAL * 20 - NL_TOTAL / 2) off = rawOff;
+      const abs  = Math.abs(off);
+      const sign = off < 0 ? -1 : 1;
+      const tx     = sign * 65 * Math.min(abs, 1.5);
+      const ry     = sign * -52 * Math.min(abs, 1);
+      const scale  = 1 - 0.32 * Math.min(abs, 1);
+      const op     = Math.max(0, 1 - 0.55 * Math.min(abs, 1) - Math.max(0, abs - 1) * 2.2);
+      const bright = 1 - 0.58 * Math.min(abs, 1);
+      const z      = Math.round(10 - abs * 5);
+      t.style.transition = animated
+        ? 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease, filter 0.45s ease'
+        : 'none';
+      t.style.transform = `translateX(${tx}%) rotateY(${ry}deg) scale(${scale})`;
+      t.style.opacity   = String(Math.max(0, op));
+      t.style.filter    = `brightness(${bright})`;
+      t.style.zIndex    = String(z);
+      t.classList.toggle('active', i === nearest);
+    });
+
+    document.querySelectorAll('.nl-mc-title-img').forEach(img =>
+      img.classList.toggle('visible', img.dataset.for === activeKey));
+  }
+
+  function nlSnap() { nlPos = Math.round(nlPos); nlApply(true); }
+
+  let nlIdleRaf = null;
+  let nlIdlePaused = false;
+  function nlStartIdle() {
+    if (nlIdleRaf) return;
+    const SPEED = 0.0008; // covers per frame — very slow
+    function idleFrame() {
+      if (!nlIdlePaused) {
+        nlPos += SPEED;
+        nlApply(false);
+      }
+      nlIdleRaf = requestAnimationFrame(idleFrame);
+    }
+    nlIdleRaf = requestAnimationFrame(idleFrame);
+  }
+  function nlPauseIdle() { nlIdlePaused = true; }
+  function nlResumeIdle() { nlIdlePaused = false; }
+
+  window.nlSpinIn = function nlSpinIn() {
+    const stage = document.querySelector('.nl-mc-stage');
+    if (!stage) return;
+    nlPos = 5.5;
+    if (nlIdleRaf) { cancelAnimationFrame(nlIdleRaf); nlIdleRaf = null; }
+    let prev = nlPos;
+
+    function frame() {
+      prev = nlPos;
+      nlPos *= 0.94;
+      const speed = Math.abs(prev - nlPos);
+      const blurPx = Math.min(speed * 300, 16);
+      stage.style.filter = blurPx > 0.3 ? `blur(${blurPx.toFixed(1)}px)` : '';
+      nlApply(false);
+      if (nlPos > 0.015) {
+        requestAnimationFrame(frame);
+      } else {
+        nlPos = 0;
+        stage.style.filter = '';
+        nlApply(true);
+        setTimeout(nlStartIdle, 800);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const stage = document.querySelector('.nl-mc-stage');
+    if (!stage) return;
+    nlApply(false);
+
+    // wheel (trackpad horizontal)
+    let snapTimer = null, driftRaf = null, velocity = 0, lastWheelT = 0;
+    function driftFrame() {
+      velocity *= 0.88;
+      if (Math.abs(velocity) < 0.0003) { nlSnap(); return; }
+      nlPos += velocity * 16;
+      nlPos = Math.max(0, Math.min(NL_TOTAL * 20 - 1, nlPos));
+      nlApply(false);
+      if (nlPos <= 0 || nlPos >= NL_TOTAL * 20 - 1) { velocity = 0; nlSnap(); return; }
+      driftRaf = requestAnimationFrame(driftFrame);
+    }
+    let idleResumeTimer = null;
+    function interruptIdle() {
+      nlPauseIdle();
+      clearTimeout(idleResumeTimer);
+      idleResumeTimer = setTimeout(nlResumeIdle, 2000);
+    }
+
+    document.getElementById('newsletter-music-col').addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) < Math.abs(e.deltaY) * 0.5) return;
+      e.preventDefault();
+      interruptIdle();
+      cancelAnimationFrame(driftRaf);
+      const now = performance.now(), dt = Math.max(now - lastWheelT, 4);
+      velocity = (e.deltaX / 260) / dt; lastWheelT = now;
+      nlPos += e.deltaX / 260;
+      nlPos = Math.max(0, Math.min(NL_TOTAL * 20 - 1, nlPos));
+      nlApply(false);
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => { driftRaf = requestAnimationFrame(driftFrame); }, 400);
+    }, { passive: false });
+
+    // touch swipe
+    let tx0 = 0, pos0 = 0, touching = false;
+    stage.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; pos0 = nlPos; touching = true; interruptIdle(); }, { passive: true });
+    stage.addEventListener('touchmove', e => {
+      if (!touching) return;
+      const dx = e.touches[0].clientX - tx0;
+      if (Math.abs(dx) > 8) e.preventDefault();
+      nlPos = Math.max(0, Math.min(NL_TOTAL * 20 - 1, pos0 - dx / 180));
+      nlApply(false);
+    }, { passive: false });
+    stage.addEventListener('touchend', () => { touching = false; nlSnap(); }, { passive: true });
+
+    // mouse drag
+    let mx0 = 0, mpos0 = 0, dragging = false;
+    stage.addEventListener('mousedown', e => { mx0 = e.clientX; mpos0 = nlPos; dragging = true; interruptIdle(); });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      nlPos = Math.max(0, Math.min(NL_TOTAL * 20 - 1, mpos0 - (e.clientX - mx0) / 180));
+      nlApply(false);
+    });
+    document.addEventListener('mouseup', () => { if (dragging) { dragging = false; nlSnap(); } });
+
+    // click side cover to navigate
+    stage.addEventListener('click', e => {
+      const track = e.target.closest('.nl-mc-track');
+      if (!track || track.classList.contains('active')) return;
+      const idx = [...stage.querySelectorAll('.nl-mc-track')].indexOf(track);
+      if (idx !== -1) { nlPos = idx; nlApply(true); }
     });
   });
 })();
