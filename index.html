@@ -22,7 +22,7 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: #f5f0ea;
+      background: var(--cream);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -37,7 +37,7 @@
       width: 100%;
       max-width: 480px;
       object-fit: contain;
-      background: #f5f0ea;
+      background: transparent;
     }
     @media (max-width: 600px) {
       #splash-video-src { max-width: 320px; }
@@ -206,7 +206,7 @@
       transition: opacity 0.4s ease;
       user-select: none;
       -webkit-user-select: none;
-    }
+      }
     .section-panel.open {
       opacity: 1;
       pointer-events: auto;
@@ -306,18 +306,18 @@
       font-size: 0.62rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: rgba(196,180,232,0.8);
+      color: rgba(210,185,100,0.8);
       background: none;
       border: none;
-      border-bottom: 1px solid rgba(196,180,232,0.35);
+      border-bottom: 1px solid rgba(210,185,100,0.3);
       padding: 0 0 2px;
       cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.2s, border-color 0.2s, text-shadow 0.2s;
       white-space: nowrap;
       text-decoration: none;
       display: inline-block;
     }
-    .tour-featured-ticket:hover { color: rgba(196,180,232,1); border-color: rgba(196,180,232,0.75); }
+    .tour-featured-ticket:hover { color: rgba(255,240,160,1); border-color: rgba(210,185,100,0.7); text-shadow: 0 0 6px rgba(255,230,80,0.3); }
 
     /* Editorial layout — multiple upcoming shows */
     .tour-editorial-row {
@@ -371,18 +371,18 @@
       font-size: 0.42rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: rgba(196,180,232,0.75);
+      color: rgba(210,185,100,0.75);
       background: none;
       border: none;
-      border-bottom: 1px solid rgba(196,180,232,0.3);
+      border-bottom: 1px solid rgba(210,185,100,0.28);
       padding: 0 0 2px;
       cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.2s, border-color 0.2s, text-shadow 0.2s;
       white-space: nowrap;
       text-decoration: none;
       display: inline-block;
     }
-    .tour-editorial-ticket:hover { color: rgba(196,180,232,1); border-color: rgba(196,180,232,0.75); }
+    .tour-editorial-ticket:hover { color: rgba(255,240,160,1); border-color: rgba(210,185,100,0.7); text-shadow: 0 0 6px rgba(255,230,80,0.3); }
     .tour-no-upcoming {
       font-family: 'Inter', sans-serif;
       font-size: 0.52rem;
@@ -795,16 +795,16 @@
       font-size: 0.48rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #9b8bbf;
+      color: rgba(210,185,100,0.75);
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(155,139,191,0.35);
+      border-bottom: 1px solid rgba(210,185,100,0.3);
       padding: 0 0 2px;
       cursor: pointer;
-      transition: color 0.25s, border-color 0.25s;
+      transition: color 0.25s, border-color 0.25s, text-shadow 0.25s;
       white-space: nowrap;
     }
-    .ticket-btn:hover { color: #c4b4e8; border-color: #c4b4e8; }
+    .ticket-btn:hover { color: rgba(255,240,160,1); border-color: rgba(210,185,100,0.7); text-shadow: 0 0 6px rgba(255,230,80,0.3); }
     .ticket-btn.sold-out {
       color: rgba(245,240,234,0.25);
       border-color: rgba(245,240,234,0.08);
@@ -1010,7 +1010,7 @@
     .contact-col-label { display: none; }
     .contact-cols { display: contents; }
     /* desktop combined section: hidden on mobile */
-    #press-contact-desktop { display: none; }
+    #press-contact-desktop { display: none !important; }
 
     .mobile-footer-links {
       display: none;
@@ -1024,6 +1024,95 @@
         background: rgba(0,0,0,0.75);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
+      }
+    }
+
+    /* ── DESKTOP PANELS: transparent overlay, content floats over hero ──── */
+    @media (min-width: 900px) {
+      .section-panel {
+        display: flex;
+        inset: 0;
+        width: 100%;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        opacity: 0;           /* hidden until .open — fixes ghost-panel glitch */
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        padding: 0;
+        align-items: stretch;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+      .section-panel.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      /* Tour panel: upcoming left, past right */
+      #panel-tour {
+        flex-direction: row;
+        align-items: stretch;
+        padding: 0;
+        gap: 0;
+        overflow: hidden;
+      }
+      #tour-upcoming-section {
+        position: absolute;
+        top: 0;
+        left: 12%;
+        width: 28%;
+        max-width: none;
+        padding: 160px 0 60px 24px;
+        overflow-y: auto;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      #tour-past-section {
+        width: auto;
+        max-width: none;
+        padding: 0 48px 60px 32px;
+        margin-left: 0;
+        margin-top: 0 !important;
+        position: absolute;
+        left: 58%;
+        right: 0;
+        bottom: 40px;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        box-sizing: border-box;
+      }
+      /* Past shows: text shadow for legibility over hero */
+      #tour-past-section .tour-row {
+        text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+        grid-template-columns: 52px 1fr auto 0;
+      }
+      #tour-past-section .tour-venue,
+      #tour-past-section .tour-date,
+      #tour-past-section .tour-city {
+        text-shadow: 0 1px 10px rgba(0,0,0,0.7);
+      }
+      #tour-past-section .tour-city { display: block; }
+      /* Music panel: appears in the right portion of the viewport */
+      #panel-music {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 60px 0 60px max(72%, calc(63% + 143px));
+        margin-left: 0;
+      }
+      #panel-music .music-carousel { margin: 0; }
+      #panel-music .mc-stage,
+      #panel-music .mc-track {
+        width: 220px !important;
+        height: 220px !important;
+        margin-left: -110px !important;
+      }
+      #panel-music .mc-cover {
+        width: 220px !important;
+        height: 220px !important;
       }
     }
 
@@ -1056,7 +1145,30 @@
       .tour-city { font-size: 0.5rem; }
 
       /* PRESS & CONTACT: desktop combined, mobile rows hidden */
-      #press-contact-desktop { display: flex; }
+      #press-contact-desktop {
+        display: flex !important;
+        z-index: 200;
+        width: 260px;
+        transition: opacity 0.3s ease;
+      }
+      #press-contact-desktop .pc-row-item {
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+      }
+      #press-contact-desktop .pc-row-item.line-in {
+        opacity: 1;
+        transform: none;
+      }
+      #press-contact-desktop .pc-row {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: color 0.18s, text-shadow 0.18s;
+      }
+      #press-contact-desktop .pc-row:hover .pc-row-label {
+        color: rgba(255,240,160,1) !important;
+        text-shadow: 0 0 6px rgba(255,230,80,0.3) !important;
+      }
       .press-contact-row { display: none; }
 
       .pc-desktop-links {
@@ -1605,7 +1717,7 @@
     }
     .pc-row.visible { opacity: 1; transform: translateY(0); }
     .pc-row.visible:hover { opacity: 0.4; }
-    .pc-row-item.visible .pc-row:hover .pc-row-label { text-decoration: underline; text-underline-offset: 4px; }
+    .pc-row-item.visible .pc-row:hover .pc-row-label { color: rgba(255,240,160,1); text-shadow: 0 0 6px rgba(255,230,80,0.3); }
     .pc-row-label {
       font-family: 'Inter', sans-serif;
       font-size: 1.1rem;
@@ -1920,17 +2032,17 @@
     <div class="nl-music-carousel">
       <div class="nl-mc-stage">
         <div class="nl-mc-track active" data-nlkey="violet">
-          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('violet')">
+          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openMusicPanelAtSong('violet')">
             <img src="VioletSongCoverPlastic.webp" alt="violet">
           </div>
         </div>
         <div class="nl-mc-track" data-nlkey="feelingyou">
-          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('feelingyou')">
+          <div class="nl-mc-cover" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openMusicPanelAtSong('feelingyou')">
             <img src="FeelingYouCVRWeb.png" alt="feeling you">
           </div>
         </div>
         <div class="nl-mc-track" data-nlkey="stormchasers">
-          <div class="nl-mc-cover nl-mc-cover--storm" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openStreamMenu('stormchasers')">
+          <div class="nl-mc-cover nl-mc-cover--storm" onclick="if(this.closest('.nl-mc-track').classList.contains('active')) openMusicPanelAtSong('stormchasers')">
             <img src="StormChasersCover.webp" alt="storm chasers">
           </div>
         </div>
@@ -1945,17 +2057,6 @@
 
 <div id="panel-tour" class="section-panel" onclick="closePanel()">
   <div id="tour-upcoming-section">
-    <div class="tour-featured-row">
-      <div class="tour-featured-date">
-        <span class="tour-featured-month">Jan</span>
-        <span class="tour-featured-day">14</span>
-      </div>
-      <div class="tour-featured-info">
-        <div class="tour-featured-venue">EP Release Show</div>
-        <div class="tour-featured-city">Berlin, DE</div>
-      </div>
-      <button class="tour-featured-ticket" onclick="event.stopPropagation(); showTicketToast()">Get Tickets</button>
-    </div>
   </div>
   <div id="tour-past-section" class="tour-list" style="margin-top:40px">
     <img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">
@@ -2069,17 +2170,17 @@
 
     <div class="mc-stage">
       <div class="mc-track active" data-key="violet">
-        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('violet')">
+        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')){ if(window.innerWidth>=640 && typeof onIdle==='function') onIdle(); else openStreamMenu('violet'); }">
           <img src="VioletSongCoverPlastic.webp" alt="violet">
         </div>
       </div>
       <div class="mc-track" data-key="feelingyou">
-        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('feelingyou')">
+        <div class="mc-cover" onclick="if(this.closest('.mc-track').classList.contains('active')){ if(window.innerWidth>=640 && typeof onIdle==='function') onIdle(); else openStreamMenu('feelingyou'); }">
           <img src="FeelingYouCVRWeb.png" alt="feeling you">
         </div>
       </div>
       <div class="mc-track" data-key="stormchasers">
-        <div class="mc-cover mc-cover--storm" onclick="if(this.closest('.mc-track').classList.contains('active')) openStreamMenu('stormchasers')">
+        <div class="mc-cover mc-cover--storm" onclick="if(this.closest('.mc-track').classList.contains('active')){ if(window.innerWidth>=640 && typeof onIdle==='function') onIdle(); else openStreamMenu('stormchasers'); }">
           <img src="StormChasersCover.webp" alt="storm chasers">
         </div>
       </div>
@@ -3482,6 +3583,63 @@ if (newsletterFormInline) {
     transition: transform 0.26s cubic-bezier(0.22,1,0.36,1);
   }
   #stream-popup.open #stream-popup-inner { transform: translateY(0); }
+  /* Desktop: left-side panel instead of full-screen blur */
+  @media (min-width: 640px) {
+    #stream-popup {
+      inset: auto;
+      left: 0; top: 0; bottom: 0;
+      width: 38vw;
+      max-width: 420px;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100vh;
+      background: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      pointer-events: none;
+    }
+    #stream-popup-close { display: none; }
+    .stream-popup-top { display: none; }
+    #stream-popup.open {
+      pointer-events: none;
+    }
+    #stream-popup-inner {
+      pointer-events: none;
+      position: absolute;
+      top: calc(50% - 23px);
+      left: 10vw;
+      transform: translate(-20px, -50%);
+      width: 260px;
+      opacity: 0;
+      transition: transform 0.32s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease;
+    }
+    #stream-popup.open #stream-popup-inner {
+      pointer-events: auto;
+      transform: translate(0px, -50%);
+      opacity: 1;
+    }
+    .stream-popup-link {
+      background: none;
+      border: none;
+      border-radius: 0;
+      padding: 7px 0;
+      margin-bottom: 0;
+      color: rgba(245,240,234,0.45);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .stream-popup-link {
+      transition: color 0.18s, opacity 0.18s;
+    }
+    .stream-popup-link:hover {
+      background: none;
+      color: rgba(255,240,160,1);
+      opacity: 1;
+    }
+    .stream-popup-link:hover svg { opacity: 1; }
+    .stream-popup-link svg { width: 13px; height: 13px; opacity: 0.6; transition: opacity 0.18s; }
+  }
   .stream-popup-top {
     display: flex;
     align-items: center;
@@ -3489,35 +3647,29 @@ if (newsletterFormInline) {
     margin-bottom: 20px;
   }
   #stream-popup-title { display: none; }
-  #stream-popup-close {
-    background: none; border: none;
-    color: rgba(245,240,234,0.3); font-size: 0.65rem;
-    cursor: pointer; padding: 12px;
-    margin: -12px;
-    transition: color 0.2s; line-height: 1;
-  }
-  #stream-popup-close:hover { color: rgba(245,240,234,0.8); }
+  #stream-popup-close { display: none; }
   .stream-popup-link {
     display: flex;
     align-items: center;
     gap: 14px;
-    color: rgba(245,240,234,0.75);
+    color: rgba(245,240,234,1);
     text-decoration: none;
-    padding: 13px 16px;
-    border-radius: 10px;
-    margin-bottom: 6px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.07);
-    transition: background 0.18s, color 0.18s, border-color 0.18s;
+    padding: 9px 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    background: none;
+    border: none;
+    transition: color 0.18s;
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
   .stream-popup-link:last-child { margin-bottom: 0; }
   .stream-popup-link:hover {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    border-color: rgba(255,255,255,0.18);
+    background: none;
+    color: rgba(255,240,160,1);
+    text-shadow: 0 0 6px rgba(255,230,80,0.3);
   }
   .stream-popup-link svg {
     width: 22px; height: 22px;
@@ -3562,9 +3714,10 @@ if (newsletterFormInline) {
   const streamPopupLinks = document.getElementById('stream-popup-links');
   const streamPopupTitle = document.getElementById('stream-popup-title');
 
-  function openStreamMenu(song) {
+  function openStreamMenu(song, skipFade) {
     const links = songLinks[song];
     if (!links) return;
+    if (typeof _unblurStreamLinks === 'function') _unblurStreamLinks();
     const display = links.displayName || song;
     if (display.includes('\n')) {
       streamPopupTitle.innerHTML = display.split('\n').map(l => `<span style="display:block">${l}</span>`).join('');
@@ -3581,7 +3734,7 @@ if (newsletterFormInline) {
       youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>`,
     };
     const streamLabels = { spotify: 'Spotify', apple: 'Apple Music', amazon: 'Amazon Music', tidal: 'Tidal', bandcamp: 'Bandcamp', deezer: 'Deezer', youtube: 'YouTube Music' };
-    streamPopupLinks.innerHTML = [
+    const newLinks = [
       ['spotify', links.spotify],
       ['apple',   links.apple],
       ['amazon',  links.amazon],
@@ -3592,11 +3745,26 @@ if (newsletterFormInline) {
     ].filter(([, url]) => url).map(([key, url]) =>
       `<a href="${url}" target="_blank" rel="noopener" class="stream-popup-link">${streamIcons[key]}<span>${streamLabels[key]}</span></a>`
     ).join('');
-    if (links.gradient) streamPopup.style.background = links.gradient;
+    if (links.gradient && window.innerWidth < 640) streamPopup.style.background = links.gradient;
     if (musicBackdrop) musicBackdrop.style.background = links.backdrop || 'linear-gradient(225deg, rgba(50,26,78,0.78) 0%, rgba(14,12,13,0.62) 55%, rgba(18,12,32,0.72) 100%)';
     streamPopup.style.visibility = '';
     streamPopup.style.opacity    = '';
-    streamPopup.classList.add('open');
+    const alreadyOpen = streamPopup.classList.contains('open');
+    if (alreadyOpen && !skipFade) {
+      const inner = document.getElementById('stream-popup-inner');
+      inner.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+      inner.style.opacity = '0';
+      inner.style.transform = inner.style.transform.replace('translateX(0px)', 'translateX(-20px)') || 'translate(-20px, -50%)';
+      setTimeout(() => {
+        streamPopupLinks.innerHTML = newLinks;
+        inner.style.opacity = '1';
+        inner.style.transform = inner.style.transform.includes('-50%') ? 'translate(0px, -50%)' : 'translateX(0)';
+        setTimeout(() => { inner.style.transition = ''; }, 200);
+      }, 160);
+    } else {
+      streamPopupLinks.innerHTML = newLinks;
+      if (!alreadyOpen) streamPopup.classList.add('open');
+    }
     if (typeof onIdle === 'function') onIdle();
   }
 
@@ -3604,9 +3772,41 @@ if (newsletterFormInline) {
   streamPopup.addEventListener('click', e => {
     if (e.target === streamPopup) streamPopup.classList.remove('open');
   });
+  document.addEventListener('click', e => {
+    if (streamPopup.classList.contains('open') && !streamPopup.contains(e.target)) {
+      streamPopup.classList.remove('open');
+    }
+  });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') streamPopup.classList.remove('open');
   });
+
+  const _spInner = document.getElementById('stream-popup-inner');
+  const _spLinks = document.getElementById('stream-popup-links');
+  let _linksBlurred = false;
+  function _blurStreamLinks() {
+    if (!streamPopup.classList.contains('open') || !_spInner) return;
+    _linksBlurred = true;
+    _spInner.style.transition = 'filter 0.2s ease, opacity 0.2s ease';
+    _spInner.style.filter = 'blur(5px)';
+    _spInner.style.opacity = '0.25';
+  }
+  function _unblurStreamLinks() {
+    if (!_spInner) return;
+    _linksBlurred = false;
+    _spInner.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
+    _spInner.style.filter = '';
+    _spInner.style.opacity = '1';
+  }
+  window._unblurStreamLinks = _unblurStreamLinks;
+  window._blurStreamLinks  = _blurStreamLinks;
+  window._isLinksBlurred = () => _linksBlurred;
+
+  const carousel = document.querySelector('.music-carousel');
+  if (carousel) {
+    carousel.addEventListener('wheel', () => _blurStreamLinks(), { passive: true });
+    carousel.addEventListener('touchmove', () => _blurStreamLinks(), { passive: true });
+  }
 </script>
 
 <!-- ── SUPPORT POPUP ─────────────────────────────────────────────────────────── -->
@@ -3838,43 +4038,42 @@ if (newsletterFormInline) {
   const pastEl     = document.getElementById('tour-past-section');
   if (!upcomingEl || !pastEl) return;
 
-  upcomingEl.innerHTML = '<div class="tour-loading">loading…</div>';
+  const CACHE_KEY = 'showsCSVCache';
+  const cached = sessionStorage.getItem(CACHE_KEY);
+  if (cached) {
+    try { renderCSV(cached); } catch(e) {}
+  }
+
+  function renderCSV(csv) {
+    const rows  = parseCSV(csv).slice(1);
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    const upcoming = rows
+      .filter(r => r[0] && r[1] && r[5] && new Date(r[0]) >= today)
+      .sort((a,b) => new Date(a[0]) - new Date(b[0]));
+
+    const past = rows
+      .filter(r => r[0] && r[1] && new Date(r[0]) < today)
+      .sort((a,b) => new Date(b[0]) - new Date(a[0]));
+
+    const useEditorial = upcoming.length > 1;
+
+    upcomingEl.innerHTML = upcoming.length
+      ? upcoming.map(r => buildRow(r, false, useEditorial)).join('')
+      : '<div class="tour-loading">no upcoming shows</div>';
+    upcomingEl.dispatchEvent(new CustomEvent('tourRendered'));
+
+    if (past.length > 0) {
+      pastEl.innerHTML = '<img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">' + past.map(r => buildRow(r, true, false)).join('');
+    }
+
+  }
 
   fetch(SHOWS_CSV_URL + '&t=' + Date.now())
     .then(r => { if (!r.ok) throw new Error('fetch failed'); return r.text(); })
     .then(csv => {
-      const rows  = parseCSV(csv).slice(1);
-      const today = new Date(); today.setHours(0,0,0,0);
-
-      const upcoming = rows
-        .filter(r => r[0] && r[1] && r[5] && new Date(r[0]) >= today)
-        .sort((a,b) => new Date(a[0]) - new Date(b[0]));
-
-      const past = rows
-        .filter(r => r[0] && r[1] && new Date(r[0]) < today)
-        .sort((a,b) => new Date(b[0]) - new Date(a[0]));
-
-      const useEditorial = upcoming.length > 1;
-
-      upcomingEl.innerHTML = upcoming.length
-        ? upcoming.map(r => buildRow(r, false, useEditorial)).join('')
-        : '<div class="tour-loading">no upcoming shows</div>';
-      upcomingEl.dispatchEvent(new CustomEvent('tourRendered'));
-
-      if (past.length > 0) {
-        pastEl.innerHTML = '<img src="PastShowsText.png" alt="Past Shows" class="tour-section-label-img">' + past.map(r => buildRow(r, true, false)).join('');
-      }
-
-      const allRows = [...upcomingEl.querySelectorAll('.tour-featured-row, .tour-editorial-row'), ...pastEl.querySelectorAll('.tour-row')];
-      allRows.forEach((el, i) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(8px)';
-        setTimeout(() => {
-          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-          el.style.opacity    = el.classList.contains('past') ? '0.55' : '1';
-          el.style.transform  = 'translateY(0)';
-        }, i * 40);
-      });
+      try { sessionStorage.setItem(CACHE_KEY, csv); } catch(e) {}
+      renderCSV(csv);
     })
     .catch(() => {}); // keep hardcoded fallback rows
 
@@ -4138,8 +4337,69 @@ function hideFlowers() {
 
 (function() {
   const e = [109,103,109,116,64,105,116,115,108,111,118,101,108,101,101,101,46,99,111,109].map(c=>String.fromCharCode(c)).join('');
-  const el = document.getElementById('pc-inquiry-link');
-  if (el) { el.href = 'mailto:' + e; el.textContent = e; }
+  function setInquiry() {
+    const el = document.getElementById('pc-inquiry-link');
+    if (el) { el.href = 'mailto:' + e; el.textContent = e; }
+    const el2 = document.getElementById('pc-inquiry-link-desk');
+    if (el2) { el2.href = 'mailto:' + e; el2.textContent = e; }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setInquiry);
+  } else {
+    setInquiry();
+  }
+})();
+
+// Show press & contact on desktop homepage after splash
+(function() {
+  let _pressShownAt = 0;
+  function showPressDesktop() {
+    if (window.innerWidth < 640) return;
+    if (window.scrollY > 10) return;
+    const pcd = document.getElementById('press-contact-desktop');
+    if (!pcd) return;
+    _pressShownAt = Date.now();
+    pcd.style.opacity = '1';
+    pcd.style.pointerEvents = 'auto';
+    // Reset and stagger lines in each time
+    const items = pcd.querySelectorAll('.pc-row-item');
+    items.forEach(el => el.classList.remove('line-in'));
+    items.forEach((el, i) => {
+      setTimeout(() => el.classList.add('line-in'), 60 + i * 90);
+    });
+  }
+  window._hidePressDesktop = function() {
+    const pcd = document.getElementById('press-contact-desktop');
+    if (!pcd) return;
+    pcd.style.opacity = '0';
+    pcd.style.pointerEvents = 'none';
+  };
+  window._showPressDesktop = showPressDesktop;
+
+  // Click outside to dismiss (ignore clicks that just triggered the show)
+  document.addEventListener('click', function(e) {
+    if (Date.now() - _pressShownAt < 100) return;
+    const pcd = document.getElementById('press-contact-desktop');
+    if (!pcd || pcd.style.opacity === '0' || pcd.style.pointerEvents === 'none') return;
+    if (!pcd.contains(e.target)) {
+      pcd.style.opacity = '0';
+      pcd.style.pointerEvents = 'none';
+    }
+  });
+  // Make row items interactive but keep hidden — only shown on explicit PRESS & CONTACT click
+  function _initPressDesktop() {
+    const pcd = document.getElementById('press-contact-desktop');
+    if (!pcd) { setTimeout(_initPressDesktop, 50); return; }
+    pcd.querySelectorAll('.pc-row-item').forEach(el => el.classList.add('visible'));
+    pcd.style.opacity = '0';
+    pcd.style.pointerEvents = 'none';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initPressDesktop);
+  } else {
+    _initPressDesktop();
+  }
+
 })();
 
 function togglePcSub(btn) {
@@ -4160,71 +4420,90 @@ function togglePcSub(btn) {
 function animateTourDay() {
   const el = document.querySelector('#panel-tour .tour-featured-day');
   if (!el) return;
-  const target = parseInt(el.textContent.trim(), 10);
+  const target = parseInt(el.dataset.day || '', 10);
   if (isNaN(target)) return;
-
-  // Slot machine: count down from (target + overshoot) to target, decelerating.
-  // Geometric series sum for speed=5, friction=0.97 ≈ 167 → overshoot = 167, starts near 100+target.
-  const maxDay = 100;
-  let pos   = target + 167;
-  let speed = 5.0;
-  const friction = 0.97;
+  el.textContent = target < 10 ? '0' + target : String(target);
 
   function frame() {
-    pos -= speed;
-    speed *= friction;
-
-    if (pos <= target) {
-      el.textContent = target < 10 ? '0' + target : String(target);
-      return;
-    }
-
-    // Wrap into 1–31 range so it looks like a calendar wheel
-    const d = ((Math.round(pos) - 1 + maxDay * 100) % maxDay) + 1;
-    el.textContent = d < 10 ? '0' + d : String(d);
-    requestAnimationFrame(frame);
+    // no-op: animation removed
   }
   requestAnimationFrame(frame);
 }
 
 function openPanel(id) {
+  // On desktop, panel-press is replaced by #press-contact-desktop on the right.
+  // Use getComputedStyle to detect desktop (CSS sets display:flex on it at 900px+).
+  const _pcd = document.getElementById('press-contact-desktop');
+  if (id === 'panel-press' && _pcd && window.getComputedStyle(_pcd).display !== 'none') {
+    const op = document.querySelector('.section-panel.open');
+    if (op) closePanel();
+    if (window._showPressDesktop) window._showPressDesktop();
+    return;
+  }
+  if (window._resetPanelScroll) window._resetPanelScroll();
+  const pcd = document.getElementById('press-contact-desktop');
+  if (pcd) { pcd.style.opacity = '0'; pcd.style.pointerEvents = 'none'; }
+  const sp = document.getElementById('stream-popup');
+  if (sp) sp.classList.remove('open');
+  if (id === 'panel-music' && window.innerWidth >= 640) {
+    const _targetKey = window._pendingMusicKey || null;
+    setTimeout(() => {
+      const key = _targetKey || document.querySelector('#panel-music .mc-track.active')?.dataset?.key;
+      if (key && typeof openStreamMenu === 'function') {
+        window._streamMenuOpenedAt = Date.now();
+        openStreamMenu(key);
+      }
+    }, 700);
+  }
   if (id === 'panel-music' || id === 'panel-tour' || id === 'panel-press') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
   const hashMap = { 'panel-music': 'view-music', 'panel-tour': 'view-upcoming', 'panel-press': 'view-press' };
   if (hashMap[id]) history.replaceState(null, '', '#' + hashMap[id]);
   const switching = !!document.querySelector('.section-panel.open');
+  const isDesktop = window.innerWidth >= 900;
   document.querySelectorAll('.section-panel').forEach(p => {
+    if (p.id === id) return; // handled below — don't hide the panel we're opening
     p.classList.remove('open');
-    if (switching) {
-      // instant hide — no fade, no display:none delay, keeps backdrop visible
+    if (isDesktop) {
+      p.style.display = '';
+      p.style.pointerEvents = 'none';
+    } else if (switching) {
       p.style.opacity = '0';
       p.style.pointerEvents = 'none';
-      setTimeout(() => { if (!p.classList.contains('open')) p.style.display = 'none'; p.style.opacity = ''; p.style.pointerEvents = ''; }, 0);
+      setTimeout(() => { if (!p.classList.contains('open')) { p.style.display = 'none'; p.style.opacity = ''; p.style.pointerEvents = ''; } }, 0);
     } else {
       p.style.display = 'none';
     }
   });
   const panel = document.getElementById(id);
   if (panel) {
-    panel.style.display = 'flex';
-    if (switching) {
-      // skip fade-in — just snap to visible since blur is already there
-      panel.style.opacity = '1';
-      panel.style.pointerEvents = 'auto';
+    // On desktop, clear any inline display so the CSS display:flex takes over
+    panel.style.display = isDesktop ? '' : 'flex';
+    panel.style.pointerEvents = '';
+    console.log('[openPanel] id='+id+' display='+panel.style.display+' switching='+switching+' isDesktop='+isDesktop);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      console.log('[openPanel rAF] adding open to '+id+' display='+panel.style.display);
       panel.classList.add('open');
-      setTimeout(() => { panel.style.opacity = ''; panel.style.pointerEvents = ''; }, 0);
-    } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('open')));
-    }
+      console.log('[openPanel rAF] after open: classList='+panel.className);
+    }));
     if (id === 'panel-music') {
-      mcReset();
+      const _pendingKey = window._pendingMusicKey || null;
       const mc = panel.querySelector('.music-carousel');
       if (mc) {
         mc.classList.remove('visible');
         const delay = switching ? 30 : 80;
         setTimeout(() => mc.classList.add('visible'), delay);
-        setTimeout(() => mcSpinIn(), delay + 80);
+        if (_pendingKey) {
+          // Snap directly to the target song — no spin animation
+          const tracks = [...panel.querySelectorAll('.mc-track')];
+          const idx = tracks.findIndex(t => t.dataset.key === _pendingKey);
+          if (idx >= 0) { mcPos = MC_TOTAL * 5 + idx; }
+          mcApply(false);
+        } else {
+          mcReset();
+          setTimeout(() => mcSpinIn(), delay + 80);
+        }
       }
     }
     if (id === 'panel-tour') {
@@ -4235,15 +4514,6 @@ function openPanel(id) {
       if (past)     past.classList.remove('visible');
       setTimeout(() => { if (upcoming) upcoming.classList.add('visible'); }, switching ? 30 : 80);
       setTimeout(() => { if (past)     past.classList.add('visible');     }, switching ? 110 : 180);
-      // Animate day counter after content is ready (CSV or static)
-      const upEl = document.getElementById('tour-upcoming-section');
-      if (upEl) {
-        let fired = false;
-        function fireDay() { if (fired) return; fired = true; setTimeout(animateTourDay, 60); }
-        upEl.addEventListener('tourRendered', fireDay, { once: true });
-        // Fallback: if no CSV fetch (static HTML), animate after panel reveal
-        setTimeout(fireDay, switching ? 400 : 600);
-      }
     }
     if (id === 'panel-press') {
       const topLevel = panel.querySelectorAll('.pc-list > .pc-row-item');
@@ -4257,22 +4527,32 @@ function openPanel(id) {
 }
 function closePanel() {
   history.replaceState(null, '', window.location.pathname);
+  const spClose = document.getElementById('stream-popup');
+  if (spClose) spClose.classList.remove('open');
   const upcoming = document.getElementById('tour-upcoming-section');
   const past     = document.getElementById('tour-past-section');
   if (upcoming) upcoming.classList.remove('visible');
   if (past)     past.classList.remove('visible');
   const mc = document.querySelector('.music-carousel');
   if (mc) mc.classList.remove('visible');
+  const isDesktop = window.innerWidth >= 900;
   document.querySelectorAll('.section-panel').forEach(p => {
     p.classList.remove('open');
     p.querySelectorAll('.pc-row, .pc-row-item').forEach(r => r.classList.remove('visible'));
     p.querySelectorAll('.pc-sub').forEach(s => s.classList.remove('open'));
     p.style.zIndex = '';
-    setTimeout(() => { if (!p.classList.contains('open')) p.style.display = 'none'; }, 420);
+    p.style.pointerEvents = 'none';
+    if (!isDesktop) {
+      setTimeout(() => { if (!p.classList.contains('open')) { p.style.display = 'none'; p.style.pointerEvents = ''; } }, 420);
+    } else {
+      p.style.display = ''; // keep display:flex from CSS so transform can animate out
+      setTimeout(() => { if (!p.classList.contains('open')) p.style.pointerEvents = ''; }, 460);
+    }
   });
   document.removeEventListener('keydown', onPanelKey);
   if (window.stopTourScroll) stopTourScroll();
   hideFlowers();
+  if (window._resetPanelScroll) window._resetPanelScroll();
 }
 function onPanelKey(e) {
   if (e.key === 'Escape') closePanel();
@@ -4280,20 +4560,82 @@ function onPanelKey(e) {
   if (e.key === 'ArrowLeft')  mcStep(-1);
 }
 
+// Close panel + scroll page on downward vertical scroll
+(function() {
+  window._resetPanelScroll = function() {};
+
+  let _lastOpenPanelId = null;
+  let _dismissedByScroll = false;
+  let _reopenTimer = null;
+  let _pressWasVisible = false;
+
+  function _dismissPanel() {
+    const op = document.querySelector('.section-panel.open');
+    if (!op || typeof closePanel !== 'function') return;
+    _lastOpenPanelId = op.id;
+    _dismissedByScroll = true;
+    closePanel();
+    const nl = document.getElementById('newsletter-section');
+    if (nl) nl.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  window.addEventListener('scroll', () => {
+    const pcd = document.getElementById('press-contact-desktop');
+    // Hide press desktop when scrolled down; remember if it was visible
+    if (window.scrollY > 10) {
+      if (pcd && pcd.style.pointerEvents !== 'none') {
+        _pressWasVisible = true;
+        pcd.style.transition = 'opacity 0.1s ease';
+        pcd.style.opacity = '0';
+        pcd.style.pointerEvents = 'none';
+      }
+    } else if (_pressWasVisible && !document.querySelector('.section-panel.open') && !_dismissedByScroll) {
+      _pressWasVisible = false;
+      if (pcd) pcd.style.transition = 'opacity 0.3s ease';
+      if (window._showPressDesktop) window._showPressDesktop();
+    }
+    // Close open panel on scroll down
+    if (window.scrollY > 10 && !_dismissedByScroll) {
+      _dismissPanel();
+    }
+    // Reopen panel when back at top — debounced so it only fires once scroll settles
+    if (_dismissedByScroll && _lastOpenPanelId) {
+      clearTimeout(_reopenTimer);
+      _reopenTimer = setTimeout(() => {
+        if (window.scrollY < 5 && typeof openPanel === 'function') {
+          _dismissedByScroll = false;
+          openPanel(_lastOpenPanelId);
+        }
+      }, 120);
+    }
+  }, { passive: true });
+
+  document.querySelectorAll('.section-panel').forEach(panel => {
+    panel.addEventListener('wheel', (e) => {
+      if (e.deltaY > 10 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        _dismissPanel();
+      }
+    }, { passive: true });
+  });
+})();
+
 // Restore panel from hash (target captured before openPanel was defined)
-if (window.__hashPanelTarget) {
+// Skip panel-press: #press-contact-desktop already shows that content on the homepage
+if (window.__hashPanelTarget && window.__hashPanelTarget !== 'panel-press') {
   const target = window.__hashPanelTarget;
   if (sessionStorage.getItem('splashSeen')) {
     setTimeout(() => openPanel(target), 50);
   } else {
     document.addEventListener('splashDone', () => openPanel(target), { once: true });
   }
+} else if (window.__hashPanelTarget === 'panel-press') {
+  history.replaceState(null, '', window.location.pathname);
 }
 
 // ── Cover Flow carousel ──────────────────────────────────────────────────────
-let mcPos   = 0;   // continuous float — 0 = first, 1 = second, etc.
-let mcIndex = 0;   // snapped integer
 const MC_TOTAL = 3;
+let mcPos   = MC_TOTAL * 5;   // start above clamp threshold so wrap works on both sides
+let mcIndex = 0;
 const mcTracks = () => document.querySelectorAll('.mc-track');
 const mcDots   = () => document.querySelectorAll('.mc-dot');
 
@@ -4302,6 +4644,7 @@ function mcWrap(n) {
 }
 
 function mcApply(animated) {
+  if (!animated && !_mcSpinning && typeof window._blurStreamLinks === 'function') window._blurStreamLinks();
   const tracks = mcTracks();
   const nearest = mcWrap(Math.round(mcPos));
   const activeKey = tracks[nearest]?.dataset?.key;
@@ -4316,7 +4659,9 @@ function mcApply(animated) {
     const abs = Math.abs(off);
     const sign = off < 0 ? -1 : 1;
 
-    const tx     = sign * 65 * Math.min(abs, 1.5);
+    // txBase as % of track width — same on mobile and desktop so side-peek is proportional
+    const txBase = 65;
+    const tx     = sign * txBase * Math.min(abs, 1.5);
     const ry     = sign * -52 * Math.min(abs, 1);
     const scale  = 1 - 0.32 * Math.min(abs, 1);
     const op     = Math.max(0, 1 - 0.55 * Math.min(abs, 1) - Math.max(0, abs - 1) * 2.2);
@@ -4342,6 +4687,15 @@ function mcApply(animated) {
 function mcSnap() {
   mcPos = Math.round(mcPos);
   mcApply(true);
+  // Don't re-open if stream menu was just opened programmatically (within 1s)
+  if (window._streamMenuOpenedAt && Date.now() - window._streamMenuOpenedAt < 1000) return;
+  if (document.getElementById('stream-popup')?.classList.contains('open') && window._isLinksBlurred?.()) {
+    const tracks = document.querySelectorAll('.mc-track');
+    const key = tracks[mcWrap(Math.round(mcPos))]?.dataset?.key;
+    if (key && typeof openStreamMenu === 'function') {
+      setTimeout(() => openStreamMenu(key, true), 120);
+    }
+  }
 }
 
 function mcStep(dir) {
@@ -4349,24 +4703,36 @@ function mcStep(dir) {
   mcApply(true);
 }
 
-function mcReset() { mcPos = 0; mcApply(true); }
+function mcReset() { mcPos = MC_TOTAL * 5; mcApply(true); }
 
+function openMusicPanelAtSong(key) {
+  window._pendingMusicKey = key;
+  // Jump to top instantly so the scroll listener doesn't dismiss the panel mid-open
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  openPanel('panel-music');
+}
+window.openMusicPanelAtSong = openMusicPanelAtSong;
+
+let _mcSpinning = false;
 function mcSpinIn() {
   const stage = document.querySelector('#panel-music .mc-stage');
   if (!stage) return;
-  mcPos = 5.5;
+  const TARGET = MC_TOTAL * 5;
+  mcPos = TARGET + 5.5;
   let prev = mcPos;
+  _mcSpinning = true;
   function frame() {
     prev = mcPos;
-    mcPos *= 0.94;
+    mcPos = TARGET + (mcPos - TARGET) * 0.94;
     const speed = Math.abs(prev - mcPos);
     const blurPx = Math.min(speed * 300, 16);
     stage.style.filter = blurPx > 0.3 ? `blur(${blurPx.toFixed(1)}px)` : '';
     mcApply(false);
-    if (mcPos > 0.015) {
+    if (mcPos - TARGET > 0.015) {
       requestAnimationFrame(frame);
     } else {
-      mcPos = 0;
+      mcPos = TARGET;
+      _mcSpinning = false;
       stage.style.filter = '';
       mcApply(true);
     }
@@ -4445,7 +4811,7 @@ function mcSpinIn() {
       const track = e.target.closest('.mc-track');
       if (!track || track.classList.contains('active')) return;
       const idx = [...mcTracks()].indexOf(track);
-      if (idx !== -1) { mcPos = idx; mcApply(true); }
+      if (idx !== -1) { mcPos = MC_TOTAL * 5 + idx; mcApply(true); }
     });
   });
 })();
@@ -4628,5 +4994,43 @@ function mcSpinIn() {
   video.play().catch(() => dismiss()); // force play on iOS; dismiss immediately if blocked
 })();
 </script>
+
+<!-- Press & contact — fixed on desktop homepage, direct body child so position:fixed works -->
+<div id="press-contact-desktop" style="position:fixed; left:calc(100vw - 12vw - 260px); top:50%; transform:translateY(-50%); z-index:200; width:260px; display:flex; opacity:1; transition:opacity 0.3s ease">
+  <div class="pc-list">
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="togglePcSub(this)">
+        <span class="pc-row-label">Electronic Press Kit</span>
+      </button>
+      <div class="pc-sub"><a href="Artist_EPK.png" download="lovelee_EPK.png" class="pc-sub-link">download</a></div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="togglePcSub(this)">
+        <span class="pc-row-label">Press Photos</span>
+      </button>
+      <div class="pc-sub"><a href="lovelee_press_photos.zip" download class="pc-sub-link">download</a></div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="togglePcSub(this)">
+        <span class="pc-row-label">Inquiries</span>
+      </button>
+      <div class="pc-sub"><a id="pc-inquiry-link-desk" class="pc-sub-link" href="#">—</a></div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="togglePcSub(this)">
+        <span class="pc-row-label">Support me</span>
+      </button>
+      <div class="pc-sub">
+        <a href="https://www.patreon.com/cw/itslovelee" target="_blank" rel="noopener" class="pc-sub-link">patreon</a>
+        <a href="https://buymeacoffee.com/itslovelee" target="_blank" rel="noopener" class="pc-sub-link">buy me a coffee</a>
+      </div>
+    </div>
+    <div class="pc-row-item">
+      <button class="pc-row" onclick="document.getElementById('newsletter-section').scrollIntoView({behavior:'smooth'})">
+        <span class="pc-row-label">Newsletter</span>
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
