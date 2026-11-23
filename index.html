@@ -22,7 +22,7 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: var(--cream);
+      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -37,8 +37,7 @@
       width: 100%;
       max-width: 480px;
       object-fit: contain;
-      background: var(--cream);
-      mix-blend-mode: multiply;
+      background: transparent;
     }
     @media (max-width: 600px) {
       #splash-video-src { max-width: 320px; }
@@ -1886,7 +1885,7 @@
 <body>
 
 <div id="splash">
-  <video id="splash-video-src" src="logo_1.mp4" autoplay muted playsinline></video>
+  <video id="splash-video-src" src="logoWhitebackground.mp4" autoplay muted playsinline></video>
   <canvas id="splash-canvas"></canvas>
 </div>
 
