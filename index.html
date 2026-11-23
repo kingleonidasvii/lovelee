@@ -4785,6 +4785,7 @@ function mcSpinIn() {
         _mcSpinning = false;
         stage.style.filter = '';
       }
+      mcApply(false); // cut any in-progress snap/spin transition instantly
       tx0 = e.touches[0].clientX; pos0 = mcPos; touching = true;
     }, { passive: true });
     stage.addEventListener('touchmove', e => {
